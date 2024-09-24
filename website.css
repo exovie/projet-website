@@ -8,6 +8,29 @@ body{
 h2{
     text-align: center;
 } 
-h3{
+.sarcasm{
+    color: green;
+    font-size: 20px;
     text-align: center;
-} 
+}
+.border{
+    border: 2px solid black;
+    padding: 20px;
+    background-color: turquoise;
+    margin: 20px;
+}
+#navbar ul {
+    padding:0%;
+    list-style-type: none; /* Retire les puces */
+    display: flex; /* Affiche les éléments en ligne */
+}
+#navbar ul li {
+    margin-right: 100px; /* Espace entre les éléments */
+}
+#navbar #first {
+    margin-left: 70px;
+}
+#navbar #main_search{
+    margin-left: 140px;
+    margin-left:0%;
+}
