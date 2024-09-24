@@ -1,17 +1,12 @@
 h1{
     color: red;
-    text-align: center;
 }
 body{ 
     background-color: purple;
 }
-h2{
-    text-align: center;
-} 
 .sarcasm{
     color: green;
     font-size: 20px;
-    text-align: center;
 }
 .border{
     background-color: turquoise; /* Couleur de fond pour le haut de la page */
@@ -30,18 +25,18 @@ h2{
     position: fixed; /* Fixe le conteneur en dessous du bandeau turquoise */
     top: 50px; /* Positionne le conteneur juste en dessous du bandeau turquoise */
     left: 0; /* Positionne le conteneur tout à gauche */
-    z-index: 999; /* Assure que le conteneur est en dessous du bandeau turquoise */
-        
-}
-#logo {
-    background-image: url('Pictures/logo.png');
+    z-index: 999; /* Assure que le conteneur est en dessous du bandeau turquoise */    
 }
 #navbar ul {
     padding:0%;
     list-style-type: none; /* Retire les puces */
     display: flex; /* Affiche les éléments en ligne */
 }
-
+#logo{
+    margin-left: 50px;
+    position: relative;
+    top: -7px;
+}
 #first {
     margin-left: 70px;
     margin-right: 140px;
@@ -51,7 +46,7 @@ h2{
     margin-right: 10px;
 }
 #main_search{
-    margin-left: 600px;
+    margin-left: 500px;
     margin-right: 10px;
     background-color: white;
 }
@@ -62,4 +57,5 @@ h2{
 }
 .content {
     padding-top: 60px;
+    text-align: center;
 }
