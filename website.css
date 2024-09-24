@@ -14,23 +14,52 @@ h2{
     text-align: center;
 }
 .border{
-    border: 2px solid black;
-    padding: 20px;
-    background-color: turquoise;
-    margin: 20px;
+    background-color: turquoise; /* Couleur de fond pour le haut de la page */
+    height: 50px; /* Hauteur du conteneur */
+    margin: 0; /* Supprime les marges par défaut pour occuper toute la largeur */
+    width: 100%; /* S'assure que le conteneur occupe toute la largeur */
+    position: fixed; /* Fixe le conteneur en haut de la page */
+    top: 0; /* Positionne le conteneur tout en haut de la page */
+    left: 0; /* Positionne le conteneur tout à gauche */
+    z-index: 1000; /* Assure que le conteneur est au-dessus des autres éléments */
+}
+.banner{
+    background: blue; /* Dégradé de couleur */
+    height: 5px; /* Hauteur fixe du bandeau esthétique */
+    width: 100%; /* S'assure que le conteneur occupe toute la largeur */
+    position: fixed; /* Fixe le conteneur en dessous du bandeau turquoise */
+    top: 50px; /* Positionne le conteneur juste en dessous du bandeau turquoise */
+    left: 0; /* Positionne le conteneur tout à gauche */
+    z-index: 999; /* Assure que le conteneur est en dessous du bandeau turquoise */
+        
+}
+#logo {
+    background-image: url('Pictures/logo.png');
 }
 #navbar ul {
     padding:0%;
     list-style-type: none; /* Retire les puces */
     display: flex; /* Affiche les éléments en ligne */
 }
-#navbar ul li {
-    margin-right: 100px; /* Espace entre les éléments */
-}
-#navbar #first {
+
+#first {
     margin-left: 70px;
+    margin-right: 140px;
 }
-#navbar #main_search{
+#Entreprises {
     margin-left: 140px;
-    margin-left:0%;
+    margin-right: 10px;
+}
+#main_search{
+    margin-left: 600px;
+    margin-right: 10px;
+    background-color: white;
+}
+#Subscription{
+    flex-direction: column;
+    position: relative;
+    top: -8px;
+}
+.content {
+    padding-top: 60px;
 }
