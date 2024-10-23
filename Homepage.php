@@ -15,7 +15,7 @@
               <img src="Pictures/minilogo.png" alt="logo">
             </a>
           </li>
-          <li class="capsule-border"><a href="Essais.html">Essais cliniques</a></li>
+          <li class="capsule-border capsule-button"><a href="Essais.html"><input type="submit" value="Essais cliniques"></a></li>
           <li class="capsule-border" id="Entreprises"><a href="Entreprises.html">Entreprises</a></li>
           <li>
             <div id="main_search" class="search">
@@ -48,3 +48,13 @@
     </div>
     </body>
 </html>
+
+<!--
+<form action="TD2_exo3.php" method="post">
+  <label for="nom">Entrez le produit voulu et la quantité au format suivant :</label>
+  <input type="text" id="nom" placeholder="produit, quantité" name="nom" required>
+  
+  <br><br>
+  <input type="submit" value="Envoyer">
+</form> 
+-->
