@@ -10,7 +10,7 @@ body{
 }
 .border{
     background-color: turquoise; /* Couleur de fond pour le haut de la page */
-    height: 50px; /* Hauteur du conteneur */
+    height: 70px; /* Hauteur du conteneur */
     margin: 0; /* Supprime les marges par défaut pour occuper toute la largeur */
     width: 100%; /* S'assure que le conteneur occupe toute la largeur */
     position: fixed; /* Fixe le conteneur en haut de la page */
@@ -19,11 +19,11 @@ body{
     z-index: 1000; /* Assure que le conteneur est au-dessus des autres éléments */
 }
 .banner{
-    background: blue; /* Dégradé de couleur */
+    background: rgb(3, 132, 245); /* Dégradé de couleur */
     height: 5px; /* Hauteur fixe du bandeau esthétique */
     width: 100%; /* S'assure que le conteneur occupe toute la largeur */
     position: fixed; /* Fixe le conteneur en dessous du bandeau turquoise */
-    top: 50px; /* Positionne le conteneur juste en dessous du bandeau turquoise */
+    top: 70px; /* Positionne le conteneur juste en dessous du bandeau turquoise */
     left: 0; /* Positionne le conteneur tout à gauche */
     z-index: 999; /* Assure que le conteneur est en dessous du bandeau turquoise */    
 }
@@ -35,27 +35,43 @@ body{
 #logo{
     margin-left: 50px;
     position: relative;
-    top: -7px;
+    top: 5px;
 }
 #first {
     margin-left: 70px;
-    margin-right: 140px;
+    margin-right: 40px;
 }
 #Entreprises {
-    margin-left: 140px;
+    margin-left: 40px;
     margin-right: 10px;
 }
 #main_search{
-    margin-left: 500px;
+    margin-left: 600px;
     margin-right: 10px;
     background-color: white;
+    position: relative;
+    top: 8px;
 }
 #Subscription{
-    flex-direction: column;
+    margin-left: 50px;
     position: relative;
-    top: -8px;
+    top: -20px;
 }
 .content {
-    padding-top: 60px;
+    padding-top: 70px;
     text-align: center;
+}
+.capsule-border {
+    background-color: blue; /* Couleur de fond */
+    border: 2px solid black; /* Couleur et épaisseur de la bordure */
+    border-radius: 50px; /* Arrondi pour donner la forme de gélule */
+    padding: 10px; /* Espacement intérieur */
+    display: inline-block; /* Pour que la bordure s'adapte au contenu */
+}
+#envelope{
+        width: 24px;
+        height: 24px;
+        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>');
+        background-size: contain;
+        background-repeat: no-repeat;
 }
