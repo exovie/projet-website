@@ -1,3 +1,10 @@
+<?php
+session_start();
+$_SESSION['origin'] = 'Homepage';
+$servername = "mysql:host=localhost;dbname=website-project"; // ou l'adresse de votre serveur
+$_SESSION['servername'] = $servername;
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -11,12 +18,12 @@
       <nav id="navbar">
         <ul>
           <li id="logo">
-            <a href="Homepage.html">
-              <img src="Pictures/minilogo.png" alt="logo">
+            <a href="Homepage.php">
+              <img src="Pictures/minilogo.png" alt="minilogo">
             </a>
           </li>
-          <li class="capsule-border capsule-button"><a href="Essais.html"><input type="submit" value="Essais cliniques"></a></li>
-          <li class="capsule-border" id="Entreprises"><a href="Entreprises.html">Entreprises</a></li>
+          <li class="capsule-border capsule-button"><a href="Essais.php"><input type="submit" value="Essais cliniques"></a></li>
+          <li class="capsule-border" id="Entreprises"><a href="Entreprises.php">Entreprises</a></li>
           <li>
             <div id="main_search" class="search">
               <input type="search" name="pattern" class="search-query tt-input" placeholder="Search" accesskey="s" spellcheck="false" dir="auto" aria-owns="tt-91ab948f-4f49-cd37-fddf-5046fc840e9c_listbox" aria-controls="tt-91ab948f-4f49-cd37-fddf-5046fc840e9c_listbox" role="combobox" aria-autocomplete="list" aria-expanded="false">
@@ -27,8 +34,8 @@
           </li>
           <li>
             <ul id="Subscription">
-              <li><img src="/Pictures/subscription.png" alt="petit bonhomme"></li>
-              <li class="capsule-border"><p><a href="connexion.html">Se connecter</a> / <a href="inscription.html">Je m'inscris</a></p></li>
+              <li><img src="Pictures/subscription.png" alt="petit bonhomme"></li>
+              <li class="capsule-border"><p><a href="connexion.php">Se connecter</a> / <a href="inscription.php">Je m'inscris</a></p></li>
             </ul>
           </li>
         </ul>
