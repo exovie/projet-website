@@ -42,5 +42,27 @@ function Valider_inscription(string $servername) {
             die ('Erreur : ' . $e->getMessage () );
         }
 }
+
+
+
+
+//Fonctions  liées aux essais
+
+function Demander_Medecin_essai(int $Id_essai, int $Id_medecin){
+    $conn = Connexion_base();
+    try {
+    $requete = $conn -> prepare("INSERT INTO MEDECIN_ESSAIS(Id_medecin, Id_essai) VALUES (?,?,'Sollicite')");
+    $requete -> execute(array($Id_medecin, $Id_essai))
+    $req = $stmt ->prepare("INSERT INTO personnesSondees(`identifiant`, `email`, `passwd`, `admin`) VALUES (?,?,?,0)");
+    $req->execute(array($identifiant, $mail, $mdp) );
+    echo "Nouveau médecin sollicité avec succès pour cet essai!";
+    } catch (PDOException $e) {
+    echo "Erreur : " . $e->getMessage();
+}}
+
+
 ?>  
+
+
+
 
