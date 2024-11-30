@@ -1,8 +1,9 @@
 <?php
 session_start();
 $_SESSION['origin'] = 'Homepage';
-$servername = "mysql:host=localhost;dbname=website-project"; // ou l'adresse de votre serveur
-$_SESSION['servername'] = $servername;
+$db_name = "mysql:host=localhost;dbname=website_db"; 
+$_SESSION['db_name'] = $db_name;
+include 'Fonctions.php';
 ?>
 
 <!DOCTYPE html>
