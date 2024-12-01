@@ -1,77 +1,184 @@
-h1{
-    color: red;
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(64, 224, 208, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centre le contenu horizontalement */
 }
-body{ 
-    background-color: white;
+
+h1 {
+    color: rgb(24, 98, 104);
 }
-.sarcasm{
-    color: green;
+
+/* BANDE FIXE */
+/* Style de la barre de navigation */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%; 
+    background-color: turquoise;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    z-index: 1000; /* Assure que la barre reste au-dessus des autres éléments */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+    border-bottom: 2px solid #2a9d8f; /* Bordure basse */
+}
+
+.nav-btn {
+    background-color: rgb(24, 98, 104);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
     font-size: 20px;
 }
-.border{
-    background-color: turquoise; /* Couleur de fond pour le haut de la page */
-    height: 70px; /* Hauteur du conteneur */
-    margin: 0; /* Supprime les marges par défaut pour occuper toute la largeur */
-    width: 100%; /* S'assure que le conteneur occupe toute la largeur */
-    position: fixed; /* Fixe le conteneur en haut de la page */
-    top: 0; /* Positionne le conteneur tout en haut de la page */
-    left: 0; /* Positionne le conteneur tout à gauche */
-    z-index: 1000; /* Assure que le conteneur est au-dessus des autres éléments */
+.nav-btn:hover {    /* Effet de survol du bouton */
+    background-color: rgb(29, 186, 197);
 }
-.banner{
-    background: rgb(3, 132, 245); /* Dégradé de couleur */
-    height: 5px; /* Hauteur fixe du bandeau esthétique */
-    width: 100%; /* S'assure que le conteneur occupe toute la largeur */
-    position: fixed; /* Fixe le conteneur en dessous du bandeau turquoise */
-    top: 70px; /* Positionne le conteneur juste en dessous du bandeau turquoise */
-    left: 0; /* Positionne le conteneur tout à gauche */
-    z-index: 999; /* Assure que le conteneur est en dessous du bandeau turquoise */    
-}
-#navbar ul {
-    padding:0%;
-    list-style-type: none; /* Retire les puces */
-    display: flex; /* Affiche les éléments en ligne */
-}
-#logo{
-    margin-left: 50px;
-    position: relative;
-    top: 5px;
-}
-#first {
-    margin-left: 70px;
-    margin-right: 40px;
-}
-#Entreprises {
-    margin-left: 40px;
-    margin-right: 10px;
-}
-#main_search{
-    margin-left: 600px;
-    margin-right: 10px;
-    background-color: white;
-    position: relative;
-    top: 8px;
-}
-#Subscription{
-    margin-left: 50px;
-    position: relative;
-    top: -20px;
-}
+
 .content {
-    padding-top: 70px;
+    margin-top: 60px; /* Pour laisser de l'espace sous la barre de navigation */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centre le contenu horizontalement */
+    text-align: center; /* Centre le texte */
+}
+
+/*Menu déroulant*/
+/* Conteneur pour l'image et le menu déroulant */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Menu déroulant */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%; /* Affiche le menu juste en dessous de l'image */
+    left: 50%;
+    transform: translateX(-50%); /* Centre le menu par rapport à l'image */
+    background-color: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    min-width: 150px;
+    max-width: calc(100vw - 20px); /* Assure que le menu ne dépasse pas les bords de la fenêtre */
+    overflow-x: auto; /* Permet le défilement horizontal si nécessaire */
+    border-radius: 8px; /* Coins arrondis */
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 10px;
+    color: black;
+    text-decoration: none;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {  /* Affiche le menu lorsque l'image est survolée */
+    display: block;
+}
+
+
+/* STYLE POUR LES MODALES*/
+.modal {
+    display: none; /* Caché par défaut */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    justify-content: center; 
+    text-align: left;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Affiche le modal si l'ancre correspond à #modal */
+#modal:target {
+    display: flex; /* Utilise flex pour centrer */
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 520px;
+    max-height: 80vh; /* Limite la hauteur du modal à 80% de la hauteur de la fenêtre */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow-y: auto; /* Ajoute un défilement vertical si le contenu dépasse la hauteur */
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-decoration: none;
+    font-size: 20px;
+    color: black;
+}
+
+/* Style pour les formulaires */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color:  rgb(29, 186, 197);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgb(24, 98, 104);
+}
+
+/* STYLE MESSAGE D'ERREUR*/
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 15px;
     text-align: center;
+    padding: 10px; /* Ajoute de l'espace à l'intérieur de l'encadré */
+    border-radius: 4px; /* Arrondit légèrement les coins de l'encadré */
+    background-color: rgba(255, 0, 0, 0.1); /* Ajoute un fond rouge très clair pour plus de visibilité */
 }
-.capsule-border {
-    background-color: blue; /* Couleur de fond */
-    border: 2px solid black; /* Couleur et épaisseur de la bordure */
-    border-radius: 50px; /* Arrondi pour donner la forme de gélule */
-    padding: 10px; /* Espacement intérieur */
-    display: inline-block; /* Pour que la bordure s'adapte au contenu */
-}
-#envelope{
-        width: 24px;
-        height: 24px;
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>');
-        background-size: contain;
-        background-repeat: no-repeat;
+
+.validation-message {
+    color: green;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: rgba(0, 128, 0, 0.1);
 }
