@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Connexion à la base de données
 $host = 'localhost';
 $dbname = 'website_db';
@@ -7,7 +8,6 @@ $password = '';
 
 //import des fonctions
 include 'fonctionInscription.php';
-
 // Connexion à la base de données
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
@@ -15,11 +15,7 @@ try {
 } catch (PDOException $e) {
     die("Erreur : " . $e->getMessage());
 }
-
-//Vérification de l'envoi du formulaire
-if (isset($_POST['part2'])) {
-    $role = $_POST['role'];
-}
+$role = $_SESSION["role"];
 
 // Vérification du format des réponses
 $errors = validateResponsesByRole($role,  $_POST['reponses']);
@@ -29,15 +25,19 @@ if ($role == 'patient'){
 
 if (!empty($errors) & $ageErr!=true) {
     // S'il y a des erreurs, on les affiche
-    session_start();
-    $_SESSION['FormsErr'] = $errors+ $ageErr;
+    $errorMessages = '';
+    if (!empty($errors)) {
+        foreach ($errors as $error) {
+            $errorMessages .= $error . "<br>";
+        }
+    }
+    $_SESSION['FormsErr'] = $errorMessages+ $ageErr;
         header('Location: /projet-website/Inscription/Form2_inscription.php#modal');
-        exit();
+
     } else {
         // Si pas d'erreur, on passe à la page suivante
-        session_start();
         $_SESSION['reponsesInscription'] = $_POST['reponses']; 
         header("Location: /projet-website/Inscription/finalisation_inscription.php");
-        exit();
+
     }
 ?>

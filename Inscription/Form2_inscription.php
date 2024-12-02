@@ -84,9 +84,10 @@ $questions = [
             <?php
             if ($role == 'medecin' or $role == 'entreprise') {
                 echo "Votre inscription sera soumise à validation par un administrateur.\n Vous pourrez vous connecter une fois votre compte validé.";
-                }?>
-                
-                <button type="submit" name="part2">Finaliser l'inscription</button>
+                } 
+                ?>
+                <br><br>
+                <button type="submit" name="part2" >Finaliser l'inscription</button>
             </form>
         </div>
     </div>

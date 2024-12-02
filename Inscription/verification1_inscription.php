@@ -37,7 +37,6 @@ if (isset($_POST['part1'])) {
         if(!isHashedPassword($_SESSION['password'])) {
             $_SESSION['HashedPasswordError'] = true;
             header("Location: Form1_inscription.php#modal");
-            exit();
         }
         $_SESSION['role'] = $role;
 
