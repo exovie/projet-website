@@ -31,7 +31,9 @@ function List_entreprise(string $servername, int $id_entreprise) {
     }
 }
 
-
+/**
+ * @param 
+ */
 function Valider_inscription(string $servername) {
     try {
         $bdd = new PDO($servername, 'root', '');
@@ -52,7 +54,7 @@ function Valider_inscription(string $servername) {
 //verif_nombremedecin, manque le cas où le nombre re passe en dessous de 2, changer le 2 d'ailleurs
 //se pencher sur l'histoire de statut en pause des médecins dans suspendre essais
 
-function Ajout_Bdd_Essai($Id_entreprise, $Titre, $Contexte, $Objectif_essai, $Design_etude, $Criteres_evaluation, $Resultats_attendus, $Id_essai_precedent, $Nb_medecins, $Nb_patients) {
+function Ajout_Bdd_Essai(int $Id_entreprise, string $Titre, string $Contexte, string $Objectif_essai, string $Design_etude, string $Criteres_evaluation, string $Resultats_attendus, int $Id_essai_precedent, int $Nb_medecins, int $Nb_patients) {
     $conn = Connexion_base();
     try{
         $DateduJour = Date();
@@ -88,7 +90,7 @@ function Ajout_Bdd_Essai($Id_entreprise, $Titre, $Contexte, $Objectif_essai, $De
     }}
 
 
-function Modif_Description_Essai($Id_essai,$Titre, $Contexte, $Objectif_essai, $Design_etude, $Criteres_evaluation,$Resultats_attendus, $Nb_medecins, $Nb_patients ){
+function Modif_Description_Essai(int $Id_essai,string $Titre, string $Contexte, string $Objectif_essai, string $Design_etude, string $Criteres_evaluation,string $Resultats_attendus, int $Nb_medecins, int $Nb_patients ){
     $conn = Connexion_base();
     try{
         $requete_statut = $conn -> prepare("SELECT `Statut` FROM `ESSAIS_CLINIQUES WHERE `Id_essai`=?");
@@ -119,7 +121,7 @@ function Modif_Description_Essai($Id_essai,$Titre, $Contexte, $Objectif_essai, $
 }
 
 //Méthode médecin
-function Modif_Infos_Essai($Id_patient, $Id_essai, $Poids, $Traitements, $Allergies){
+function Modif_Infos_Essai(int $Id_patient, int $Id_essai, double $Poids, string $Traitements, string $Allergies){
     $conn = Connexion_base();
     try{
         //Modification du poids, des traitements et des allergies
@@ -244,7 +246,7 @@ function Suspendre_Essai(int $Id_essai){
 
 
 //Méthode patient
-function Postuler_Patient_Essai($Id_essai, $Id_patient){
+function Postuler_Patient_Essai(int $Id_essai, int $Id_patient){
     $conn = Connexion_base();
     try{
         $requete = $conn -> prepare("INSERT INTO `PATIENTS_ESSAIS(`Id_patient`, `Id_essai`, `Statut_participation`) VALUES (?,?,'0000/00/00','En attente')");  //quand met-on la date?
@@ -270,7 +272,7 @@ function Postuler_Patient_Essai($Id_essai, $Id_patient){
 
 //Méthode patient, médecin
 
-function Retirer_Patient_Essai($Id_essai, $Id_patient){
+function Retirer_Patient_Essai(int $Id_essai, int $Id_patient){
     $conn = Connexion_base();
     try{
         $requete = $conn -> prepare("UPDATE `PATIENTS_ESSAIS` SET `Statut_participation` = 'Abandon' WHERE (`Id_essai` = ? AND `Id_patient` = ?)");
@@ -296,7 +298,7 @@ function Retirer_Patient_Essai($Id_essai, $Id_patient){
     }
     
 
-function Verif_nbMedecin_Essai($Id_essai){
+function Verif_nbMedecin_Essai(int $Id_essai){
     $conn = Connexion_base();
     try{ 
         $requete_compte = $conn -> prepare("SELECT COUNT(*) AS 'nombre' FROM `MEDECIN_ESSAIS`WHERE (`Id_essai` = ? AND `Statut_medecin` = 'Actif')");
@@ -334,7 +336,7 @@ function Verif_nbMedecin_Essai($Id_essai){
     }
 
     
-function Verif_nbPatient_Essai($Id_essai){
+function Verif_nbPatient_Essai(int $Id_essai){
     $conn = Connexion_base();
     try{
         //on récupère le nombre de patient
@@ -386,7 +388,7 @@ function Verif_nbPatient_Essai($Id_essai){
 }
 
 //Méthode entreprise
-function Traiter_Candidature_Medecin($Id_essai, $Id_medecin, $Reponse){
+function Traiter_Candidature_Medecin(int $Id_essai, int $Id_medecin, string $Reponse){
     // reponse égale à "oui" ou "non"
     $conn = Connexion_base();
     try{
@@ -413,7 +415,7 @@ function Traiter_Candidature_Medecin($Id_essai, $Id_medecin, $Reponse){
 }
 
 //Méthode médecins
-function Traiter_Candidature_Patient($Id_entreprise, $Id_patient, $Reponse){
+function Traiter_Candidature_Patient(int $Id_entreprise, int $Id_patient, string $Reponse){
     // reponse égale à "oui" ou "non"
     $conn = Connexion_base();
     try{
