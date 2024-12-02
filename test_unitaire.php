@@ -7,9 +7,11 @@
     <link rel="stylesheet" href="website.css">
     <style>
         table {
-            width: 100%;
+            width: 95%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            padding: 10px;
+            margin-left: 30px;
         }
         th, td {
             border: 1px solid #ddd;
@@ -27,6 +29,15 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+        body {
+            overflow-y: scroll; /* Affiche toujours la barre de défilement verticale */
+            overflow-x: auto;   /* Affiche la barre de défilement horizontale si nécessaire */
+            padding : 10px;
+        }
+        h1 {
+        color: rgb(24, 98, 104);
+        }
+
     </style>
 </head>
 
@@ -260,7 +271,7 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
             ?>
         </tbody>
     </table>
-    <i>Les utilisateurs générés avec les Id_user = <?php foreach ($userCreated as $Id) {echo $Id, " ,";}?> ont été supprimés de la BdD.</i>
+    <i>Les utilisateurs générés avec les Id_user = <?php foreach ($userCreated as $Id) {echo $Id, " , ";}?> ont été supprimés de la BdD.</i>
 
     <body>
     <h2>Tests des Fonctions de CONNEXION</h2>
@@ -275,7 +286,23 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
         </thead>
         <tbody>
             <?php
-            include 'Inscription/fonctionInscription.php';
+            include 'Connexion/fonctionConnexion.php';
+
+            //Verification si l'email est attribué à un compte
+            $email_existant = 'angie@admin.com';
+            $email_non_existant = 'angie@test.com';
+            addTestResult(
+                "Verif_mail (email existant)",
+                "Un compte est relié à cet email",
+                Verif_mail_connexion($pdo, $email_existant) ? "L'email existe" : "L'email n'existe pas",
+                Verif_mail_connexion($pdo, $email_existant) !== false
+            );
+            addTestResult(
+                "Verif_mail (email non existant)",
+                "L'email n'existe pas",
+                Verif_mail_connexion($pdo, $email_non_existant) ? "L'email existe" : "L'email n'existe pas",
+                Verif_mail_connexion($pdo, $email_non_existant) == false
+            );
             ?>
 
 </body>

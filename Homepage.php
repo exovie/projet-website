@@ -13,95 +13,8 @@ include 'Fonctions.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="'utf-8">
     <link rel="stylesheet" href='website.css'>
+    <link rel="stylesheet" href= 'navigationBar.css'>
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: rgba(64, 224, 208, 0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Centre le contenu horizontalement */
-        }
-        h1 {
-            color: rgb(24, 98, 104);
-        }
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%; 
-            background-color: turquoise;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 10px 0;
-            z-index: 1000; /* Assure que la barre reste au-dessus des autres éléments */
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
-            border-bottom: 2px solid #2a9d8f; /* Bordure basse */
-        }
-        /* Style des boutons de navigation */
-        .nav-btn {
-            background-color: rgb(24, 98, 104);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        /* Effet de survol du bouton */
-        .nav-btn:hover {
-            background-color: rgb(29, 186, 197);
-        }
-        .content {
-            margin-top: 60px; /* Pour laisser de l'espace sous la barre de navigation */
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Centre le contenu horizontalement */
-            text-align: center; /* Centre le texte */
-        }
-
-        /* Conteneur pour l'image et le menu déroulant */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        /* Menu déroulant */
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%; /* Affiche le menu juste en dessous de l'image */
-            left: 50%;
-            transform: translateX(-50%); /* Centre le menu par rapport à l'image */
-            background-color: white;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1;
-            min-width: 150px;
-            max-width: calc(100vw - 20px); /* Assure que le menu ne dépasse pas les bords de la fenêtre */
-            overflow-x: auto; /* Permet le défilement horizontal si nécessaire */
-            border-radius: 8px; /* Coins arrondis */
-        }
-
-        .dropdown-content a {
-            display: block;
-            padding: 10px;
-            color: black;
-            text-decoration: none;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #f1f1f1;
-        }
-
-        /* Affiche le menu lorsque l'image est survolée */
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-    </style>
 </head>
 <body>
 
@@ -121,7 +34,7 @@ include 'Fonctions.php';
             </a>
             </div>
         <div class="dropdown">
-            <a href="Homepage.php">
+            <a>
                 <img src="Pictures/pictureProfil.png" alt="pictureProfil" style="cursor: pointer;">
             </a>
             <div class="dropdown-content">
@@ -131,7 +44,7 @@ include 'Fonctions.php';
                     <a href="#">Déconnexion</a>
                 <?php else: ?>
                     <!-- Options pour les utilisateurs non connectés -->
-                    <a href="#">Connexion</a>
+                    <a href="Connexion/Form1_connexion.php#modal">Connexion</a>
                     <a href="Inscription/Form1_inscription.php#modal">S'inscrire</a>
                 <?php endif; ?>
             </div>
@@ -151,6 +64,22 @@ include 'Fonctions.php';
             </div>
         </div>
     <?php endif; ?>
+
+    <!-- Message Success Connexion -->
+
+    <!-- Message Success Deconnexion -->
+    <?php if (isset($_GET['unloggedSuccess']) && $_GET['unloggedSuccess'] === 'true'): 
+        $unloggedSuccessMessage = 'Votre déconnexion a bien été prise en compte.'?>
+        <div id="modal" class="modal" style="display: flex; text-align: center;">
+            <div class="modal-content">
+            <p class="validation-message"><?php echo htmlspecialchars($unloggedSuccessMessage); ?></p>
+                        <?php unset($_SESSION['unloggedSuccess']); ?>
+            <p>Au plaisir de vous revoir.</p> 
+            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
+            </div>
+        </div>
+    <?php endif; ?>
+
 
     <!-- Contenu principal -->
     <div class="content">
