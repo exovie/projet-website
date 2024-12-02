@@ -1,8 +1,8 @@
 <?php
 session_start();
 $_SESSION['origin'] = 'Homepage';
-$db_name = "mysql:host=localhost;dbname=website_db"; 
-$_SESSION['db_name'] = $db_name;
+$dbname = "mysql:host=localhost;dbname=website_db"; 
+$_SESSION['dbname'] = $dbname;
 include 'Fonctions.php';
 ?>
 
@@ -49,6 +49,15 @@ include 'Fonctions.php';
       <h1 id="main_page">Clinicou, le site des <strong>essais cliniques !</strong></h1>
       <h2>Le site qui vous permet de vous inscrire <em> facilement </em> pour crever pour big pharma</h2>
       <p class = "sarcasm"> Un max de fun</p>
+      <p>
+        <?php
+        $id_entreprises = Get_id($dbname, 'ENTREPRISES', 'Id_entreprise');
+        foreach ($id_entreprises as $id_entreprise) {
+            echo "<p> $id_entreprise </p>";
+            $entreprise = List_entreprise($dbname, $id_entreprise);
+        }
+        ?>
+      </p>
       <p><a href="https://www.linkedin.com/in/oussamaammar/">Pour plus d'informations</a></p>
       <img src="https://media.wired.com/photos/5f87340d114b38fa1f8339f9/master/w_1600%2Cc_limit/Ideas_Surprised_Pikachu_HD.jpg" alt="Surprised Pikachu">
       <p>L'eau, dans 20, 3O ans <br> il n'y en aura plus</p>
