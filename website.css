@@ -75,3 +75,59 @@ body{
         background-size: contain;
         background-repeat: no-repeat;
 }
+
+/* Style pour le conteneur principal */
+.home_page {
+    width: 300px; /* Ajustez selon vos besoins */
+    padding: 20px;
+    border: 2px solid black;
+    border-radius: 20px;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    text-align: left;
+    background-color: #f9f9f9;
+  }
+  
+  /* Titre de l'entreprise */
+  .home_page h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+    margin: 0;
+  }
+  
+  .home_page h1 span {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: normal;
+  }
+  
+  /* Information de base */
+  .home_page p {
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  
+  /* Section des essais cliniques */
+  .home_page .clinical-trials {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff; /* Bleu pour lien */
+    text-decoration: underline;
+    margin-bottom: 10px;
+  }
+  
+  /* Liste des médecins */
+  .home_page .medecins {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+  
+  .home_page .medecins div {
+    width: 40px;
+    height: 40px;
+    background: #d9d9d9;
+    border-radius: 50%;
+  }
+  

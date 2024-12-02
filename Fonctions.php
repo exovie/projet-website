@@ -1,6 +1,22 @@
 <?php
-session_start();
-$dbname = $_SESSION["dbname"];
+
+function Err_connexion($numErr) {
+    switch($numErr){
+        case "Err1": 
+            echo "Nous n'avons pas de compte associé à cette adresse email";
+            break;
+        case "Err2":
+            echo "le mot de passe ou l'identifiant est incorrect";
+            break;
+        case "Err3":
+            echo "Le compte n'a pas encore été validé";
+            break;
+        default:
+            echo "Une erreur est survenue";
+            break;
+    }
+
+}
 
 function Connexion_base($db_name): PDO {
     $host = 'localhost';
@@ -41,6 +57,9 @@ function Get_id($db_name, string $table, string $column): array {
         // Gestion des erreurs de base de données
         echo "Erreur: " . $e->getMessage();
         return [];
+    } finally {
+    // Fermer la connexion
+    Fermer_base($conn);
     }
 }
 
@@ -79,31 +98,48 @@ function List_entreprise(string $db_name, int $id_entreprise): array {
 
     $clinical_trials = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    $sql = "
+    SELECT
+        MEDECINS.Nom AS Nom_Medecin
+    FROM 
+        ESSAIS_CLINIQUES
+    JOIN 
+        ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
+    JOIN 
+        USERS ON ENTREPRISES.Id_entreprise = USERS.Id_user
+    JOIN 
+        MEDECIN_ESSAIS ON ESSAIS_CLINIQUES.Id_essai = MEDECIN_ESSAIS.Id_essai
+    JOIN 
+        MEDECINS ON MEDECIN_ESSAIS.Id_medecin = MEDECINS.Id_medecin
+    WHERE 
+        ENTREPRISES.Id_entreprise = :Id_entreprise;
+        ";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $medecins = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     foreach ($resultats as $entreprise) {
-        echo '<ul>';
-        echo '<li>Nom entreprise : ' . $entreprise['Nom_entreprise'] . '</li>';
-        echo '<li>Telephone : ' . $entreprise['Telephone'] . '</li>';
-        echo '</ul>';
-    }
-    
-    foreach ($clinical_trials as $essai_clinique) {
-        echo '<ul>';
-        echo '<li>Titre : ' . $essai_clinique['Titre'] . '</li>';
-        echo '<li>Contexte : ' . $essai_clinique['Contexte'] . '</li>';
-        echo '<li>Objectif de l\'essai : ' . $essai_clinique['Objectif_essai'] . '</li>';
-        echo '<li>Design de l\'étude : ' . $essai_clinique['Design_etude'] . '</li>';
-        echo '<li>Critère d\'évaluation : ' . $essai_clinique['Critere_evaluation'] . '</li>';
-        echo '<li>Résultats attendus : ' . $essai_clinique['Resultats_attendus'] . '</li>';
-        echo '<li>Date de lancement : ' . $essai_clinique['Date_lancement'] . '</li>';
-        echo '<li>Date de fin : ' . $essai_clinique['Date_fin'] . '</li>';
-        echo '<li>Date de création : ' . $essai_clinique['Date_creation'] . '</li>';
-        echo '<li>Statut : ' . $essai_clinique['Statut'] . '</li>';
-        echo '</ul>';
+        echo '<div class = home_page>';
+            echo '<h1>' . $entreprise['Nom_entreprise'] . '<span> Téléphones : '. $entreprise['Telephone']. '</h1>';
+            echo '<p> Siret : ' . $entreprise['Siret'] . '</p>';
+            echo '<p class="clinical-trials"> Nombre d\'essais cliniques : ' . count($clinical_trials) . '</p>';
+            echo '<p> Nos medecins partenaires : </p>';
+            echo '<div id="medecins">';
+                foreach ($medecins as $medecin) {
+                    echo '<div>' . htmlspecialchars($medecin['Nom_Medecin']) . '</div>';
+                }
+            echo '</div>';
+        echo '</div>';
+        
     }
 
     return [
         'entreprise' => $resultats,
-        'clinical_trials' => $clinical_trials
+        'clinical_trials' => $clinical_trials,
+        'medecins' => $medecins
     ];
 
     } catch (PDOException $e) {
@@ -114,8 +150,85 @@ function List_entreprise(string $db_name, int $id_entreprise): array {
     // Fermer la connexion
     Fermer_base($conn);
     }
+
 }
 
+function List_essai($role, $db_name) {
+
+    $conn = Connexion_base($db_name);
+    $statuses = [
+        'patient' => 'Recrutement',
+        'medecin' => 'En attente',
+        'autres' => null // Utilisation de null pour indiquer "tous les statuts"
+    ];
+    
+    try {
+        // Construction dynamique de la requête
+        $sql = "
+            SELECT 
+                EC.*,
+                CONCAT(M.Nom, ' ', M.Prenom) AS Nom_Medecin,
+                E.Nom_entreprise AS Nom_Entreprise
+            FROM 
+                ESSAIS_CLINIQUES EC
+            LEFT JOIN MEDECIN_ESSAIS ME ON EC.Id_essai = ME.Id_essai
+            LEFT JOIN MEDECINS M ON ME.Id_medecin = M.Id_medecin
+            LEFT JOIN ENTREPRISES E ON EC.Id_entreprise = E.Id_entreprise
+        ";
+    
+        // Si le statut n'est pas "tous", on ajoute une clause WHERE
+        if ($statuses[$role] !== null) {
+            $sql .= "WHERE EC.Statut = :Statut ";
+        }
+    
+        $sql .= "ORDER BY Date_creation ASC;";
+    
+        $stmt = $conn->prepare($sql);
+    
+        // Lier la variable seulement si le statut est défini
+        if ($statuses[$role] !== null) {
+            $stmt->bindParam(':Statut', $statuses[$role], PDO::PARAM_STR);
+        }
+        
+
+        $stmt->execute();
+            
+        // Récupérer les résultats
+        $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($resultats as $essai) {
+            echo '<ul class = "entreprises">';
+            echo '<li><strong>Nom de l\'entreprise :</strong> ' . htmlspecialchars($essai['Nom_Entreprise']) . '</li>';
+            echo '<li><strong>Titre de l\'essai :</strong> ' . htmlspecialchars($essai['Titre']) . '</li>';
+            echo '<li><strong>Contexte :</strong> ' . htmlspecialchars($essai['Contexte']) . '</li>';
+            echo '<li><strong>Objectif de l\'essai :</strong> ' . htmlspecialchars($essai['Objectif_essai']) . '</li>';
+            echo '<li><strong>Design de l\'étude :</strong> ' . htmlspecialchars($essai['Design_etude']) . '</li>';
+            echo '<li><strong>Critères d\'évaluation :</strong> ' . htmlspecialchars($essai['Critere_evaluation']) . '</li>';
+            echo '<li><strong>Résultats attendus :</strong> ' . htmlspecialchars($essai['Resultats_attendus']) . '</li>';
+        
+            // Vérifier si un médecin est associé à cet essai
+            if (!empty($essai['Nom_Medecin'])) {
+                echo '<li><strong>Médecin associé :</strong> ' . htmlspecialchars($essai['Nom_Medecin']) . '</li>';
+            } else {
+                echo '<li><strong>Médecin associé :</strong> Aucun médecin assigné</li>';
+            }
+            echo '</ul>';
+        }
+
+        return [
+            'essai clinique' => $resultats,
+        ];
+
+        } catch (PDOException $e) {
+            echo "Erreur : " . $e->getMessage();
+            return [];
+        
+        } finally {
+        // Fermer la connexion
+        Fermer_base($conn);
+        }
+
+}
 
 function List_Medecin(string $db_name, int $id_medecin): array {
     $conn = Connexion_base($db_name);
@@ -143,13 +256,50 @@ function List_Medecin(string $db_name, int $id_medecin): array {
     return $resultats;
 }
 
-function Valider_inscription(string $servername) {
+function Valider_inscription(string $servername, $db_name) {
+    $conn = Connexion_base($db_name);
+
     try {
-        $bdd = new PDO($servername, 'root', '');
-        echo 'connexion réussie';
-        } 
-        catch (Exception $e) {
-            echo 'connexion échouée';
-            die ('Erreur : ' . $e->getMessage () );
-        }
+        $sql = "
+    SELECT *
+    FROM ENTREPRISES
+    WHERE Id_entreprise = :Id_entreprise;
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
+    $stmt->execute();
+        
+    // Récupérer les résultats
+    $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    $sql = "
+    SELECT ESSAIS_CLINIQUES.Titre, ESSAIS_CLINIQUES.Contexte, ESSAIS_CLINIQUES.Objectif_essai, 
+    ESSAIS_CLINIQUES.Design_etude, ESSAIS_CLINIQUES.Critere_evaluation, 
+    ESSAIS_CLINIQUES.Resultats_attendus, ESSAIS_CLINIQUES.Date_lancement, 
+    ESSAIS_CLINIQUES.Date_fin, ESSAIS_CLINIQUES.Date_creation, ESSAIS_CLINIQUES.Statut
+    FROM ESSAIS_CLINIQUES
+    JOIN ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
+    JOIN USERS ON ENTREPRISES.Id_entreprise = USERS.Id_user
+    WHERE ENTREPRISES.Id_entreprise = :Id_entreprise;
+    ";
+            
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $clinical_trials = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return [
+        'entreprise' => $resultats,
+        'clinical_trials' => $clinical_trials
+    ];
+
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return [];
+    
+    } finally {
+    // Fermer la connexion
+    Fermer_base($conn);
+    }
 }

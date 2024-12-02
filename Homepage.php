@@ -53,9 +53,9 @@ include 'Fonctions.php';
         <?php
         $id_entreprises = Get_id($dbname, 'ENTREPRISES', 'Id_entreprise');
         foreach ($id_entreprises as $id_entreprise) {
-            echo "<p> $id_entreprise </p>";
             $entreprise = List_entreprise($dbname, $id_entreprise);
         }
+
         ?>
       </p>
       <p><a href="https://www.linkedin.com/in/oussamaammar/">Pour plus d'informations</a></p>
@@ -74,4 +74,20 @@ include 'Fonctions.php';
   <br><br>
   <input type="submit" value="Envoyer">
 </form> 
+
+
+    foreach ($clinical_trials as $essai_clinique) {
+        echo '<ul>';
+        echo '<li>Titre : ' . $essai_clinique['Titre'] . '</li>';
+        echo '<li>Contexte : ' . $essai_clinique['Contexte'] . '</li>';
+        echo '<li>Objectif de l\'essai : ' . $essai_clinique['Objectif_essai'] . '</li>';
+        echo '<li>Design de l\'étude : ' . $essai_clinique['Design_etude'] . '</li>';
+        echo '<li>Critère d\'évaluation : ' . $essai_clinique['Critere_evaluation'] . '</li>';
+        echo '<li>Résultats attendus : ' . $essai_clinique['Resultats_attendus'] . '</li>';
+        echo '<li>Date de lancement : ' . $essai_clinique['Date_lancement'] . '</li>';
+        echo '<li>Date de fin : ' . $essai_clinique['Date_fin'] . '</li>';
+        echo '<li>Date de création : ' . $essai_clinique['Date_creation'] . '</li>';
+        echo '<li>Statut : ' . $essai_clinique['Statut'] . '</li>';
+        echo '</ul>';
+    }
 -->
