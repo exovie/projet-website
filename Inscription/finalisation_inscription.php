@@ -1,4 +1,9 @@
 <?php
+include("fonctionInscription.php");
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 
 //Vérifie si les données sont bien renseignées
@@ -21,13 +26,13 @@ try {
 }
 
 //Enregistrement de l'users dans la BDD
-$newID = addUser($pdo, $_SESSION["mdp"], $_SESSION["email"], $_SESSION["role"]);
+$newID = addUser($pdo, $_SESSION["password"], $_SESSION["email"], $_SESSION["role"]);
 if (!$newID) {$_SESSION["addUserError"] = true;
     header("Location: Form1_inscription.php#modal");
     exit();}
 
 //Enregistrement des données dans la base de données selon le role 
-$addRoleError = addRole($pdo, $_SESSION["role"], $newID, $_SESSION["reponses"]);
+$addRoleError = addRole($pdo, $_SESSION["role"], $newID, $_SESSION["reponsesInscription"]);
 if (!$addRoleError) {
     $_SESSION["addRoleError"] = true;
     header("Location: Form1_inscription.php#modal");
