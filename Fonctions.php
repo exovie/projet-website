@@ -100,7 +100,8 @@ function List_entreprise(string $db_name, int $id_entreprise): array {
 
     $sql = "
     SELECT
-        MEDECINS.Nom AS Nom_Medecin
+        MEDECINS.Nom AS Nom_Medecin,
+        MEDECINS.Profile_picture
     FROM 
         ESSAIS_CLINIQUES
     JOIN 
@@ -122,16 +123,24 @@ function List_entreprise(string $db_name, int $id_entreprise): array {
     $medecins = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($resultats as $entreprise) {
-        echo '<div class = home_page>';
-            echo '<h1>' . $entreprise['Nom_entreprise'] . '<span> Téléphones : '. $entreprise['Telephone']. '</h1>';
+        echo '<div class = "entreprise">';
+            echo '<h1>' . $entreprise['Nom_entreprise'] . '</h1>';
+            echo '<p> Téléphones : '. $entreprise['Telephone']. '</p>';
             echo '<p> Siret : ' . $entreprise['Siret'] . '</p>';
             echo '<p class="clinical-trials"> Nombre d\'essais cliniques : ' . count($clinical_trials) . '</p>';
             echo '<p> Nos medecins partenaires : </p>';
-            echo '<div id="medecins">';
-                foreach ($medecins as $medecin) {
-                    echo '<div>' . htmlspecialchars($medecin['Nom_Medecin']) . '</div>';
+            echo '<ul id="medecins">';
+            $counter = 0;
+            foreach ($medecins as $medecin) {
+                if ($counter >= 5) break; // Arrête après 5 éléments
+                if ($medecin['Profile_picture'] == null){
+                    echo '<li> <img src="Pictures/defaultPicture.png" alt="pictureProfil" class="fixed_picture" style="cursor: pointer;"> </li>';
+                } else {
+                echo '<li>' . htmlspecialchars($medecin['Nom_Medecin']) . '</li>';
                 }
-            echo '</div>';
+                $counter++; // Incrémente après l'affichage
+            }
+            echo '</ul>';
         echo '</div>';
         
     }

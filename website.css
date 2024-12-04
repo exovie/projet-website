@@ -1,14 +1,12 @@
+#main_page {
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
 
-h1{
-    color: red;
+#grologo {
+    margin-top: 100px;
 }
-body{ 
-    background-color: white;
-}
-.sarcasm{
-    color: green;
-    font-size: 20px;
-}
+
 .border{
     background-color: turquoise; /* Couleur de fond pour le haut de la page */
     height: 70px; /* Hauteur du conteneur */
@@ -78,7 +76,7 @@ body{
 }
 
 /* Style pour le conteneur principal */
-.home_page {
+.entreprise {
     width: 300px; /* Ajustez selon vos besoins */
     padding: 20px;
     border: 2px solid black;
@@ -90,27 +88,27 @@ body{
   }
   
   /* Titre de l'entreprise */
-  .home_page h1 {
+  .entreprise h1 {
     font-size: 24px;
     font-weight: bold;
     color: black;
     margin: 0;
   }
   
-  .home_page h1 span {
+  .entreprise h1 span {
     font-size: 14px;
     font-style: italic;
     font-weight: normal;
   }
   
   /* Information de base */
-  .home_page p {
+  .entreprise p {
     font-size: 14px;
     margin: 10px 0;
   }
   
   /* Section des essais cliniques */
-  .home_page .clinical-trials {
+  .entreprise .clinical-trials {
     font-size: 16px;
     font-weight: bold;
     color: #007bff; /* Bleu pour lien */
@@ -119,13 +117,13 @@ body{
   }
   
   /* Liste des médecins */
-  .home_page .medecins {
+  .entreprise .medecins {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
   }
   
-  .home_page .medecins div {
+  .entreprise .medecins div {
     width: 40px;
     height: 40px;
     background: #d9d9d9;
@@ -227,39 +225,38 @@ button:hover {
 }
 
 /* Style pour le conteneur principal */
-.home_page {
-    width: 300px; /* Ajustez selon vos besoins */
+.entreprise {
+    width: 300px; /* Largeur fixe pour uniformiser */
     padding: 20px;
-    border: 2px solid black;
+    border: 0px solid rgba(64, 224, 208, 0.2);
     border-radius: 20px;
-    font-family: Arial, sans-serif;
-    line-height: 1.5;
+    background-color: rgba(132, 219, 210, 0.475);
     text-align: left;
-    background-color: #f9f9f9;
-  }
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+}
   
   /* Titre de l'entreprise */
-  .home_page h1 {
+  .entreprise h1 {
     font-size: 24px;
     font-weight: bold;
-    color: black;
+    color: rgb(24, 98, 104);
     margin: 0;
   }
   
-  .home_page h1 span {
+  .entreprise h1 span {
     font-size: 14px;
     font-style: italic;
     font-weight: normal;
   }
   
   /* Information de base */
-  .home_page p {
+  .entreprise p {
     font-size: 14px;
     margin: 10px 0;
   }
   
   /* Section des essais cliniques */
-  .home_page .clinical-trials {
+  .entreprise .clinical-trials {
     font-size: 16px;
     font-weight: bold;
     color: #007bff; /* Bleu pour lien */
@@ -268,16 +265,35 @@ button:hover {
   }
   
   /* Liste des médecins */
-  .home_page .medecins {
+  .entreprise #medecins {
     display: flex;
-    justify-content: space-between;
+    justify-content: left;
     margin-top: 15px;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .entreprise #medecins li {
+    padding-right: 5px;
   }
   
-  .home_page .medecins div {
-    width: 40px;
-    height: 40px;
-    background: #d9d9d9;
-    border-radius: 50%;
-  }
-  
+
+  #boxes {
+        display: flex; /* Active Flexbox */
+        justify-content: center; /* Centre horizontalement */
+        align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
+        flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */
+        gap: 20px; /* Espacement entre les boîtes */
+        padding: 20px; /* Optionnel : ajoute de l'espace interne */    
+}
+    
+.presentation {
+    color: rgb(24, 98, 104);
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.fixed_picture {
+    width: 32px; /* Largeur fixe */
+    height: 32px; /* Hauteur fixe */
+}

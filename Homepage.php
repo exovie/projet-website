@@ -30,7 +30,7 @@ include 'Fonctions.php';
         <button class="nav-btn">Contact</button>
         <div class="dropdown">
             <a href="Homepage.php">
-                <img src="Pictures/letterPicture.png" alt="pictureProfil" style="cursor: pointer;">
+                <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
             </div>
         <div class="dropdown">
@@ -56,11 +56,11 @@ include 'Fonctions.php';
 
     <!-- Contenu principal -->
     <div class="content">
-        <h1>Bienvenue sur notre site</h1>
-        <p>Contenu de la page...</p>
         <div>
             <img src="Pictures/logo.png" alt="logo" id="grologo">
-            <h1 id="main_page">Clinicou, le site des <strong>essais cliniques !</strong></h1>
+            <h1 id="main_page">Clinicou, le site des essais cliniques !</h1>
+            <p class = "presentation"> Les entreprises membres :</p>
+            <div id="boxes">
             <?php
               $id_entreprises = Get_id($db_name, 'ENTREPRISES', 'Id_entreprise');
               foreach ($id_entreprises as $id_entreprise) {
@@ -68,8 +68,8 @@ include 'Fonctions.php';
               }
 
             ?>
-            <h2>Le site qui vous permet de vous inscrire <em>facilement</em> pour crever pour big pharma</h2>
-            <p class="sarcasm">Un max de fun</p>
+            </div>
+            <p class="presentation">Les médecins membres :</p>
             <p><a href="https://www.linkedin.com/in/oussamaammar/">Pour plus d'informations</a></p>
             <img src="https://media.wired.com/photos/5f87340d114b38fa1f8339f9/master/w_1600%2Cc_limit/Ideas_Surprised_Pikachu_HD.jpg" alt="Surprised Pikachu">
             <p>L'eau, dans 20, 30 ans <br> il n'y en aura plus</p>
