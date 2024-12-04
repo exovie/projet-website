@@ -1,3 +1,4 @@
+
 h1{
     color: red;
 }
@@ -74,6 +75,155 @@ body{
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>');
         background-size: contain;
         background-repeat: no-repeat;
+}
+
+/* Style pour le conteneur principal */
+.home_page {
+    width: 300px; /* Ajustez selon vos besoins */
+    padding: 20px;
+    border: 2px solid black;
+    border-radius: 20px;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    text-align: left;
+    background-color: #f9f9f9;
+  }
+  
+  /* Titre de l'entreprise */
+  .home_page h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+    margin: 0;
+  }
+  
+  .home_page h1 span {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: normal;
+  }
+  
+  /* Information de base */
+  .home_page p {
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  
+  /* Section des essais cliniques */
+  .home_page .clinical-trials {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff; /* Bleu pour lien */
+    text-decoration: underline;
+    margin-bottom: 10px;
+  }
+  
+  /* Liste des médecins */
+  .home_page .medecins {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+  
+  .home_page .medecins div {
+    width: 40px;
+    height: 40px;
+    background: #d9d9d9;
+    border-radius: 50%;
+  }
+  
+
+
+.modal {
+    display: none; /* Caché par défaut */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    justify-content: center; 
+    text-align: left;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Affiche le modal si l'ancre correspond à #modal */
+#modal:target {
+    display: flex; /* Utilise flex pour centrer */
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 520px;
+    max-height: 80vh; /* Limite la hauteur du modal à 80% de la hauteur de la fenêtre */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow-y: auto; /* Ajoute un défilement vertical si le contenu dépasse la hauteur */
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-decoration: none;
+    font-size: 20px;
+    color: black;
+}
+
+/* Style pour les formulaires */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color:  rgb(29, 186, 197);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgb(24, 98, 104);
+}
+
+/* STYLE MESSAGE D'ERREUR*/
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 10px; /* Ajoute de l'espace à l'intérieur de l'encadré */
+    border-radius: 4px; /* Arrondit légèrement les coins de l'encadré */
+    background-color: rgba(255, 0, 0, 0.1); /* Ajoute un fond rouge très clair pour plus de visibilité */
+}
+
+.validation-message {
+    color: green;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: rgba(0, 128, 0, 0.1);
 }
 
 /* Style pour le conteneur principal */
