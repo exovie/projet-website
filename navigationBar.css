@@ -37,7 +37,10 @@ h1 {
     border-radius: 5px;
     cursor: pointer;
     font-size: 20px;
+    display: inline-block;
+    text-decoration: none;
 }
+
 .nav-btn:hover {    /* Effet de survol du bouton */
     background-color: rgb(29, 186, 197);
 }

@@ -82,10 +82,7 @@ function List_entreprise(string $db_name, int $id_entreprise): array {
     $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
     $sql = "
-    SELECT ESSAIS_CLINIQUES.Titre, ESSAIS_CLINIQUES.Contexte, ESSAIS_CLINIQUES.Objectif_essai, 
-    ESSAIS_CLINIQUES.Design_etude, ESSAIS_CLINIQUES.Critere_evaluation, 
-    ESSAIS_CLINIQUES.Resultats_attendus, ESSAIS_CLINIQUES.Date_lancement, 
-    ESSAIS_CLINIQUES.Date_fin, ESSAIS_CLINIQUES.Date_creation, ESSAIS_CLINIQUES.Statut
+    SELECT ESSAIS_CLINIQUES.Titre
     FROM ESSAIS_CLINIQUES
     JOIN ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
     JOIN USERS ON ENTREPRISES.Id_entreprise = USERS.Id_user

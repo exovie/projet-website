@@ -25,9 +25,9 @@ include 'Fonctions.php';
                 <img src="Pictures/minilogo.png" alt="minilogo">
             </a>
         </div>
-        <button class="nav-btn">Essais Cliniques</button>
-        <button class="nav-btn">Entreprise</button>
-        <button class="nav-btn">Contact</button>
+        <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
+        <a href="Entreprises.php" class="nav-btn">Entreprise</a>
+        <a href="Contact.php" class="nav-btn">Contact</a>
         <div class="dropdown">
             <a href="Homepage.php">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
