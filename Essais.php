@@ -60,10 +60,10 @@ include 'Fonctions.php';
     <div class="filter-container">
       <!-- Filtre de statut -->
       <select name="statusFilter" class="filter-box">
-          <option value="Tous">Tous les statuts</option>
-          <option value="Recrutement">Recrutement</option>
-          <option value="En attente">En attente</option>
-          <option value="Terminé">Terminé</option>
+          <option value="Tous">Toutes les phases</option>
+          <option value="Recrutement">PHASE I</option>
+          <option value="En attente">PHASE II</option>
+          <option value="Terminé">PHASE III</option>
       </select>
 
       <!-- Filtre de date -->

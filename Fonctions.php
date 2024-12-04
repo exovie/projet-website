@@ -174,13 +174,14 @@ function List_essai($role, $db_name) {
         $sql = "
             SELECT 
                 EC.*,
-                CONCAT(M.Nom, ' ', M.Prenom) AS Nom_Medecin,
+                GROUP_CONCAT(DISTINCT CONCAT(M.Nom, ' ', M.Prenom) SEPARATOR ', ') AS Nom_Medecin,
                 E.Nom_entreprise AS Nom_Entreprise
             FROM 
                 ESSAIS_CLINIQUES EC
             LEFT JOIN MEDECIN_ESSAIS ME ON EC.Id_essai = ME.Id_essai
             LEFT JOIN MEDECINS M ON ME.Id_medecin = M.Id_medecin
             LEFT JOIN ENTREPRISES E ON EC.Id_entreprise = E.Id_entreprise
+
         ";
     
         // Si le statut n'est pas "tous", on ajoute une clause WHERE
@@ -188,7 +189,8 @@ function List_essai($role, $db_name) {
             $sql .= "WHERE EC.Statut = :Statut ";
         }
     
-        $sql .= "ORDER BY Date_creation ASC;";
+        $sql .= "GROUP BY EC.Id_essai
+                ORDER BY Date_creation ASC;";
     
         $stmt = $conn->prepare($sql);
     

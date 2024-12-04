@@ -353,7 +353,7 @@ button:hover {
 .search-button {
     padding: 10px 15px;
     margin-left: 10px;
-    background-color: #007bff;
+    background-color: #008b8b;
     color: white;
     border: none;
     border-radius: 5px;
@@ -362,7 +362,7 @@ button:hover {
 }
 
 .search-button:hover {
-    background-color: #0056b3;
+    background-color: #00b3aa;
 }
 
 .filter-container {
