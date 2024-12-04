@@ -61,15 +61,13 @@ include 'Fonctions.php';
         <div>
             <img src="Pictures/logo.png" alt="logo" id="grologo">
             <h1 id="main_page">Clinicou, le site des <strong>essais cliniques !</strong></h1>
-            <p>
-              <?php
+            <?php
               $id_entreprises = Get_id($db_name, 'ENTREPRISES', 'Id_entreprise');
               foreach ($id_entreprises as $id_entreprise) {
                   $entreprise = List_entreprise($db_name, $id_entreprise);
               }
 
-              ?>
-            </p>
+            ?>
             <h2>Le site qui vous permet de vous inscrire <em>facilement</em> pour crever pour big pharma</h2>
             <p class="sarcasm">Un max de fun</p>
             <p><a href="https://www.linkedin.com/in/oussamaammar/">Pour plus d'informations</a></p>
