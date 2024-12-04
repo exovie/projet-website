@@ -1,6 +1,5 @@
 <?php
-session_start();
-$servername = $_SESSION["servername"];
+
 
 function Connexion_base(){
     $host = 'localhost';
@@ -23,50 +22,6 @@ function Fermer_base($pdo){
     $pdo->close();
 }
 
-function List_entreprise(string $servername, int $id_entreprise) {
-
-    $conn = Connexion_base();
-
-    try {
-        $sql = "
-        SELECT E.* 
-        FROM ENTREPRISES E
-        JOIN FONCTIONS F ON E.Id_entreprise = F.Id_entreprise
-        WHERE F.Id_Fonction = :Id_Fonction
-    ";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':Id_Fonction', $Id_Fonction, PDO::PARAM_INT);
-    $stmt->execute();
-    
-    // Récupérer les résultats
-    $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "Erreur : " . $e->getMessage();
-        return [];
-    
-    } finally {
-    // Fermer la connexion
-    Fermer_base($conn);
-    }
-}
-
-/**
- * @param 
- */
-function Valider_inscription(string $servername) {
-    try {
-        $bdd = new PDO($servername, 'root', '');
-        echo 'connexion réussie';
-        } 
-        catch (Exception $e) {
-            echo 'connexion échouée';
-            die ('Erreur : ' . $e->getMessage () );
-        }
-}
-
-
-
-
 //Fonctions  liées aux essais
 
 //attention aux dates, elles sont initialisées à 000/00/00 à la création, il faut donc les update et non les insert
@@ -81,7 +36,7 @@ function Ajout_Bdd_Essai(int $Id_entreprise, string $Titre, string $Contexte, st
         `Resultats_attendus`, `Date_lancement`, `Date_fin`, `Date_creation`, `Id_essai_precedent`, `Statut`, `Id_entreprise`, `Nb_medecins`, `Nb_patients`) VALUES (?,?,?,?,?,?,'0000/00/00','0000/00/00',$DateduJour,?, 'En attente', ?,?)");// on ne connait pas encore date lancement et fin
         $requete -> execute(array($Titre, $Contexte, $Objectif_essai, $Design_etude, $Critères_evaluation,$Resultats_attendus, $Id_essai_precedent, $Id_entreprise, $Nb_medecins, $Nb_patients));
         echo "Essai ajouté avec succès";
-        Fermer_base();
+        Fermer_base($conn);
 
     }
     catch (PDOException $e) {
@@ -146,7 +101,7 @@ function Modif_Infos_Essai(int $Id_patient, int $Id_essai, double $Poids, string
         //Modification du poids, des traitements et des allergies
         $requete_update = $conn -> prepare("UPDATE `PATIENTS` SET(`Poids` = ?, `Traitements` = ?, `Allergies`= ?)  WHERE `Id_patient`=?");
         $requete_update = execute(array($Poids, $Traitements, $Allergies, $Id_patient));
-        Fermer_base();
+        Fermer_base($conn);
         echo "Info patients modifiées avec succès";
     }
     catch (PDOException $e) {
@@ -193,7 +148,7 @@ function Postuler_Medecin_Essai(int $Id_essai, int $Id_medecin){
             $tableau = $requete_bis->fetch();
             $Id_entreprise = $tableau["Id_entreprise"];
             Generer_notif(5,$Id_essai, $Id_entreprise);
-            Fermer_base();
+            Fermer_base($conn);
         }
          catch (PDOException $e) {
         echo "Erreur notification: " . $e->getMessage(); }
@@ -272,7 +227,7 @@ function Postuler_Patient_Essai(int $Id_essai, int $Id_patient){
         $requete = $conn -> prepare("INSERT INTO `PATIENTS_ESSAIS(`Id_patient`, `Id_essai`, `Statut_participation`) VALUES (?,?,'0000/00/00','En attente')");  //quand met-on la date?
         $requete -> execute(array($Id_medecin, $Id_essai))
         echo "Demande de participation enregistrée avec succès pour cet essai!";
-        Fermer_base();
+        Fermer_base($conn);
         } catch (PDOException $e) {
         echo "Erreur bdd: " . $e->getMessage(); }
     
@@ -297,7 +252,7 @@ function Retirer_Patient_Essai(int $Id_essai, int $Id_patient){
     try{
         $requete = $conn -> prepare("UPDATE `PATIENTS_ESSAIS` SET `Statut_participation` = 'Abandon' WHERE (`Id_essai` = ? AND `Id_patient` = ?)");
         $requete -> execute(array($Id_essai, $Id_patient));
-        Fermer_base();
+        Fermer_base($conn);
         echo "Patient retiré avec succès de l'essai";
     }
     catch (PDOException $e) {
@@ -463,10 +418,12 @@ function Traiter_Candidature_Patient(int $Id_entreprise, int $Id_patient, string
     catch (PDOException $e) {
         echo "Erreur bdd/notifs: " . $e->getMessage(); }
 
-    Fermer_base();
+    Fermer_base($conn);
 }
+echo "helloworld"
 
 ?>  
+
 
 
 
