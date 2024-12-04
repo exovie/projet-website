@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 /* Verification de si le premier formulaire a deja ete rempli*/
 if (!isset($_SESSION['email'], $_SESSION['role'])) {
@@ -15,7 +16,7 @@ if (isset($_SESSION['FormsErr'])) {
 $questions = [
     'patient' => ['Nom','Prenom','Date de naissance','Sexe','Telephone','Profil Picture','Taille', 'Poids', 'Traitements', 'Allergies', 'CNI'],
     'medecin' => ['Nom','Prenom','Spécialité','Telephone','Matricule', 'Profil Picture'],
-    'entreprise' => ['Nom Entreprise', 'Telephone','Adresse', 'Profil Picture', 'SIRET']
+    'entreprise' => ['Nom Entreprise', 'Telephone','Profil Picture', 'SIRET']
 ];
 ?>
 <!DOCTYPE html>
@@ -55,10 +56,10 @@ $questions = [
                     <input type="text" name="reponses[]" placeholder="AAAA-MM-JJ" required>
                 <?php elseif ($question == 'Profil Picture'): ?>
                     <label><?php echo htmlspecialchars($question); ?></label>
-                    <input type="file" name="reponses[]">
+                    <input type="file" name="reponses[]" accept="image/*">
                 <?php elseif ($question == 'CNI'): ?>
                     <label><?php echo htmlspecialchars($question); ?></label>
-                    <input type="file" name="reponses[]">
+                    <input type="file" name="reponses[]" accept="image/*">
                 <?php elseif ($question == 'Taille'): ?>
                     <label><?php echo htmlspecialchars($question); ?></label>
                     <input type="int" name="reponses[]" placeholder=" en cm " required>
