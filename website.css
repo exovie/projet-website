@@ -226,9 +226,9 @@ button:hover {
 
 /* Style pour le conteneur principal */
 .entreprise {
-    width: 300px; /* Largeur fixe pour uniformiser */
-    padding: 20px;
-    border: 0px solid rgba(64, 224, 208, 0.2);
+    width: 25%; /* Largeur fixe pour uniformiser */
+    padding: 10px;
+    border: 5px solid rgba(64, 224, 208, 0.2);
     border-radius: 20px;
     background-color: rgba(132, 219, 210, 0.475);
     text-align: left;
@@ -242,13 +242,7 @@ button:hover {
     color: rgb(24, 98, 104);
     margin: 0;
   }
-  
-  .entreprise h1 span {
-    font-size: 14px;
-    font-style: italic;
-    font-weight: normal;
-  }
-  
+
   /* Information de base */
   .entreprise p {
     font-size: 14px;
@@ -258,10 +252,10 @@ button:hover {
   /* Section des essais cliniques */
   .entreprise .clinical-trials {
     font-size: 16px;
-    font-weight: bold;
-    color: #007bff; /* Bleu pour lien */
-    text-decoration: underline;
     margin-bottom: 10px;
+    font-weight: normal;
+    color:black;
+    text-decoration: none;
   }
   
   /* Liste des médecins */
@@ -278,13 +272,13 @@ button:hover {
   }
   
 
-  #boxes {
-        display: flex; /* Active Flexbox */
-        justify-content: center; /* Centre horizontalement */
-        align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
-        flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */
-        gap: 20px; /* Espacement entre les boîtes */
-        padding: 20px; /* Optionnel : ajoute de l'espace interne */    
+#boxes {
+    display: flex; /* Active Flexbox */
+    justify-content: center; /* Centre horizontalement */
+    align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
+    flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */
+    gap: 20px; /* Espacement entre les boîtes */
+    padding: 20px; /* Optionnel : ajoute de l'espace interne */    
 }
     
 .presentation {
@@ -297,3 +291,92 @@ button:hover {
     width: 32px; /* Largeur fixe */
     height: 32px; /* Hauteur fixe */
 }
+
+.minilogo {
+    width: 50px; /* Largeur fixe */
+    height: 50px; /* Hauteur fixe */
+}
+
+.trials {
+    width: 70%; /* Largeur fixe pour uniformiser */
+    padding: 10px;
+    border: 5px solid rgba(64, 224, 208, 0.2);
+    border-radius: 20px;
+    background-color: rgba(132, 219, 210, 0.475);
+    text-align: left;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+    list-style: none;
+}
+
+.trials li {
+    margin: 5px 0;
+}
+
+#trial_boxes {
+    display: flex; /* Active Flexbox */
+    justify-content: center; /* Centre horizontalement */
+    align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
+    flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */ /* Espacement entre les boîtes */
+    padding: 20px; /* Optionnel : ajoute de l'espace interne */    
+}
+
+.trials .trial_title {
+    font-weight: bold;
+}
+
+.trials .trial_company {
+    font-style: italic;
+    color: rgb(24, 98, 104);
+}
+
+.search-container {
+    width: 40%;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+}
+
+.search-box {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    margin-top: 15px;
+}
+
+.search-box:focus {
+    border-color:rgb(29, 186, 197);
+}
+
+.search-button {
+    padding: 10px 15px;
+    margin-left: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.search-button:hover {
+    background-color: #0056b3;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    width:fit-content;
+}
+
+.filter-container select {
+    flex: 1;
+    margin: 0 5px;
+    background-color: #f8f8f9;
+    border: solid 1px #ccc;
+    border-radius: 5px;
+
+}
+

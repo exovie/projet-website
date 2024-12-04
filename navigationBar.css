@@ -41,6 +41,7 @@ h1 {
     text-decoration: none;
 }
 
+
 .nav-btn:hover {    /* Effet de survol du bouton */
     background-color: rgb(29, 186, 197);
 }

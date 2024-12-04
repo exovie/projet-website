@@ -160,12 +160,13 @@ function List_entreprise(string $db_name, int $id_entreprise): array {
 }
 
 function List_essai($role, $db_name) {
-
     $conn = Connexion_base($db_name);
     $statuses = [
+        'visiteur' => 'Recrutement',
         'patient' => 'Recrutement',
         'medecin' => 'En attente',
-        'autres' => null // Utilisation de null pour indiquer "tous les statuts"
+        'admin' => null,
+        'entreprise' => null // Utilisation de null pour indiquer "tous les statuts"
     ];
     
     try {
@@ -196,25 +197,20 @@ function List_essai($role, $db_name) {
             $stmt->bindParam(':Statut', $statuses[$role], PDO::PARAM_STR);
         }
         
-
         $stmt->execute();
             
         // Récupérer les résultats
         $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach ($resultats as $essai) {
-            echo '<ul class = "entreprises">';
-            echo '<li><strong>Nom de l\'entreprise :</strong> ' . htmlspecialchars($essai['Nom_Entreprise']) . '</li>';
-            echo '<li><strong>Titre de l\'essai :</strong> ' . htmlspecialchars($essai['Titre']) . '</li>';
-            echo '<li><strong>Contexte :</strong> ' . htmlspecialchars($essai['Contexte']) . '</li>';
-            echo '<li><strong>Objectif de l\'essai :</strong> ' . htmlspecialchars($essai['Objectif_essai']) . '</li>';
-            echo '<li><strong>Design de l\'étude :</strong> ' . htmlspecialchars($essai['Design_etude']) . '</li>';
-            echo '<li><strong>Critères d\'évaluation :</strong> ' . htmlspecialchars($essai['Critere_evaluation']) . '</li>';
-            echo '<li><strong>Résultats attendus :</strong> ' . htmlspecialchars($essai['Resultats_attendus']) . '</li>';
         
+        foreach ($resultats as $essai) {
+            echo '<ul class = "trials">';
+            echo '<li class = "trial_title">' . htmlspecialchars($essai['Titre']) . '</li>';
+            echo '<li class = "trial_company">' . htmlspecialchars($essai['Nom_Entreprise']) . '</li>';
+            echo '<li>' . htmlspecialchars($essai['Objectif_essai']) . '</li>';
+           
             // Vérifier si un médecin est associé à cet essai
             if (!empty($essai['Nom_Medecin'])) {
-                echo '<li><strong>Médecin associé :</strong> ' . htmlspecialchars($essai['Nom_Medecin']) . '</li>';
+                echo '<li><strong>Médecins associés :</strong> ' . htmlspecialchars($essai['Nom_Medecin']) . '</li>';
             } else {
                 echo '<li><strong>Médecin associé :</strong> Aucun médecin assigné</li>';
             }

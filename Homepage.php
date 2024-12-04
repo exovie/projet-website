@@ -3,6 +3,7 @@ session_start();
 $_SESSION['origin'] = 'Homepage';
 $db_name = "mysql:host=localhost;dbname=website_db"; 
 $_SESSION['db_name'] = $db_name;
+$_SESSION['role'] = 'visiteur';
 include 'Fonctions.php';
 ?>
 
@@ -22,7 +23,7 @@ include 'Fonctions.php';
     <div class="navbar">
         <div id="logo">
             <a href="Homepage.php">
-                <img src="Pictures/minilogo.png" alt="minilogo">
+                <img src="Pictures/logo.png" alt="minilogo" class="minilogo">
             </a>
         </div>
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
@@ -51,9 +52,6 @@ include 'Fonctions.php';
         </div>
     </div>
 
-    
-
-
     <!-- Contenu principal -->
     <div class="content">
         <div>
@@ -73,7 +71,7 @@ include 'Fonctions.php';
             <p><a href="https://www.linkedin.com/in/oussamaammar/">Pour plus d'informations</a></p>
             <img src="https://media.wired.com/photos/5f87340d114b38fa1f8339f9/master/w_1600%2Cc_limit/Ideas_Surprised_Pikachu_HD.jpg" alt="Surprised Pikachu">
             <p>L'eau, dans 20, 30 ans <br> il n'y en aura plus</p>
-            <p><a href="#main_page">retour au début</a></p>
+            <p><a href="#">retour au début</a></p>
         </div>
     </div>
 </body>
