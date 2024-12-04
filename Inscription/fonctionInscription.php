@@ -49,7 +49,7 @@ function validateResponsesByRole($role, $responses) {
             return in_array($value, ['M', 'F']);
         },
         'Telephone' => function($value) {
-            return preg_match('/^\d{10}$/', $value);
+            return preg_match('/^\d{10}$/', str_replace(' ', '', $value));
         },
         'Taille' => function($value) {
             return filter_var($value, FILTER_VALIDATE_INT) !== false && $value > 0;
@@ -60,17 +60,14 @@ function validateResponsesByRole($role, $responses) {
         'Spécialité' => function($value) {
             return is_string($value) && !empty($value);
         },
-        'Adresse' => function($value) {
-            return is_string($value) && strlen($value) > 5;
-        },
         'Matricule' => function($value) {
-            return preg_match('/^\d{11}$/', $value);
+            return preg_match('/^\d{11}$/', str_replace(' ', '', $value));
         },
         'Nom Entreprise' => function($value) {
             return is_string($value) && !empty($value);
         },
         'SIRET' => function($value) {
-            return preg_match('/^\d{14}$/', $value); // Un SIRET valide contient 14 chiffres
+            return preg_match('/^\d{14}$/', str_replace(' ', '', $value)); // Un SIRET valide contient 14 chiffres
         }
     ];
 
@@ -147,7 +144,7 @@ function addRole($pdo, $role, $newID, $reponses) {
         VALUES (:id, :nom, :prenom, :dateN, :Sexe, :Tel, :PP, :taille, :poids, :traitement, :allergie, :cni)");  
         $stmt->execute(['id' => $newID,
             'nom' => $reponses[0], 'prenom' => $reponses[1],'dateN' => $reponses[2], 'Sexe' => $reponses[3],
-            'Tel' => $reponses[4], 'PP' => $reponses[5],'taille' => $reponses[6], 'poids' => $reponses[7],
+            'Tel' => str_replace(' ', '', $reponses[4]), 'PP' => $reponses[5],'taille' => str_replace(' ', '', $reponses[6]), 'poids' => str_replace(' ', '', $reponses[7]),
             'traitement' => $reponses[8], 'allergie' => $reponses[9],'cni' => $reponses[10]]);
         }
 
@@ -155,18 +152,17 @@ function addRole($pdo, $role, $newID, $reponses) {
         $stmt = $pdo->prepare("INSERT INTO `MEDECINS` (`Id_medecin`, `Nom`, `Prenom`, `Specialite`, `Telephone`, `Matricule`, `Profile_picture`,`Statut_inscription`) 
         VALUES (:id, :nom, :prenom, :specialite, :Tel, :matricule, :PP, '0')");
         $stmt->execute(['id' => $newID,
-            'nom' => $reponses[0], 'prenom' => $reponses[1],'specialite' => $reponses[2], 'Tel' => $reponses[3],
-            'matricule' => $reponses[4], 'PP' => $reponses[5]]);
+            'nom' => $reponses[0], 'prenom' => $reponses[1],'specialite' => $reponses[2], 'Tel' => str_replace(' ', '', $reponses[3]),
+            'matricule' => str_replace(' ', '', $reponses[4]), 'PP' => $reponses[5]]);
         }
 
     elseif ($role=== "entreprise") {
         $stmt = $pdo->prepare("INSERT INTO `ENTREPRISES` (`Id_entreprise`, `Nom_entreprise`, `Telephone`, `Profile_picture`, `Siret`, `Verif_inscription`) 
         VALUES (:id, :nom, :Tel, :PP, :siret, '0')");
         $stmt->execute(['id' => $newID,
-            'nom' => $reponses[0], 'Tel' => $reponses[1], 'PP' => $reponses[2],
-            'siret' => $reponses[3]]);
-        } 
-
+            'nom' => $reponses[0], 'Tel' => str_replace(' ', '', $reponses[1]), 'PP' => $reponses[2], 'siret' => str_replace(' ', '', $reponses[3])])
+        ;
+    } 
     else {
         // Rôle inconnu
         header("Location: Form1_inscription.php#modal");

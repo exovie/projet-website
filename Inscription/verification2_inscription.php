@@ -1,4 +1,9 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Inclure le module ou fichier PHP
+include 'module.php';
 session_start();
 // Connexion à la base de données
 $host = 'localhost';
@@ -18,25 +23,31 @@ try {
 $role = $_SESSION["role"];
 
 // Vérification du format des réponses
-$errors = validateResponsesByRole($role,  $_POST['reponses']);
+$errorMessages = '';
 $date = $_POST['reponses'][2];
 if ($role == 'patient'){
-    $ageErr= Verif_age($date); }
+    $ageErr= Verif_age($date); 
+    if ($ageErr == false) {
+        //$errorMessages= $errorMessages."Vous devez être majeur pour vous inscrire.";
+    }
+}
 
-if (!empty($errors) & $ageErr!=true) {
+$errors = validateResponsesByRole($role,  $_POST['reponses']);
+if (!empty($errors)) {
     // S'il y a des erreurs, on les affiche
     $errorMessages = '';
     if (!empty($errors)) {
         foreach ($errors as $error) {
-            $errorMessages .= $error . "<br>";
+            $errorMessages .= $error;
         }
     }
-    $_SESSION['FormsErr'] = $errorMessages+ $ageErr;
-        header('Location: /projet-website/Inscription/Form2_inscription.php#modal');
 
+
+    $_SESSION['FormsErr'] = $errorMessages;
+        header('Location: /projet-website/Inscription/Form2_inscription.php#modal');
     } else {
         // Si pas d'erreur, on passe à la page suivante
-        $_SESSION['reponsesInscription'] = $_POST['reponses']; 
+        $_SESSION['reponsesInscription'] = ($_POST['reponses']); 
         header("Location: /projet-website/Inscription/finalisation_inscription.php");
 
     }
