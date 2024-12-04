@@ -29,7 +29,9 @@
         </nav>
       </div>
       <div class="banner">
+
       </div>  
     </div>
   </body> 
+
 </html>

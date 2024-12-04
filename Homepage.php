@@ -1,59 +1,102 @@
 <?php
 session_start();
 $_SESSION['origin'] = 'Homepage';
-$servername = "mysql:host=localhost;dbname=website-project"; // ou l'adresse de votre serveur
-$_SESSION['servername'] = $servername;
+$db_name = "mysql:host=localhost;dbname=website_db"; 
+$_SESSION['db_name'] = $db_name;
+include 'Fonctions.php';
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <title>That's what she said</title>
+<head>
+    <title>Clinicou - HomePage</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="'utf-8">
-    <link rel="stylesheet" href="website.css">
-  </head>
-  <body>
-    <div id="upper" class="border">
-      <nav id="navbar">
-        <ul>
-          <li id="logo">
+    <link rel="stylesheet" href='website.css'>
+    <link rel="stylesheet" href= 'navigationBar.css'>
+
+</head>
+<body>
+
+    <!-- Conteneur fixe en haut de la page -->
+    <div class="navbar">
+        <div id="logo">
             <a href="Homepage.php">
-              <img src="Pictures/minilogo.png" alt="minilogo">
+                <img src="Pictures/minilogo.png" alt="minilogo">
             </a>
-          </li>
-          <li class="capsule-border capsule-button"><a href="Essais.php"><input type="submit" value="Essais cliniques"></a></li>
-          <li class="capsule-border" id="Entreprises"><a href="Entreprises.php">Entreprises</a></li>
-          <li>
-            <div id="main_search" class="search">
-              <input type="search" name="pattern" class="search-query tt-input" placeholder="Search" accesskey="s" spellcheck="false" dir="auto" aria-owns="tt-91ab948f-4f49-cd37-fddf-5046fc840e9c_listbox" aria-controls="tt-91ab948f-4f49-cd37-fddf-5046fc840e9c_listbox" role="combobox" aria-autocomplete="list" aria-expanded="false">
+        </div>
+        <button class="nav-btn">Essais Cliniques</button>
+        <button class="nav-btn">Entreprise</button>
+        <button class="nav-btn">Contact</button>
+        <div class="dropdown">
+            <a href="Homepage.php">
+                <img src="Pictures/letterPicture.png" alt="pictureProfil" style="cursor: pointer;">
+            </a>
             </div>
-          </li>
-          <li>
-            <p id = envelope></p>
-          </li>
-          <li>
-            <ul id="Subscription">
-              <li><img src="Pictures/subscription.png" alt="petit bonhomme"></li>
-              <li class="capsule-border"><p><a href="connexion.php">Se connecter</a> / <a href="inscription.php">Je m'inscris</a></p></li>
-            </ul>
-          </li>
-        </ul>
-      </nav>
+        <div class="dropdown">
+            <a>
+                <img src="Pictures/pictureProfil.png" alt="pictureProfil" style="cursor: pointer;">
+            </a>
+            <div class="dropdown-content">
+                <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
+                    <!-- Options pour les utilisateurs connectés -->
+                    <a href="#">Mon Profil</a>
+                    <a href="#">Déconnexion</a>
+                <?php else: ?>
+                    <!-- Options pour les utilisateurs non connectés -->
+                    <a href="Connexion/Form1_connexion.php#modal">Connexion</a>
+                    <a href="Inscription/Form1_inscription.php#modal">S'inscrire</a>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
-    <div class="banner">
-    </div>
+
+    <!-- Message Success Inscription -->
+    <?php if (isset ($_SESSION['inscriptionSuccess'])): 
+        $inscriptionSuccessMessage = 'Votre inscription a bien été enregistrée.' ?>
+        <div id="modal" class="modal" style="display: flex; text-align: center;">
+            <div class="modal-content">
+            <p class="validation-message"><?php echo htmlspecialchars($inscriptionSuccessMessage); ?></p>
+                        <?php unset($_SESSION['inscriptionSuccess']); ?>
+            <p>Si votre inscription concerne un compte Médecin ou Entreprise,votre demande est soumise à la validation d' administateur. </p> 
+            <p> Si vous vous êtes inscrit en tant que Patient,vous pouvez déjà vous connecter pour candidater à l'un de nos essais cliniques !</p>
+            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Message Success Connexion -->
+
+    <!-- Message Success Deconnexion -->
+    <?php if (isset($_GET['unloggedSuccess']) && $_GET['unloggedSuccess'] === 'true'): 
+        $unloggedSuccessMessage = 'Votre déconnexion a bien été prise en compte.'?>
+        <div id="modal" class="modal" style="display: flex; text-align: center;">
+            <div class="modal-content">
+            <p class="validation-message"><?php echo htmlspecialchars($unloggedSuccessMessage); ?></p>
+                        <?php unset($_SESSION['unloggedSuccess']); ?>
+            <p>Au plaisir de vous revoir.</p> 
+            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
+            </div>
+        </div>
+    <?php endif; ?>
+
+
+    <!-- Contenu principal -->
     <div class="content">
-      <img src="Pictures/logo.png" alt="logo" id="grologo">
-      <h1 id="main_page">Clinicou, le site des <strong>essais cliniques !</strong></h1>
-      <h2>Le site qui vous permet de vous inscrire <em> facilement </em> pour crever pour big pharma</h2>
-      <p class = "sarcasm"> Un max de fun</p>
-      <p><a href="https://www.linkedin.com/in/oussamaammar/">Pour plus d'informations</a></p>
-      <img src="https://media.wired.com/photos/5f87340d114b38fa1f8339f9/master/w_1600%2Cc_limit/Ideas_Surprised_Pikachu_HD.jpg" alt="Surprised Pikachu">
-      <p>L'eau, dans 20, 3O ans <br> il n'y en aura plus</p>
-      <p> <a href="#main_page">retour au début</a></p>
+        <h1>Bienvenue sur notre site</h1>
+        <p>Contenu de la page...</p>
+        <div>
+            <img src="Pictures/logo.png" alt="logo" id="grologo">
+            <h1 id="main_page">Clinicou, le site des <strong>essais cliniques !</strong></h1>
+            <h2>Le site qui vous permet de vous inscrire <em>facilement</em> pour crever pour big pharma</h2>
+            <p class="sarcasm">Un max de fun</p>
+            <p><a href="https://www.linkedin.com/in/oussamaammar/">Pour plus d'informations</a></p>
+            <img src="https://media.wired.com/photos/5f87340d114b38fa1f8339f9/master/w_1600%2Cc_limit/Ideas_Surprised_Pikachu_HD.jpg" alt="Surprised Pikachu">
+            <p>L'eau, dans 20, 30 ans <br> il n'y en aura plus</p>
+            <p><a href="#main_page">retour au début</a></p>
+        </div>
     </div>
-    </body>
+</body>
 </html>
 
 <!--
