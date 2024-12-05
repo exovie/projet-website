@@ -1,13 +1,12 @@
-h1{
-    color: red;
+#main_page {
+    margin-top: 100px;
+    margin-bottom: 100px;
 }
-body{ 
-    background-color: white;
+
+#grologo {
+    margin-top: 100px;
 }
-.sarcasm{
-    color: green;
-    font-size: 20px;
-}
+
 .border{
     background-color: turquoise; /* Couleur de fond pour le haut de la page */
     height: 70px; /* Hauteur du conteneur */
@@ -75,3 +74,309 @@ body{
         background-size: contain;
         background-repeat: no-repeat;
 }
+
+/* Style pour le conteneur principal */
+.entreprise {
+    width: 300px; /* Ajustez selon vos besoins */
+    padding: 20px;
+    border: 2px solid black;
+    border-radius: 20px;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    text-align: left;
+    background-color: #f9f9f9;
+  }
+  
+  /* Titre de l'entreprise */
+  .entreprise h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+    margin: 0;
+  }
+  
+  .entreprise h1 span {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: normal;
+  }
+  
+  /* Information de base */
+  .entreprise p {
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  
+  /* Section des essais cliniques */
+  .entreprise .clinical-trials {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff; /* Bleu pour lien */
+    text-decoration: underline;
+    margin-bottom: 10px;
+  }
+  
+  /* Liste des médecins */
+  .entreprise .medecins {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+  
+  .entreprise .medecins div {
+    width: 40px;
+    height: 40px;
+    background: #d9d9d9;
+    border-radius: 50%;
+  }
+  
+
+
+.modal {
+    display: none; /* Caché par défaut */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    justify-content: center; 
+    text-align: left;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Affiche le modal si l'ancre correspond à #modal */
+#modal:target {
+    display: flex; /* Utilise flex pour centrer */
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 520px;
+    max-height: 80vh; /* Limite la hauteur du modal à 80% de la hauteur de la fenêtre */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow-y: auto; /* Ajoute un défilement vertical si le contenu dépasse la hauteur */
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-decoration: none;
+    font-size: 20px;
+    color: black;
+}
+
+/* Style pour les formulaires */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color:  rgb(29, 186, 197);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgb(24, 98, 104);
+}
+
+/* STYLE MESSAGE D'ERREUR*/
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 10px; /* Ajoute de l'espace à l'intérieur de l'encadré */
+    border-radius: 4px; /* Arrondit légèrement les coins de l'encadré */
+    background-color: rgba(255, 0, 0, 0.1); /* Ajoute un fond rouge très clair pour plus de visibilité */
+}
+
+.validation-message {
+    color: green;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: rgba(0, 128, 0, 0.1);
+}
+
+/* Style pour le conteneur principal */
+.entreprise {
+    width: 25%; /* Largeur fixe pour uniformiser */
+    padding: 10px;
+    border: 5px solid rgba(64, 224, 208, 0.2);
+    border-radius: 20px;
+    background-color: rgba(132, 219, 210, 0.475);
+    text-align: left;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+}
+  
+  /* Titre de l'entreprise */
+  .entreprise h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: rgb(24, 98, 104);
+    margin: 0;
+  }
+
+  /* Information de base */
+  .entreprise p {
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  
+  /* Section des essais cliniques */
+  .entreprise .clinical-trials {
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: normal;
+    color:black;
+    text-decoration: none;
+  }
+  
+  /* Liste des médecins */
+  .entreprise #medecins {
+    display: flex;
+    justify-content: left;
+    margin-top: 15px;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .entreprise #medecins li {
+    padding-right: 5px;
+  }
+  
+
+#boxes {
+    display: flex; /* Active Flexbox */
+    justify-content: center; /* Centre horizontalement */
+    align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
+    flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */
+    gap: 20px; /* Espacement entre les boîtes */
+    padding: 20px; /* Optionnel : ajoute de l'espace interne */    
+}
+    
+.presentation {
+    color: rgb(24, 98, 104);
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.fixed_picture {
+    width: 32px; /* Largeur fixe */
+    height: 32px; /* Hauteur fixe */
+}
+
+.minilogo {
+    width: 50px; /* Largeur fixe */
+    height: 50px; /* Hauteur fixe */
+}
+
+.trials {
+    width: 70%; /* Largeur fixe pour uniformiser */
+    padding: 10px;
+    border: 5px solid rgba(64, 224, 208, 0.2);
+    border-radius: 20px;
+    background-color: rgba(132, 219, 210, 0.475);
+    text-align: left;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+    list-style: none;
+}
+
+.trials li {
+    margin: 5px 0;
+}
+
+#trial_boxes {
+    display: flex; /* Active Flexbox */
+    justify-content: center; /* Centre horizontalement */
+    align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
+    flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */ /* Espacement entre les boîtes */
+    padding: 20px; /* Optionnel : ajoute de l'espace interne */    
+}
+
+.trials .trial_title {
+    font-weight: bold;
+}
+
+.trials .trial_company {
+    font-style: italic;
+    color: rgb(24, 98, 104);
+}
+
+.search-container {
+    width: 40%;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+}
+
+.search-box {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    margin-top: 15px;
+}
+
+.search-box:focus {
+    border-color:rgb(29, 186, 197);
+}
+
+.search-button {
+    padding: 10px 15px;
+    margin-left: 10px;
+    background-color: #008b8b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.search-button:hover {
+    background-color: #00b3aa;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    width:fit-content;
+}
+
+.filter-container select {
+    flex: 1;
+    margin: 0 5px;
+    background-color: #f8f8f9;
+    border: solid 1px #ccc;
+    border-radius: 5px;
+
+}
+

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="'utf-8">
     <link rel="stylesheet" href="website.css">
+    <link rel="stylesheet" href="navigationBar.css">
   </head>
   <body>
     <div id="upper" class="border">

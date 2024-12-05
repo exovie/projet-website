@@ -1,15 +1,19 @@
 body {
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
     background-color: rgba(64, 224, 208, 0.2);
     display: flex;
     flex-direction: column;
     align-items: center; /* Centre le contenu horizontalement */
 }
+
 h1 {
     color: rgb(24, 98, 104);
 }
+
+/* BANDE FIXE */
+/* Style de la barre de navigation */
 .navbar {
     position: fixed;
     top: 0;
@@ -24,7 +28,7 @@ h1 {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
     border-bottom: 2px solid #2a9d8f; /* Bordure basse */
 }
-/* Style des boutons de navigation */
+
 .nav-btn {
     background-color: rgb(24, 98, 104);
     color: white;
@@ -32,12 +36,16 @@ h1 {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 20px;
+    display: inline-block;
+    text-decoration: none;
 }
-/* Effet de survol du bouton */
-.nav-btn:hover {
+
+
+.nav-btn:hover {    /* Effet de survol du bouton */
     background-color: rgb(29, 186, 197);
 }
+
 .content {
     margin-top: 60px; /* Pour laisser de l'espace sous la barre de navigation */
     padding: 20px;
@@ -47,6 +55,7 @@ h1 {
     text-align: center; /* Centre le texte */
 }
 
+/*Menu déroulant*/
 /* Conteneur pour l'image et le menu déroulant */
 .dropdown {
     position: relative;
@@ -80,7 +89,6 @@ h1 {
     background-color: #f1f1f1;
 }
 
-/* Affiche le menu lorsque l'image est survolée */
-.dropdown:hover .dropdown-content {
+.dropdown:hover .dropdown-content {  /* Affiche le menu lorsque l'image est survolée */
     display: block;
 }
