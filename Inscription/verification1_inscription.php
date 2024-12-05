@@ -44,5 +44,8 @@ if (isset($_POST['part1'])) {
         header("Location: /projet-website/Inscription/Form2_inscription.php#modal");
         exit();
     }
+}else {
+    header('Location: /projet-website/Homepage.php');
+    exit;
 }
 ?>
