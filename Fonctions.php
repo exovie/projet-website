@@ -1,23 +1,5 @@
 <?php
 
-function Err_connexion($numErr) {
-    switch($numErr){
-        case "Err1": 
-            echo "Nous n'avons pas de compte associé à cette adresse email";
-            break;
-        case "Err2":
-            echo "le mot de passe ou l'identifiant est incorrect";
-            break;
-        case "Err3":
-            echo "Le compte n'a pas encore été validé";
-            break;
-        default:
-            echo "Une erreur est survenue";
-            break;
-    }
-
-}
-
 function Connexion_base(): PDO {
     $host = 'localhost';
     $user = 'root';
@@ -34,7 +16,7 @@ try {
 return $pdo;
 }
 
-function Fermer_base(PDO &$conn): void {
+function Fermer_base($conn): void {
     $conn = null;
 }
 
@@ -486,5 +468,5 @@ function SuccesEditor($SuccessCode){
             <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
         </div>
     </div>';}
-    
+
     ?>
