@@ -1,6 +1,8 @@
 <?php
-
 session_start();
+
+include("../Fonctions.php");
+
 /* Verification de si le premier formulaire a deja ete rempli*/
 if (!isset($_SESSION['email'], $_SESSION['role'])) {
     header("Location: /projet-website/Inscription/Form1_inscription.php");
@@ -37,11 +39,15 @@ $questions = [
             <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
             <h1>Inscription - <?php echo $role?></h1>
             <form method="POST" action="/projet-website/Inscription/verification2_inscription.php">
+
+            <!-- Affichage des erreurs -->
             <?php if (isset($FormsErr)): ?>
                         <p class="error-message"><?php echo htmlspecialchars($FormsErr); ?></p>
                         <?php unset($FormsErr);
                         unset($_SESSION['FormsErr']); ?>
-                    <?php endif; ?>
+            <?php endif; ?>
+
+            <!-- Affichage du formulaire -->
             <?php foreach ($questions[$role] as $question): ?>
             <div class="form-group">
 
@@ -81,7 +87,7 @@ $questions = [
                 <?php endif; ?>
             </div>
             <?php endforeach; ?>
-            
+
             <?php
             if ($role == 'medecin' or $role == 'entreprise') {
                 echo "Votre inscription sera soumise à validation par un administrateur.\n Vous pourrez vous connecter une fois votre compte validé.";

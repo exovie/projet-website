@@ -113,12 +113,14 @@ function isHashedPassword($passwordHash) {
 
 // Fonction pour ajouter un utilisateur dans la base de données
 function addUser($pdo, $mdp, $email, $role) {
-    isHashedPassword($mdp) || $mdp = password_hash($mdp, PASSWORD_DEFAULT); // Hachage du mot de passe si ce n'est
+    if (!isHashedPassword($mdp)) {
+        $mdp = password_hash($mdp, PASSWORD_DEFAULT); // Hachage du mot de passe si ce n'est pas déjà un hachage
+    }
 
     try {
         $stmt = $pdo->prepare("INSERT INTO `USERS` (`Id_user`, `Passwd`, `Email`, `Role`) VALUES (NULL, :pswd, :email, :role)");
         $stmt->execute([
-            'pswd' => password_hash($mdp, PASSWORD_DEFAULT), // Hachage du mot de passe pour la sécurité
+            'pswd' => $mdp,
             'email' => $email,
             'role' => $role
         ]);
