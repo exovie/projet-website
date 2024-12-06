@@ -30,7 +30,7 @@
             color: #721c24;
         }
         body {
-            overflow-y: scroll; /* Affiche toujours la barre de défilement verticale */
+            overflow-y: auto; /* Affiche toujours la barre de défilement verticale */
             overflow-x: auto;   /* Affiche la barre de défilement horizontale si nécessaire */
             padding : 10px;
         }
@@ -291,19 +291,94 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
             //Verification si l'email est attribué à un compte
             $email_existant = 'angie@admin.com';
             $email_non_existant = 'angie@test.com';
+            $resultEmail = Verif_mail_connexion($pdo, $email_existant);
+            $resultFakeEmail = Verif_mail_connexion($pdo, $email_non_existant);
             addTestResult(
-                "Verif_mail (email existant)",
+                "Verif_mail_connexion (email existant)",
                 "Un compte est relié à cet email",
-                Verif_mail_connexion($pdo, $email_existant) ? "L'email existe" : "L'email n'existe pas",
-                Verif_mail_connexion($pdo, $email_existant) !== false
+                $resultEmail ? "L'email existe" : "L'email n'existe pas",
+                $resultEmail !== false
             );
             addTestResult(
-                "Verif_mail (email non existant)",
+                "Verif_mail_connexion (email non existant)",
                 "L'email n'existe pas",
-                Verif_mail_connexion($pdo, $email_non_existant) ? "L'email existe" : "L'email n'existe pas",
-                Verif_mail_connexion($pdo, $email_non_existant) == false
+                $resultFakeEmail ? "L'email existe" : "L'email n'existe pas",
+                $resultFakeEmail == false
+            );
+
+            //Verification si le compte est validé
+            //pour un medecin
+            $resultMedF = Verif_validation_connexion($pdo, 101, 'Medecin');
+            addTestResult(
+                'Verif_validation_connexion(MedecinF)',
+                'Compte non validé',
+                $resultMedF ? 'Compte validé': 'Compte non validé',
+                $resultMedF == false
+            );
+
+            $resultMed = Verif_validation_connexion($pdo, 25 ,'Medecin');
+            addTestResult(
+                'Verif_validation_connexion(Medecin)',
+                'Compte validé',
+                $resultMed ? 'Compte validé': 'Compte non validé',
+                $resultMed == true
+            );
+
+            $resultEn = Verif_validation_connexion($pdo, 12,'Entreprise');
+            addTestResult(
+                'Verif_validation_connexion(Entreprise)',
+                'Compte validé',
+                $resultEn ? 'Compte validé': 'Compte non validé',
+                $resultEn == true
+            );
+
+            $resultEnF = Verif_validation_connexion(    $pdo, 102,'Entreprise');
+            addTestResult(
+                'Verif_validation_connexion(EntrepriseF)',
+                'Compte non validé',
+                $resultMedF ? 'Compte validé': 'Compte non validé',
+                $resultMedF == false
+            );
+
+            $resultWrongRole = Verif_validation_connexion($pdo, 54, 'Patient');
+            addTestResult(
+                'Verif_validation_connexion(Wrong Role)',
+                'Pas le bon rôle',
+                is_string($resultWrongRole) ? 'Pas le bon rôle': 'Validé ou pas',
+                is_string($resultWrongRole) == true
+            );
+
+            //Comparaison des mots de passe
+            $wrongMDP = Compare_mdp_connexion($pdo, 'blabla', $resultEmail[1]);
+            addTestResult(
+                'Compare_mdp_connexion(MDP faux)',
+                'Le mot de passe est incorrect',
+                $wrongMDP ? 'Le mot de passe est correct': 'Le mot de passe est incorrect',
+                !$wrongMDP
+            );
+            $goodMDP= Compare_mdp_connexion($pdo, 'angie', $resultEmail[1]);
+            addTestResult(
+                'Compare_mdp_connexion(MDP vrai)',
+                'Le mot de passe est correct',
+                $goodMDP == true ? 'Le mot de passe est correct': 'Le mot de passe est incorrect',
+                $goodMDP
             );
             ?>
+        </tbody>
+    </table>
+
+    <body>
+    <h2>Tests des Fonctions des NOTIFICATIONS </h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fonction</th>
+                <th>Résultat Attendu</th>
+                <th>Résultat Obtenu</th>
+                <th>Commentaire</th>
+            </tr>
+        </thead>
+        <tbody>
 
 </body>
 </html>
