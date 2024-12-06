@@ -1,22 +1,12 @@
 <?php
 session_start();
-// Connexion à la base de données
-$host = 'localhost';
-$dbname = 'website_db';
-$user = 'root';
-$password = '';
 
 //import des fonctions
 include 'fonctionInscription.php';
 include '../Fonctions.php';
 
 // Connexion à la base de données
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur : " . $e->getMessage());
-}
+$pdo = Connexion_base();
 $role = $_SESSION["role"];
 
 // Vérification du format des réponses
@@ -41,10 +31,12 @@ if (!empty($errors)) {
 
 
     $_SESSION['FormsErr'] = $errorMessages;
+    Fermer_base($pdo);
         header('Location: /projet-website/Inscription/Form2_inscription.php#modal');
     } else {
         // Si pas d'erreur, on passe à la page suivante
         $_SESSION['reponsesInscription'] = ($_POST['reponses']); 
+        Fermer_base($pdo);
         header("Location: /projet-website/Inscription/finalisation_inscription.php");
 
     }

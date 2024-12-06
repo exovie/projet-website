@@ -11,21 +11,13 @@ if (!isset($_SESSION["role"], $_SESSION["email"])) {
 
 
 // Connexion à la base de données
-$host = 'localhost';
-$dbname = 'website_db';
-$user = 'root';
-$password = '';
+$pdo = Connexion_base();
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur : " . $e->getMessage());
-}
 
 //Enregistrement de l'users dans la BDD
 $newID = addUser($pdo, $_SESSION["password"], $_SESSION["email"], $_SESSION["role"]);
 if (!$newID) {$_SESSION["ErrorCode"] = 8;
+    Fermer_base($pdo);
     header("Location: Form1_inscription.php#modal");
     exit();}
 
@@ -33,6 +25,7 @@ if (!$newID) {$_SESSION["ErrorCode"] = 8;
 $addRoleError = addRole($pdo, $_SESSION["role"], $newID, $_SESSION["reponsesInscription"]);
 if (!$addRoleError) {
     $_SESSION["ErrorCode"] = 8;
+    Fermer_base($pdo);
     header("Location: Form1_inscription.php#modal");
     exit();
 }
@@ -42,6 +35,7 @@ else {
 
     session_start(); // Redémarrer la session pour afficher un message de succès
     $_SESSION["SuccessCode"] = 1;
+    Fermer_base($pdo);
     header("Location: /projet-website/Homepage.php");
 }
 

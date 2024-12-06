@@ -1,26 +1,13 @@
 <?php
 session_start();    
 
-// Connexion à la base de données
-$host = 'localhost';
-$dbname = 'website_db';
-$user = 'root';
-$password = '';
-
 //import des fonctions
 include 'fonctionConnexion.php';
 include '../Fonctions.php';
 
 
 // Connexion à la base de données
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur : " . $e->getMessage());
-}
-
-
+$pdo = Connexion_base();
 
 // Vérification de l'envoi du formulaire
 if (isset($_POST['Part1C'])) {
@@ -31,6 +18,7 @@ if (isset($_POST['Part1C'])) {
     $verifEmail = Verif_mail_connexion($pdo, $email);
     if (!$verifEmail) {
         $_SESSION['ErrorCode'] = 3; 
+        Fermer_base($pdo);
         header('Location: /projet-website/Homepage.php');
         exit;
         }
@@ -48,6 +36,7 @@ if (isset($_POST['Part1C'])) {
         $verification = Verif_validation_connexion($pdo, $idCompte, $roleCompte);
         if (!$verification) {
             $_SESSION['ErrorCode'] = 4;
+            Fermer_base($pdo);
             header('Location: /projet-website/Connexion/Form1_connexion.php');
             exit;
         }}
@@ -56,6 +45,7 @@ if (isset($_POST['Part1C'])) {
     $checkMdp = Compare_mdp_connexion($pdo, trim($password), ($mdpCompte));
     if (!$checkMdp) {
         $_SESSION['ErrorCode'] = 5;
+        Fermer_base($pdo);
         header('Location: /projet-website/Connexion/Form1_connexion.php#modal');
         exit;
     }
@@ -69,10 +59,12 @@ if (isset($_POST['Part1C'])) {
     $_SESSION['Nom'] = $informationUSERS[1];
 
     $_SESSION['SuccessCode']= 2;
+    Fermer_base($pdo);
     header('Location: /projet-website/Homepage.php');
     exit;
 }
 else {
+    Fermer_base($pdo);
     header('Location: /projet-website/Homepage.php');
     exit;
 }

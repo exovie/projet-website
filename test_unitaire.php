@@ -58,15 +58,11 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
 <body>
     <h1>Résultats des Tests Unitaires</h1>
     <h2>Connexion à la Base de Données</h2>
+    
     <?php
     // Vérification de la connexion
-    $host = 'localhost';
-    $dbname = 'website_db';
-    $user = 'root';
-    $password = '';
     try {
-        $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo = Connexion_base();
         echo "<p class='success'>Connexion à la base de données réussie.</p>";
     } catch (PDOException $e) {
         echo "<p class='failure'>Erreur de connexion : " . $e->getMessage() . "</p>";
