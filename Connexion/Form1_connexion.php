@@ -1,5 +1,8 @@
 <?php
 session_start();
+if (isset($_SESSION['EmailUnicityError'])) {
+    $EmailUnicityError= "Cet email est déjà utilisé. Veuillez en choisir un autre ou vous connecter.";
+}
 include("../Fonctions.php");
 ?>
 
@@ -13,7 +16,7 @@ include("../Fonctions.php");
 </head>
 <body>
 <div class="content">
-        <h1>Inscrivez-vous chez Clinicou</h1>
+        <h1>Ravi de vous revoir parmis nous ! </h1>
         <img src="/projet-website/Pictures/logo.png" alt="logo" id="grologo">
     </div>
 
@@ -22,8 +25,8 @@ include("../Fonctions.php");
         <div class="modal-content">
             <!-- Lien de fermeture qui redirige vers Homepage.php -->
             <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
-            <h1>Inscription</h1>
-            <form method="POST" action="/projet-website/Inscription/verification1_inscription.php" id="form-part-1">
+            <h1>Connexion</h1>
+            <form method="POST" action="/projet-website/Connexion/verification1_connexion.php" id="formC-part-1">
 
             <!-- Affichage des erreurs  -->
             <?php 
@@ -42,17 +45,28 @@ include("../Fonctions.php");
                 <label for="password">Mot de passe :</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <div class="form-group">
-                <label for="role">Rôle :</label>
-                <select id="role" name="role" required>
-                    <option value="patient">Patient</option>
-                    <option value="medecin">Médecin</option>
-                    <option value="entreprise">Entreprise</option>
-                </select>
-            </div>
-                <button type="submit" name="part1">Continuer</button>
+                <button type="submit" name="Part1C">Continuer</button>
             </form>
         </div>
     </div>
+<!-- DEBUG -->
+<?php if (isset($_SESSION['machin'])): ?>
+    <div class="debug-output">
+        <?php foreach ($_SESSION['machin'] as $key => $value): ?>
+            <p><strong><?php echo htmlspecialchars($key); ?>:</strong> <?php echo htmlspecialchars($value); ?></p>
+        <?php endforeach; 
+        echo var_dump($_SESSION["machin"][1]);
+        $type = password_verify($_SESSION["ma"], $_SESSION["machin"][1]);
+        echo var_dump($type);
+
+        $na = password_verify($_SESSION['ma'], password_hash($_SESSION['ma'], PASSWORD_DEFAULT));
+        echo $na .'<br>';
+        echo var_dump($na);
+
+        $truc = password_verify('i3s', '$2y$10$nduKVjNnufeX70ntSz6bdOB7HI59ibyAByApHazDQ.F4c8WrxCEni');
+        echo var_dump($truc)
+        ?>
+    </div>
+<?php endif; ?>
 </body>
 </html>

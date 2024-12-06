@@ -1,9 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Inclure le module ou fichier PHP
-include 'module.php';
 session_start();
 // Connexion à la base de données
 $host = 'localhost';
@@ -13,6 +8,8 @@ $password = '';
 
 //import des fonctions
 include 'fonctionInscription.php';
+include '../Fonctions.php';
+
 // Connexion à la base de données
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);

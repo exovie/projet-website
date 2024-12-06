@@ -7,6 +7,7 @@ $password = '';
 
 //import des fonctions
 include 'fonctionInscription.php';
+include'../Fonctions.php';
 
 // Connexion à la base de données
 try {
@@ -26,7 +27,7 @@ if (isset($_POST['part1'])) {
     if (! Verif_mail($pdo, $email)) {
         // Email déjà utilisé
         session_start();
-        $_SESSION['EmailUnicityError'] = true;
+        $_SESSION['ErrorCode'] = 6;
         header('Location: Form1_inscription.php#modal');
         exit();
     } else {
@@ -35,7 +36,7 @@ if (isset($_POST['part1'])) {
         $_SESSION['email'] = $email;
         $_SESSION['password'] = password_hash($password, PASSWORD_DEFAULT); // Hachage du mot de passe
         if(!isHashedPassword($_SESSION['password'])) {
-            $_SESSION['HashedPasswordError'] = true;
+            $_SESSION['ErrorCode'] = 7;
             header("Location: Form1_inscription.php#modal");
         }
         $_SESSION['role'] = $role;
@@ -44,5 +45,8 @@ if (isset($_POST['part1'])) {
         header("Location: /projet-website/Inscription/Form2_inscription.php#modal");
         exit();
     }
+}else {
+    header('Location: /projet-website/Homepage.php');
+    exit;
 }
 ?>

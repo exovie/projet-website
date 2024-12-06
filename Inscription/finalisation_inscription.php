@@ -1,8 +1,6 @@
 <?php
 include("fonctionInscription.php");
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+include("../Fonctions.php");
 
 session_start();
 
@@ -27,14 +25,14 @@ try {
 
 //Enregistrement de l'users dans la BDD
 $newID = addUser($pdo, $_SESSION["password"], $_SESSION["email"], $_SESSION["role"]);
-if (!$newID) {$_SESSION["addUserError"] = true;
+if (!$newID) {$_SESSION["ErrorCode"] = 8;
     header("Location: Form1_inscription.php#modal");
     exit();}
 
 //Enregistrement des données dans la base de données selon le role 
 $addRoleError = addRole($pdo, $_SESSION["role"], $newID, $_SESSION["reponsesInscription"]);
 if (!$addRoleError) {
-    $_SESSION["addRoleError"] = true;
+    $_SESSION["ErrorCode"] = 8;
     header("Location: Form1_inscription.php#modal");
     exit();
 }
@@ -43,7 +41,7 @@ else {
     session_destroy(); // Réinitialiser la session pour ne pas sauvegarder les données du formulaire 
 
     session_start(); // Redémarrer la session pour afficher un message de succès
-    $_SESSION["inscriptionSuccess"] = true;
+    $_SESSION["SuccessCode"] = 1;
     header("Location: /projet-website/Homepage.php");
 }
 
