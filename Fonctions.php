@@ -1,23 +1,5 @@
 <?php
 
-function Err_connexion($numErr) {
-    switch($numErr){
-        case "Err1": 
-            echo "Nous n'avons pas de compte associé à cette adresse email";
-            break;
-        case "Err2":
-            echo "le mot de passe ou l'identifiant est incorrect";
-            break;
-        case "Err3":
-            echo "Le compte n'a pas encore été validé";
-            break;
-        default:
-            echo "Une erreur est survenue";
-            break;
-    }
-
-}
-
 function Connexion_base(): PDO {
     $host = 'localhost';
     $user = 'root';
@@ -34,7 +16,7 @@ try {
 return $pdo;
 }
 
-function Fermer_base(PDO &$conn): void {
+function Fermer_base($conn): void {
     $conn = null;
 }
 
@@ -444,7 +426,7 @@ function ErrorEditor($errorCode, $modal='false'){
 
     //If the error code is display on another modal 
     if ($modal == 'true') {
-        echo'<p class="error-message">' . htmlspecialchars($errorMessage) . '</p>'; 
+        echo'<p class="error-message">' . htmlspecialchars($errorMessage). '</p>'; 
     }
     else {
     //Display the modal with the message
@@ -482,9 +464,9 @@ function SuccesEditor($SuccessCode){
     <div id="modal" class="modal" style="display: flex; text-align: center;">
         <div class="modal-content">
             <p class="validation-message">' . htmlspecialchars($SuccesMessage) . '</p>
-            <p> '. htmlspecialchars($Commentaire). '</p>
+            <p> '. ($Commentaire). '</p>
             <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
         </div>
     </div>';}
-    
+
     ?>
