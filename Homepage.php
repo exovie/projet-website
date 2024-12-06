@@ -38,10 +38,10 @@ include 'Fonctions.php';
                 <img src="Pictures/pictureProfil.png" alt="pictureProfil" style="cursor: pointer;">
             </a>
             <div class="dropdown-content">
-                <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
+                <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] == true): ?>
                     <!-- Options pour les utilisateurs connectés -->
                     <a href="#">Mon Profil</a>
-                    <a href="#">Déconnexion</a>
+                    <a href="Deconnexion.php">Déconnexion</a>
                 <?php else: ?>
                     <!-- Options pour les utilisateurs non connectés -->
                     <a href="Connexion/Form1_connexion.php#modal">Connexion</a>
@@ -51,35 +51,21 @@ include 'Fonctions.php';
         </div>
     </div>
 
-    <!-- Message Success Inscription -->
-    <?php if (isset ($_SESSION['inscriptionSuccess'])): 
-        $inscriptionSuccessMessage = 'Votre inscription a bien été enregistrée.' ?>
-        <div id="modal" class="modal" style="display: flex; text-align: center;">
-            <div class="modal-content">
-            <p class="validation-message"><?php echo htmlspecialchars($inscriptionSuccessMessage); ?></p>
-                        <?php unset($_SESSION['inscriptionSuccess']); ?>
-            <p>Si votre inscription concerne un compte Médecin ou Entreprise,votre demande est soumise à la validation d' administateur. </p> 
-            <p> Si vous vous êtes inscrit en tant que Patient,vous pouvez déjà vous connecter pour candidater à l'un de nos essais cliniques !</p>
-            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
-            </div>
-        </div>
-    <?php endif; ?>
+<!-- Message Success -->
+<?php 
+if (isset($_SESSION['SuccessCode'])): 
+    SuccesEditor($_SESSION['SuccessCode']);
+    unset($_SESSION['SuccessCode']); // Nettoyage après affichage
+endif; 
+?>
 
-    <!-- Message Success Connexion -->
-
-    <!-- Message Success Deconnexion -->
-    <?php if (isset($_GET['unloggedSuccess']) && $_GET['unloggedSuccess'] === 'true'): 
-        $unloggedSuccessMessage = 'Votre déconnexion a bien été prise en compte.'?>
-        <div id="modal" class="modal" style="display: flex; text-align: center;">
-            <div class="modal-content">
-            <p class="validation-message"><?php echo htmlspecialchars($unloggedSuccessMessage); ?></p>
-                        <?php unset($_SESSION['unloggedSuccess']); ?>
-            <p>Au plaisir de vous revoir.</p> 
-            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
-            </div>
-        </div>
-    <?php endif; ?>
-
+<!-- Message Erreur -->
+<?php 
+if (isset($_SESSION['ErrorCode'])): 
+    ErrorEditor($_SESSION['ErrorCode']);
+    unset($_SESSION['ErrorCode']); // Nettoyage après affichage
+endif; 
+?>
 
     <!-- Contenu principal -->
     <div class="content">
