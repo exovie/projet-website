@@ -3,6 +3,7 @@ session_start();
 $_SESSION['origin'] = 'Homepage';
 $db_name = "mysql:host=localhost;dbname=website_db"; 
 $_SESSION['db_name'] = $db_name;
+$_SESSION['role'] = 'visiteur';
 include 'Fonctions.php';
 ?>
 
@@ -22,15 +23,15 @@ include 'Fonctions.php';
     <div class="navbar">
         <div id="logo">
             <a href="Homepage.php">
-                <img src="Pictures/minilogo.png" alt="minilogo">
+                <img src="Pictures/logo.png" alt="minilogo" class="minilogo">
             </a>
         </div>
-        <button class="nav-btn">Essais Cliniques</button>
-        <button class="nav-btn">Entreprise</button>
-        <button class="nav-btn">Contact</button>
+        <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
+        <a href="Entreprises.php" class="nav-btn">Entreprise</a>
+        <a href="Contact.php" class="nav-btn">Contact</a>
         <div class="dropdown">
             <a href="Homepage.php">
-                <img src="Pictures/letterPicture.png" alt="pictureProfil" style="cursor: pointer;">
+                <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
             </div>
         <div class="dropdown">
@@ -38,7 +39,7 @@ include 'Fonctions.php';
                 <img src="Pictures/pictureProfil.png" alt="pictureProfil" style="cursor: pointer;">
             </a>
             <div class="dropdown-content">
-                <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] == true): ?>
+                <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
                     <!-- Options pour les utilisateurs connectés -->
                     <a href="#">Mon Profil</a>
                     <a href="Deconnexion.php">Déconnexion</a>
@@ -51,35 +52,44 @@ include 'Fonctions.php';
         </div>
     </div>
 
-<!-- Message Success -->
-<?php 
-if (isset($_SESSION['SuccessCode'])): 
-    SuccesEditor($_SESSION['SuccessCode']);
-    unset($_SESSION['SuccessCode']); // Nettoyage après affichage
-endif; 
-?>
+    <!-- Message Success -->
+    <?php 
+    if (isset($_SESSION['SuccessCode'])): 
+        SuccesEditor($_SESSION['SuccessCode']);
+        unset($_SESSION['SuccessCode']); // Nettoyage après affichage
+    endif; 
+    ?>
 
-<!-- Message Erreur -->
-<?php 
-if (isset($_SESSION['ErrorCode'])): 
-    ErrorEditor($_SESSION['ErrorCode']);
-    unset($_SESSION['ErrorCode']); // Nettoyage après affichage
-endif; 
-?>
+    <!-- Message Erreur -->
+    <?php 
+    if (isset($_SESSION['ErrorCode'])): 
+        ErrorEditor($_SESSION['ErrorCode']);
+        unset($_SESSION['ErrorCode']); // Nettoyage après affichage
+    endif; 
+    ?>
 
     <!-- Contenu principal -->
     <div class="content">
-        <h1>Bienvenue sur notre site</h1>
-        <p>Contenu de la page...</p>
+    <h1>Bienvenue sur notre site</h1>
+    <p>Contenu de la page...</p>
         <div>
             <img src="Pictures/logo.png" alt="logo" id="grologo">
-            <h1 id="main_page">Clinicou, le site des <strong>essais cliniques !</strong></h1>
-            <h2>Le site qui vous permet de vous inscrire <em>facilement</em> pour crever pour big pharma</h2>
-            <p class="sarcasm">Un max de fun</p>
+            <h1 id="main_page">Clinicou, le site des essais cliniques !</h1>
+            <p class = "presentation"> Les entreprises membres :</p>
+            <div id="boxes">
+            <?php
+              $id_entreprises = Get_id( 'ENTREPRISES', 'Id_entreprise');
+              foreach ($id_entreprises as $id_entreprise) {
+                  $entreprise = List_entreprise($id_entreprise);
+              }
+
+            ?>
+            </div>
+            <p class="presentation">Les médecins membres :</p>
             <p><a href="https://www.linkedin.com/in/oussamaammar/">Pour plus d'informations</a></p>
             <img src="https://media.wired.com/photos/5f87340d114b38fa1f8339f9/master/w_1600%2Cc_limit/Ideas_Surprised_Pikachu_HD.jpg" alt="Surprised Pikachu">
             <p>L'eau, dans 20, 30 ans <br> il n'y en aura plus</p>
-            <p><a href="#main_page">retour au début</a></p>
+            <p><a href="#">retour au début</a></p>
         </div>
     </div>
 </body>
@@ -93,4 +103,19 @@ endif;
   <br><br>
   <input type="submit" value="Envoyer">
 </form> 
+
+    foreach ($clinical_trials as $essai_clinique) {
+        echo '<ul>';
+        echo '<li>Titre : ' . $essai_clinique['Titre'] . '</li>';
+        echo '<li>Contexte : ' . $essai_clinique['Contexte'] . '</li>';
+        echo '<li>Objectif de l\'essai : ' . $essai_clinique['Objectif_essai'] . '</li>';
+        echo '<li>Design de l\'étude : ' . $essai_clinique['Design_etude'] . '</li>';
+        echo '<li>Critère d\'évaluation : ' . $essai_clinique['Critere_evaluation'] . '</li>';
+        echo '<li>Résultats attendus : ' . $essai_clinique['Resultats_attendus'] . '</li>';
+        echo '<li>Date de lancement : ' . $essai_clinique['Date_lancement'] . '</li>';
+        echo '<li>Date de fin : ' . $essai_clinique['Date_fin'] . '</li>';
+        echo '<li>Date de création : ' . $essai_clinique['Date_creation'] . '</li>';
+        echo '<li>Statut : ' . $essai_clinique['Statut'] . '</li>';
+        echo '</ul>';
+    }
 -->
