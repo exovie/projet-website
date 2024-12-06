@@ -60,9 +60,9 @@ include 'Fonctions.php';
             <p class = "presentation"> Les entreprises membres :</p>
             <div id="boxes">
             <?php
-              $id_entreprises = Get_id($db_name, 'ENTREPRISES', 'Id_entreprise');
+              $id_entreprises = Get_id( 'ENTREPRISES', 'Id_entreprise');
               foreach ($id_entreprises as $id_entreprise) {
-                  $entreprise = List_entreprise($db_name, $id_entreprise);
+                  $entreprise = List_entreprise($id_entreprise);
               }
 
             ?>
