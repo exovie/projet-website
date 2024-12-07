@@ -191,7 +191,7 @@ function Retirer_Medecin_Essai(int $Id_essai, int $Id_medecin){
 }
 
 //méthode entreprise/admin 
-// se pencher sur le statut en pause
+
 //fonctionne pour changer l'état de l'essai mais affiche une erreur
 function Suspendre_Essai(int $Id_essai){
 
@@ -200,10 +200,6 @@ function Suspendre_Essai(int $Id_essai){
         $requete = $conn -> prepare("UPDATE `ESSAIS_CLINIQUES` SET `Statut` = 'Suspendu' WHERE `Id_essai` = ?");
         $requete -> execute(array($Id_essai));
         echo "Essai suspendu avec succès!";
-        Fermer_base($conn);
-        $requete_bis = $conn -> prepare("UPDATE `MEDECIN_ESSAIS` SET `Statut_medecin` = 'En pause' WHERE (`Id_essai` = ? AND `Id_medecin` = ?)"); //a-t-on vraiment besoin d'un statut en pause pour les médecins? dans ce cas là, le rajouter dans la ligne et la bdd
-        $requete_bis -> execute(array($Id_essai, $Id_medecin));
-        echo "Medecin mis en pause de l'essai  succès!";
         Fermer_base($conn);
     }
     catch (PDOException $e) {
@@ -217,12 +213,13 @@ function Suspendre_Essai(int $Id_essai){
         $tableau = $requete_bis->fetch();
         $Id_entreprise = $tableau["Id_entreprise"];
          Generer_notif(17, $Id_entreprise);
+         Fermer_base($conn);
         // Envoi aux médecins
+        $conn = Connexion_base();
         $requete_ter = $conn -> prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
         $requete_ter->execute(array($Id_essai));
-        $tableau = $requete_ter->fetchAll();
-        $Liste_medecin = $tableau["Id_medecin"];
-        foreach ($Liste_medecin as $medecin) {
+        $tableau_medecin = $requete_ter->fetchAll();
+        foreach ($tableau_medecin as $medecin) {
             $Id_medecin = $medecin['Id_medecin'];
             Generer_notif(17, $Id_essai, $Id_medecin);
         }
