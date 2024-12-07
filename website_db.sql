@@ -745,8 +745,10 @@ INSERT INTO `USERS` (`Id_user`, `Passwd`, `Email`, `Role`) VALUES
 -- Indexes for table `DESTINATAIRE`
 --
 ALTER TABLE `DESTINATAIRE`
-  ADD PRIMARY KEY (`Id_notif`,`Id_destinataire`),
-  ADD KEY `FK_DESTINATAIRE_USERS` (`Id_destinataire`);
+  ADD PRIMARY KEY (`Id_notif`, `Id_destinataire`),
+  ADD KEY `FK_DESTINATAIRE_USERS` (`Id_destinataire`),
+  DROP FOREIGN KEY `FK_DESTINATAIRE_NOTIFICATION`,
+  ADD CONSTRAINT `FK_DESTINATAIRE_NOTIFICATION` FOREIGN KEY (`Id_notif`) REFERENCES `NOTIFICATION` (`Id_notif`) ON DELETE SET NULL;
 
 --
 -- Indexes for table `ENTREPRISES`
