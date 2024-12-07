@@ -2,16 +2,15 @@
 /*Fonction qui calcule et génère les statistiques d’un essai lorsque que la phase de recrutement est finie*/
 
 session_start();
+
+//Connexion à la base
 include("Connexion_base.php");
-
-
 $conn = Connexion_base();
-//$id_essai = isset($_GET['id_essai']) ? (int)$_GET['id_essai'] : 6;
+
 $id_essai = isset($_GET['id_essai']);
 
 function Stat_data($conn, int $id_essai){
     try {
-
         // Requête pour récupérer les poids et les sexes des patients
         $query = $conn->prepare("
             SELECT Poids, Sexe, Taille, Date_naissance
@@ -181,8 +180,6 @@ function Stat_Sexe($data, $conn, int $id_essai){
 
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -190,21 +187,22 @@ function Stat_Sexe($data, $conn, int $id_essai){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Distribution des Poids, Tailles, Âges et Sexe- Essai Clinique</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href='website.css'>
+    <link rel="stylesheet" href= 'navigationBar.css'>
     <style>
         /* Conteneur principal pour les graphiques */
         .charts-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 colonnes de taille égale */
+            grid-gap: 20px; /* Espacement entre les éléments */
             margin: 20px;
+            justify-content: center;
         }
 
         /* Style commun pour les histogrammes */
         .histogram {
-            width: 500px; /* Largeur spécifique aux histogrammes */
-            height: 500px; /* Hauteur spécifique aux histogrammes */
+            width: 100%; /* Largeur de 100% pour remplir la cellule de la grille */
+            height: 300px; /* Hauteur spécifique aux histogrammes */
             padding: 15px;
             border: 2px solid #ddd;
             border-radius: 8px;
@@ -214,7 +212,7 @@ function Stat_Sexe($data, $conn, int $id_essai){
 
         /* Style spécifique pour le camembert */
         .camembert {
-            width: 300px; /* Largeur réduite pour le camembert */
+            width: 100%; /* Largeur de 100% pour remplir la cellule de la grille */
             height: 300px; /* Hauteur spécifique pour le camembert */
             padding: 20px;
             border: 2px solid #4CAF50;
@@ -229,16 +227,57 @@ function Stat_Sexe($data, $conn, int $id_essai){
     </style>
 </head>
 <body>
+<!-- Code de la barre de navigation -->
+<div class="navbar">
+        <div id="logo">
+            <a href="Homepage.php">
+                <img src="Pictures/logo.png" alt="minilogo" class="minilogo">
+            </a>
+        </div>
+        <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
+        <a href="Entreprises.php" class="nav-btn">Entreprise</a>
+        <a href="Contact.php" class="nav-btn">Contact</a>
+        <div class="dropdown">
+            <a href="Homepage.php">
+                <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
+            </a>
+        </div>
+        <div class="dropdown">
+            <a>
+                <img src="Pictures/pictureProfil.png" alt="pictureProfil" style="cursor: pointer;">
+            </a>
+            <div class="dropdown-content">
+            <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
+                <!-- Options pour les utilisateurs connectés -->
+                <?php 
+                if ($_SESSION['role'] == 'Medecin') {
+                    echo "<h1 style='font-size: 18px; text-align: center;'>Dr " . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
+                } elseif ($_SESSION['role'] == 'Entreprise') {
+                    echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "®</h1>";
+                } else {
+                    echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
+                }
+                ?>
+                <a href="#">Mon Profil</a>
+                <a href="Deconnexion.php">Déconnexion</a>
+            <?php else: ?>
+                <!-- Options pour les utilisateurs non connectés -->
+                <a href="Connexion/Form1_connexion.php#modal">Connexion</a>
+                <a href="Inscription/Form1_inscription.php#modal">S'inscrire</a>
+            <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
 
 <h1>Distribution des Poids, Tailles, Âges et Sexe pour l'Essai ID : <?= htmlspecialchars($id_essai) ?></h1>
-<?php 
 
+<?php 
 $data = Stat_data($conn, $id_essai);
 $poids_stats = Stat_Poids($data, $conn, $id_essai);
 $taille_stats = Stat_Taille($data, $conn, $id_essai);
 $age_stats = Stat_Age($data, $conn, $id_essai);
 $sexe_stats = Stat_Sexe($data, $conn, $id_essai);
-
 ?>
 
 <!-- Conteneur pour les graphiques -->
@@ -264,12 +303,9 @@ $sexe_stats = Stat_Sexe($data, $conn, $id_essai);
     </div> 
 </div>
 
-
-
 <script>
     // Récupérer les données depuis PHP pour chaque graphique (Poids, Taille, Âge et Sexe)
     
-
     // Poids
     const poidsLabels = <?= $poids_stats['tranches_poids_labels'] ?>;
     const poidsData = <?= $poids_stats['tranches_poids_counts'] ?>;
@@ -365,7 +401,7 @@ $sexe_stats = Stat_Sexe($data, $conn, $id_essai);
             plugins: {
                 title: { 
                     display: true,
-                        text: 'Proportion Hommes/Femmes de cet essai'
+                    text: 'Proportion Hommes/Femmes de cet essai'
                 }
             }
         }
@@ -374,3 +410,4 @@ $sexe_stats = Stat_Sexe($data, $conn, $id_essai);
 
 </body>
 </html>
+
