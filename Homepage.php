@@ -3,7 +3,12 @@ session_start();
 $_SESSION['origin'] = 'Homepage';
 $db_name = "mysql:host=localhost;dbname=website_db"; 
 $_SESSION['db_name'] = $db_name;
-$_SESSION['role'] = 'visiteur';
+if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true) {
+    $_SESSION['role'] = $role;
+
+} else {
+    $_SESSION['role'] = 'visiteur';
+}
 include 'Fonctions.php';
 ?>
 
@@ -30,9 +35,9 @@ include 'Fonctions.php';
         <a href="Entreprises.php" class="nav-btn">Entreprise</a>
         <a href="Contact.php" class="nav-btn">Contact</a>
         <?php
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['role'] == 'admin')) {
+        //if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['role'] == 'admin')) {
                 echo '<a href="admin_page.php" class="nav-btn">Gestion</a>';
-            }
+        //    }
         ?>
         <div class="dropdown">
             <a href="Homepage.php">
@@ -67,7 +72,8 @@ include 'Fonctions.php';
             <?php
               $id_entreprises = Get_id( 'ENTREPRISES', 'Id_entreprise');
               foreach ($id_entreprises as $id_entreprise) {
-                  $entreprise = List_entreprise($id_entreprise);
+                $entreprise = Get_entreprise_data($id_entreprise);
+                Display_entreprise_data($entreprise);
               }
 
             ?>

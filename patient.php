@@ -1,8 +1,8 @@
 <?php
 session_start();
 $_SESSION['origin'] = 'admin_page';
+$role = $_SESSION['role'];
 include 'Fonctions.php';
-include 'Fonctions_admin.php';
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +56,34 @@ include 'Fonctions_admin.php';
     <div class="content">
         <div id="boxes">
             <?php
-              display_users();
+              if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_patient'])) {
+                // Appeler une fonction PHP
+                $id_patient = $_POST['id_patient'];
+                $patient = get_patient($id_patient);
+                display_patient_unique($patient);
+                switch ($role){
+                    case 'admin':
+                        echo '<form method="POST">';
+                        echo '<input type="hidden" name="id_patient" value="'.$id_patient.'">';
+                        echo '<button type="submit" name="accepter" class="btn">Accepter</button>';
+                        echo '<button type="submit" name="refuser" class="btn">Refuser</button>';
+                        echo '</form>';
+                        break;
+                    case 'entreprise':
+                        echo '<form method="POST">';
+                        echo '<input type="hidden" name="id_patient" value="'.$id_patient.'">';
+                        echo '<button type="submit" name="accepter" class="btn">Accepter</button>';
+                        echo '</form>';
+                        break;
+                    case 'medecin':
+                        echo '<form method="POST">';
+                        echo '<input type="hidden" name="id_patient" value="'.$id_patient.'">';
+                        echo '<button type="submit" name="accepter" class="btn">Accepter</button>';
+                        echo '</form>';
+                        break;
+                }
+            }
+
             ?>
         </div>
     </div>

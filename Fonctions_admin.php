@@ -1,7 +1,5 @@
 <?php
 
-include 'Fonctions.php';
-
 function Valider_inscription($id_user) {
     $conn = Connexion_base();
         try {
@@ -81,8 +79,69 @@ function refus_inscription($id_user) {
     }
 }
 
+function display_medecin_admin($medecin) {
+    $medecin = $medecin[0];
+    echo '<div class="admin-box">';
+    echo '<div class="content">';
+    echo '<ul class="medecin_admin">';
+    echo '<li class="noms_medecins">' . htmlspecialchars($medecin['Nom']) . " " . htmlspecialchars($medecin['Prenom']) . '</li>';
+    echo '<li class="specialite">' . htmlspecialchars($medecin['Specialite']) . '</li>';
+    echo '</ul>';
+    echo '</div>';
+    echo '<div class="actions">';
+    echo '<button class="edit">Modifier</button>';
+    echo '<button class="delete">Supprimer</button>';
+    echo '</div>';
+    echo '</div>';
+}
+
+
+function display_entreprise_admin($entreprise) {
+    $entreprise = $entreprise[0];
+    echo '<div class="admin-box">';
+    echo '<div class="content">';
+    echo '<p class="noms_entreprises">' . htmlspecialchars($entreprise['Nom_entreprise']) . '</p>';
+    echo '</div>';
+    echo '<div class="actions">';
+    echo '<button class="edit">Modifier</button>';
+    echo '<button class="delete">Supprimer</button>';
+    echo '</div>';
+    echo '</div>';
+}
+
+
+function display_patient_admin($patient) {
+    $patient = $patient[0];
+    echo '<div class="admin-box">';
+    echo '<div class="content">';
+    echo '<p>' . htmlspecialchars($patient['Nom']) . " " . htmlspecialchars($patient['Prenom']) . '</p>';
+    echo '</div>';
+    echo '<div class="actions">';
+    echo '<button class="edit">Modifier</button>';
+    echo '<button class="delete">Supprimer</button>';
+    echo '</div>';
+    echo '</div>';
+}
+
+
+
 function display_users() {
     $medecins = Get_id('MEDECINS', 'Id_medecin');
     $entreprises = Get_id('ENTREPRISES', 'Id_entreprise');
     $patients = Get_id('PATIENTS', 'Id_patient');
+
+    foreach ($medecins as $medecin) {
+        $data = List_medecin($medecin);
+        display_medecin_admin($data);
+    }
+
+    foreach ($entreprises as $entreprise) {
+        $data = Get_company($entreprise);
+        display_entreprise_admin($data);
+    }
+
+    foreach ($patients as $patient) {
+        $data = Get_patient($patient);
+        display_patient_admin($data);
+    }
 }

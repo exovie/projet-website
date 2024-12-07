@@ -102,27 +102,3 @@ $list_essai = Get_essais($role);
 </body>
 </html>
 
-<!--
-<form action="TD2_exo3.php" method="post">
-  <label for="nom">Entrez le produit voulu et la quantité au format suivant :</label>
-  <input type="text" id="nom" placeholder="produit, quantité" name="nom" required>
-  
-  <br><br>
-  <input type="submit" value="Envoyer">
-</form> 
-
-    foreach ($clinical_trials as $essai_clinique) {
-        echo '<ul>';
-        echo '<li>Titre : ' . $essai_clinique['Titre'] . '</li>';
-        echo '<li>Contexte : ' . $essai_clinique['Contexte'] . '</li>';
-        echo '<li>Objectif de l\'essai : ' . $essai_clinique['Objectif_essai'] . '</li>';
-        echo '<li>Design de l\'étude : ' . $essai_clinique['Design_etude'] . '</li>';
-        echo '<li>Critère d\'évaluation : ' . $essai_clinique['Critere_evaluation'] . '</li>';
-        echo '<li>Résultats attendus : ' . $essai_clinique['Resultats_attendus'] . '</li>';
-        echo '<li>Date de lancement : ' . $essai_clinique['Date_lancement'] . '</li>';
-        echo '<li>Date de fin : ' . $essai_clinique['Date_fin'] . '</li>';
-        echo '<li>Date de création : ' . $essai_clinique['Date_creation'] . '</li>';
-        echo '<li>Statut : ' . $essai_clinique['Statut'] . '</li>';
-        echo '</ul>';
-    }
--->

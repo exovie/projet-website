@@ -65,100 +65,99 @@ function Get_id(string $table, string $column): array {
 }
 
 
-function List_entreprise(int $id_entreprise): array {
-
+function Get_entreprise_data(int $id_entreprise): array {
     $conn = Connexion_base();
 
     try {
+        // Récupérer les informations de l'entreprise
         $sql = "
-    SELECT *
-    FROM ENTREPRISES
-    WHERE Id_entreprise = :Id_entreprise;
-    ";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
-    $stmt->execute();
-        
-    // Récupérer les résultats
-    $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-    $sql = "
-    SELECT ESSAIS_CLINIQUES.Titre
-    FROM ESSAIS_CLINIQUES
-    JOIN ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
-    JOIN USERS ON ENTREPRISES.Id_entreprise = USERS.Id_user
-    WHERE ENTREPRISES.Id_entreprise = :Id_entreprise;
-    ";
-            
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
-    $stmt->execute();
-
-    $clinical_trials = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $sql = "
-    SELECT
-        MEDECINS.Nom AS Nom_Medecin,
-        MEDECINS.Profile_picture
-    FROM 
-        ESSAIS_CLINIQUES
-    JOIN 
-        ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
-    JOIN 
-        USERS ON ENTREPRISES.Id_entreprise = USERS.Id_user
-    JOIN 
-        MEDECIN_ESSAIS ON ESSAIS_CLINIQUES.Id_essai = MEDECIN_ESSAIS.Id_essai
-    JOIN 
-        MEDECINS ON MEDECIN_ESSAIS.Id_medecin = MEDECINS.Id_medecin
-    WHERE 
-        ENTREPRISES.Id_entreprise = :Id_entreprise;
+            SELECT *
+            FROM ENTREPRISES
+            WHERE Id_entreprise = :Id_entreprise;
         ";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
+        $stmt->execute();
+        $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
-    $stmt->execute();
+        // Récupérer les essais cliniques
+        $sql = "
+            SELECT ESSAIS_CLINIQUES.Titre
+            FROM ESSAIS_CLINIQUES
+            JOIN ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
+            WHERE ENTREPRISES.Id_entreprise = :Id_entreprise;
+        ";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
+        $stmt->execute();
+        $clinical_trials = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $medecins = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Récupérer les médecins partenaires
+        $sql = "
+            SELECT
+                MEDECINS.Nom AS Nom_Medecin,
+                MEDECINS.Profile_picture
+            FROM 
+                ESSAIS_CLINIQUES
+            JOIN 
+                ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
+            JOIN 
+                MEDECIN_ESSAIS ON ESSAIS_CLINIQUES.Id_essai = MEDECIN_ESSAIS.Id_essai
+            JOIN 
+                MEDECINS ON MEDECIN_ESSAIS.Id_medecin = MEDECINS.Id_medecin
+            WHERE 
+                ENTREPRISES.Id_entreprise = :Id_entreprise;
+        ";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
+        $stmt->execute();
+        $medecins = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($resultats as $entreprise) {
-        echo '<div class = "entreprise">';
-            echo '<h1>' . $entreprise['Nom_entreprise'] . '</h1>';
-            echo '<p> Téléphones : '. $entreprise['Telephone']. '</p>';
-            echo '<p> Siret : ' . $entreprise['Siret'] . '</p>';
-            echo '<p class="clinical-trials"> Nombre d\'essais cliniques : ' . count($clinical_trials) . '</p>';
-            echo '<p> Nos medecins partenaires : </p>';
-            echo '<ul id="medecins">';
-            $counter = 0;
-            foreach ($medecins as $medecin) {
-                if ($counter >= 5) break; // Arrête après 5 éléments
-                if ($medecin['Profile_picture'] == null){
-                    echo '<li> <img src="Pictures/defaultPicture.png" alt="pictureProfil" class="fixed_picture" style="cursor: pointer;"> </li>';
-                } else {
-                echo '<li>' . htmlspecialchars($medecin['Nom_Medecin']) . '</li>';
-                }
-                $counter++; // Incrémente après l'affichage
-            }
-            echo '</ul>';
-        echo '</div>';
-        
-    }
-
-    return [
-        'entreprise' => $resultats,
-        'clinical_trials' => $clinical_trials,
-        'medecins' => $medecins
-    ];
+        return [
+            'entreprise' => $resultats,
+            'clinical_trials' => $clinical_trials,
+            'medecins' => $medecins
+        ];
 
     } catch (PDOException $e) {
         echo "Erreur : " . $e->getMessage();
         return [];
-    
     } finally {
-    // Fermer la connexion
-    Fermer_base($conn);
+        Fermer_base($conn);
+    }
+}
+
+function Display_entreprise_data(array $data) {
+    if (empty($data['entreprise'])) {
+        echo '<p>Aucune entreprise trouvée.</p>';
+        return;
     }
 
+    foreach ($data['entreprise'] as $entreprise) {
+        echo '<div class="entreprise">';
+        echo '<h1>' . htmlspecialchars($entreprise['Nom_entreprise']) . '</h1>';
+        echo '<p>Téléphones : ' . htmlspecialchars($entreprise['Telephone']) . '</p>';
+        echo '<p>Siret : ' . htmlspecialchars($entreprise['Siret']) . '</p>';
+        echo '<p class="clinical-trials">Nombre d\'essais cliniques : ' . count($data['clinical_trials']) . '</p>';
+        echo '<p>Nos médecins partenaires :</p>';
+        echo '<ul id="medecins">';
+        
+        $counter = 0;
+        foreach ($data['medecins'] as $medecin) {
+            if ($counter >= 5) break; // Limite à 5 médecins
+            if (empty($medecin['Profile_picture'])) {
+                echo '<li><img src="Pictures/defaultPicture.png" alt="profile picture" class="fixed_picture" style="cursor: pointer;"></li>';
+            } else {
+                echo '<li>' . htmlspecialchars($medecin['Nom_Medecin']) . '</li>';
+            }
+            $counter++;
+        }
+        
+        echo '</ul>';
+        echo '</div>';
+    }
 }
+
 
 function Get_essais($role) {
     $conn = Connexion_base();
@@ -354,4 +353,112 @@ function enterprise_filter($liste_EC) {
         $enterpriseName = htmlspecialchars($EC['Nom_Entreprise'], ENT_QUOTES, 'UTF-8');
         echo '<option value="' . $enterpriseName . '">' . $enterpriseName . '</option>';
     }
+}
+
+function get_company(int $id_company): array {
+    $conn = Connexion_base();
+
+    try {
+        $sql = "
+    SELECT *
+    FROM ENTREPRISES
+    WHERE Id_entreprise = :id_entreprise;
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':id_entreprise', $id_company, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    // Récupérer les résultats
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return [];
+    
+    } finally {
+    // Fermer la connexion
+    Fermer_base($conn);
+    }
+}
+
+function get_patient(int $id_patient): array {
+    $conn = Connexion_base();
+
+    try {
+        $sql = "
+    SELECT *
+    FROM PATIENTS
+    WHERE Id_patient = :id_patient;
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':id_patient', $id_patient, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    // Récupérer les résultats
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return [];
+    
+    } finally {
+    // Fermer la connexion
+    Fermer_base($conn);
+    }
+}
+
+function display_patient_unique ($patient) {
+    $patient = $patient[0];
+    echo '<ul class = "patients">';
+    echo '<li class = "noms_patients">' . htmlspecialchars($patient['Nom']) . " " .htmlspecialchars($patient['Prenom']). '</li>';
+    echo '<li class = "age">' . htmlspecialchars($patient['Age']) . '</li>';
+    if ($patient['Profile_picture'] == null){
+        echo '<li> <img src="Pictures/defaultPicture.png" alt="pictureProfil" class="fixed_picture" style="cursor: pointer;"> </li>';
+    } else {
+    echo '<li class="fixed_picture">' . htmlspecialchars($patient['Profile_picture']) . '</li>';
+    }
+    echo '</ul>';
+}
+
+function verifier_essai_clinique(int $id_medecin, int $id_patient): bool {
+    // Connexion à la base de données
+    $conn = Connexion_base();
+    
+    try {
+        // Vérifier si le médecin et le patient sont inscrits au même essai clinique
+        $sql = "
+        SELECT COUNT(*) AS count
+        FROM MEDECIN_ESSAIS m
+        JOIN PATIENTS_ESSAIS p ON m.Id_essai = p.Id_essai
+        WHERE m.Id_medecin = :id_medecin
+        AND p.Id_patient = :id_patient;
+        ";
+        
+        // Préparer et exécuter la requête
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id_medecin', $id_medecin, PDO::PARAM_INT);
+        $stmt->bindParam(':id_patient', $id_patient, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        // Récupérer le résultat
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Si le résultat est supérieur à 0, cela signifie que le médecin et le patient sont inscrits au même essai
+        return $result['count'] > 0;
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return false;
+    } finally {
+        // Fermer la connexion
+        Fermer_base($conn);
+    }
+}
+
+function display_patient_medecin($patient){
+    $patient = $patient[0];
+    echo '<ul class = "patients">';
+    echo '<li>' . htmlspecialchars($patient['Taille']) . '</li>';
+    echo '<li>' . htmlspecialchars($patient['Poids']) . '</li>';
+    echo '<li>' . htmlspecialchars($patient['Traitements']) . '</li>';
+    echo '<li>' . htmlspecialchars($patient['Allergies']) . '</li>';
+    echo '<li>' . htmlspecialchars($patient['Cni']) . '</li>';
+    echo '</ul>';  
 }
