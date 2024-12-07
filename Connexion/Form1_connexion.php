@@ -49,24 +49,5 @@ include("../Fonctions.php");
             </form>
         </div>
     </div>
-<!-- DEBUG -->
-<?php if (isset($_SESSION['machin'])): ?>
-    <div class="debug-output">
-        <?php foreach ($_SESSION['machin'] as $key => $value): ?>
-            <p><strong><?php echo htmlspecialchars($key); ?>:</strong> <?php echo htmlspecialchars($value); ?></p>
-        <?php endforeach; 
-        echo var_dump($_SESSION["machin"][1]);
-        $type = password_verify($_SESSION["ma"], $_SESSION["machin"][1]);
-        echo var_dump($type);
-
-        $na = password_verify($_SESSION['ma'], password_hash($_SESSION['ma'], PASSWORD_DEFAULT));
-        echo $na .'<br>';
-        echo var_dump($na);
-
-        $truc = password_verify('i3s', '$2y$10$nduKVjNnufeX70ntSz6bdOB7HI59ibyAByApHazDQ.F4c8WrxCEni');
-        echo var_dump($truc)
-        ?>
-    </div>
-<?php endif; ?>
 </body>
 </html>

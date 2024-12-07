@@ -1,4 +1,7 @@
 <?php
+session_start();
+$db_name = "mysql:host=localhost;dbname=website_db"; 
+$_SESSION['db_name'] = $db_name;
 
 function Connexion_base(): PDO {
     $host = 'localhost';

@@ -19,7 +19,7 @@ if (isset($_POST['Part1C'])) {
     if (!$verifEmail) {
         $_SESSION['ErrorCode'] = 3; 
         Fermer_base($pdo);
-        header('Location: /projet-website/Homepage.php');
+        header('Location: /projet-website/Connexion/Form1_connexion.php#modal');
         exit;
         }
     
@@ -28,16 +28,13 @@ if (isset($_POST['Part1C'])) {
     $mdpCompte = $verifEmail[1];
     $roleCompte = $verifEmail[3];
 
-    $_SESSION['machin'] = $verifEmail;
-    $_SESSION['ma']= $password;
-
     //Vérification de la validation de l'utilisateur
     if ($roleCompte == 'Medecin' || $roleCompte == 'Entreprise') {
         $verification = Verif_validation_connexion($pdo, $idCompte, $roleCompte);
         if (!$verification) {
             $_SESSION['ErrorCode'] = 4;
             Fermer_base($pdo);
-            header('Location: /projet-website/Connexion/Form1_connexion.php');
+            header('Location: /projet-website/Connexion/Form1_connexion.php#modal');
             exit;
         }}
     
