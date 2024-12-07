@@ -27,6 +27,7 @@ include 'Fonctions_admin.php';
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
         <a href="Entreprises.php" class="nav-btn">Entreprise</a>
         <a href="Contact.php" class="nav-btn">Contact</a>
+        <a href="admin_page.php" class="nav-btn">Gestion</a>
         <div class="dropdown">
             <a href="Homepage.php">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">

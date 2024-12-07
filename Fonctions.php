@@ -238,15 +238,15 @@ function List_Medecin(int $id_medecin): array {
     try {
         $sql = "
     SELECT *
-    FROM ENTREPRISES
-    WHERE Id_entreprise = :Id_entreprise
+    FROM MEDECINS
+    WHERE Id_medecin = :id_medecin;
     ";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':Id_entreprise', $id_medecin, PDO::PARAM_INT);
+    $stmt->bindParam(':id_medecin', $id_medecin, PDO::PARAM_INT);
     $stmt->execute();
     
     // Récupérer les résultats
-    $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         echo "Erreur : " . $e->getMessage();
         return [];
@@ -255,7 +255,19 @@ function List_Medecin(int $id_medecin): array {
     // Fermer la connexion
     Fermer_base($conn);
     }
-    return $resultats;
+}
+
+function display_medecin($medecin) {
+    $medecin = $medecin[0];
+    echo '<ul class = "medecins">';
+    if ($medecin['Profile_picture'] == null){
+        echo '<li> <img src="Pictures/defaultPicture.png" alt="pictureProfil" class="fixed_picture" style="cursor: pointer;"> </li>';
+    } else {
+    echo '<li class="fixed_picture">' . htmlspecialchars($medecin['Profile_picture']) . '</li>';
+    }
+    echo '<li class = "noms_medecins">' . htmlspecialchars($medecin['Nom']) . " " .htmlspecialchars($medecin['Prenom']). '</li>';
+    echo '<li class = "specialite">' . htmlspecialchars($medecin['Specialite']) . '</li>';
+    echo '</ul>';
 }
 
 

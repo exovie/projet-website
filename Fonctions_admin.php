@@ -1,5 +1,7 @@
 <?php
 
+include 'Fonctions.php';
+
 function Valider_inscription($id_user) {
     $conn = Connexion_base();
         try {
@@ -77,4 +79,10 @@ function refus_inscription($id_user) {
         // Fermer la connexion
         Fermer_base($conn);
     }
+}
+
+function display_users() {
+    $medecins = Get_id('MEDECINS', 'Id_medecin');
+    $entreprises = Get_id('ENTREPRISES', 'Id_entreprise');
+    $patients = Get_id('PATIENTS', 'Id_patient');
 }

@@ -29,6 +29,11 @@ include 'Fonctions.php';
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
         <a href="Entreprises.php" class="nav-btn">Entreprise</a>
         <a href="Contact.php" class="nav-btn">Contact</a>
+        <?php
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['role'] == 'admin')) {
+                echo '<a href="admin_page.php" class="nav-btn">Gestion</a>';
+            }
+        ?>
         <div class="dropdown">
             <a href="Homepage.php">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
@@ -67,7 +72,19 @@ include 'Fonctions.php';
 
             ?>
             </div>
-            <p class="presentation">Les médecins membres :</p>
+            <p class="presentation" id="medecin">Les médecins membres :</p>
+            <div id="medecin_boxes">
+            <?php
+              $id_medecins = Get_id( 'MEDECINS', 'Id_medecin');
+              $counter = 0;
+              foreach ($id_medecins as $id_medecin) {
+                if ($counter == 10) break;
+                $medecins = List_Medecin($id_medecin);
+                display_medecin($medecins);
+                $counter++;
+              }
+            ?>
+            </div>
             <p><a href="https://www.linkedin.com/in/oussamaammar/">Pour plus d'informations</a></p>
             <img src="https://media.wired.com/photos/5f87340d114b38fa1f8339f9/master/w_1600%2Cc_limit/Ideas_Surprised_Pikachu_HD.jpg" alt="Surprised Pikachu">
             <p>L'eau, dans 20, 30 ans <br> il n'y en aura plus</p>
@@ -76,28 +93,3 @@ include 'Fonctions.php';
     </div>
 </body>
 </html>
-
-<!--
-<form action="TD2_exo3.php" method="post">
-  <label for="nom">Entrez le produit voulu et la quantité au format suivant :</label>
-  <input type="text" id="nom" placeholder="produit, quantité" name="nom" required>
-  
-  <br><br>
-  <input type="submit" value="Envoyer">
-</form> 
-
-    foreach ($clinical_trials as $essai_clinique) {
-        echo '<ul>';
-        echo '<li>Titre : ' . $essai_clinique['Titre'] . '</li>';
-        echo '<li>Contexte : ' . $essai_clinique['Contexte'] . '</li>';
-        echo '<li>Objectif de l\'essai : ' . $essai_clinique['Objectif_essai'] . '</li>';
-        echo '<li>Design de l\'étude : ' . $essai_clinique['Design_etude'] . '</li>';
-        echo '<li>Critère d\'évaluation : ' . $essai_clinique['Critere_evaluation'] . '</li>';
-        echo '<li>Résultats attendus : ' . $essai_clinique['Resultats_attendus'] . '</li>';
-        echo '<li>Date de lancement : ' . $essai_clinique['Date_lancement'] . '</li>';
-        echo '<li>Date de fin : ' . $essai_clinique['Date_fin'] . '</li>';
-        echo '<li>Date de création : ' . $essai_clinique['Date_creation'] . '</li>';
-        echo '<li>Statut : ' . $essai_clinique['Statut'] . '</li>';
-        echo '</ul>';
-    }
--->
