@@ -392,7 +392,6 @@ function refus_inscription($id_user) {
     // Fermer la connexion
     Fermer_base($conn);
     }
-    return $resultats;
 }
 
 
