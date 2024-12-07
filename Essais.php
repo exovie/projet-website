@@ -4,7 +4,7 @@ $_SESSION['origin'] = 'Essais_cliniques';
 $role = $_SESSION['role'];
 $db_name = $_SESSION['db_name'];
 include 'Fonctions.php';
-$list_essai = Get_essais($role, $db_name);
+$list_essai = Get_essais($role);
 ?>
 
 <!DOCTYPE html>
