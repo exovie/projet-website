@@ -105,7 +105,7 @@ function Modif_Description_Essai(int $Id_essai,string $Titre, string $Contexte, 
 }
 
 //Méthode médecin
-function Modif_Infos_Essai(int $Id_patient, int $Id_essai, int $Poids, string $Traitements, string $Allergies){
+function Modif_Infos_Patient(int $Id_patient, int $Id_essai, int $Poids, string $Traitements, string $Allergies){
 
     try{
         $conn = Connexion_base();
