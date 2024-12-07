@@ -83,8 +83,8 @@ $Statut_essai = 'Recrutement';
             if($role =='medecin'){
                 if(Verif_Participation_Medecin($Id_user, $Id_essai)){//si ce médecin s'occupe de cet essai
                      echo '<button class="nav-btn_essai" onclick="Retirer_Medecin_Essai(' . $Id_essai . ', ' . $Id_user . ')">Se retirer de cet essai</button>';
-                     Afficher_Patients($Id_essai,'Actif', $Id_entreprise);
-                     Afficher_Patients($Id_essai,'En attente', $Id_entreprise); }
+                     Afficher_Patients($Id_essai,'Actif');
+                     Afficher_Patients($Id_essai,'En attente'); }
                     //modifier les infos des patients dans la page menant au patient
 
                 else{ // si ce médecin ne s'occupe pas de cet essai
@@ -93,10 +93,10 @@ $Statut_essai = 'Recrutement';
                     }
                 }
             if ($role == 'admin'){
-                Afficher_Patients($Id_essai,'Actif', $Id_entreprise);
-                Afficher_Patients($Id_essai,'En attente', $Id_entreprise); 
-                Afficher_Medecins($Id_essai,'Actif', $Id_entreprise);
-                Afficher_Medecins($Id_essai,'En attente', $Id_entreprise);
+                Afficher_Patients($Id_essai,'Actif');
+                Afficher_Patients($Id_essai,'En attente'); 
+                Afficher_Medecins($Id_essai,'Actif');
+                Afficher_Medecins($Id_essai,'En attente');
                 echo '<button class="nav-btn_essai" onclick="Suspendre_Essai(' . $Id_essai . ')"> Suspendre cet essai</button>';
                 //modifier l'essai?
                 //demander_medecin?
@@ -104,8 +104,8 @@ $Statut_essai = 'Recrutement';
             }
 
             if ($role == 'entreprise'){
-                Afficher_Medecins($Id_essai,'Actif', $Id_entreprise);
-                Afficher_Medecins($Id_essai,'En attente', $Id_entreprise);
+                Afficher_Medecins($Id_essai,'Actif');
+                Afficher_Medecins($Id_essai,'En attente');
                 echo '<button class="nav-btn_essai" onclick="Suspendre_Essai(' . $Id_essai . ')"> Suspendre cet essai</button>';
                     //si le recrutement a commencé: afficher les statistiques
                     //demander un médecin
