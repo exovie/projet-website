@@ -17,7 +17,7 @@ $conn= Connexion_base();
         if ($role_user !== 'Entreprise') {
             return "Vous devez être une entreprise pour créer un essai clinique.";
         }
-        echo "Verification statut";
+        
         // Générer un Id_essai unique
         $stmt = $conn->query("SELECT MAX(Id_essai) AS max_id FROM essais_cliniques");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
