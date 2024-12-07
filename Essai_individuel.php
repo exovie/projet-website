@@ -5,7 +5,11 @@ ini_set('display_errors', 1); // Affiche les erreurs à l'écran
 ini_set('display_startup_errors', 1); // Affiche les erreurs au démarrage de PHP
 //include 'Fonctions.php';
 include 'Fonctions_essai.php';
-
+$Id_essai = 1;
+$Id_entreprise = 7;
+$role = 'admin';
+$Id_user = 15;
+$Statut_essai = 'Recrutement';
 
 ?>
 
@@ -62,46 +66,55 @@ include 'Fonctions_essai.php';
                 <main>
 
     <div id="indiv_trial_boxes">
-       <?php Afficher_essai(1);
-       //if statut == 'patient'{
-             //if (Verif_Patient_Cet_Essai($Id_essai, $Id_patient)){
-                     //echo '<button class="nav-btn_essai" onclick="Retirer_Patient_Essai(' . $Id_essai . ', ' . $Id_patient . ')">Se retirer de cet essai</button>';}
-            //else{
-               // if(!Verif_Participation_Patient($Id_patient)){
- //echo '<button class="nav-btn_essai" onclick="Postuler_Patient_Essai(' . $Id_essai . ', ' . $Id_patient . ')">Participer à cet essai</button>';}
-                //}}
+       <?php Afficher_Essai($Id_essai); ?>
+        </div> 
+        <div class="frame">
+        <?php   if($role == 'patient'){
+                    if (Verif_Patient_Cet_Essai($Id_essai, $Id_user)){ //si ce patient est dans cet essai
+                     echo '<button class="nav-btn_essai" onclick="Retirer_Patient_Essai(' . $Id_essai . ', ' . $Id_user . ')">Se retirer de cet essai</button>';}
+                     
+                    else{
+                if(!Verif_Participation_Patient($Id_user)&& $Statut_essai == 'Recrutement'){ //si ce patient n'est pas dans cet essai
+                    echo '<button class="nav-btn_essai" onclick="Postuler_Patient_Essai(' . $Id_essai . ', ' . $Id_user . ')">Participer à cet essai</button>';}
+                }
+                }
  
 
-       //if statut =='medecin'{
-            //if(Verif_Participation_Medecin($Id_medecin, $Id_essai))//si ce médecin s'occupe de cet essai{
-                    //echo '<button class="nav-btn_essai" onclick="Retirer_Medecin_Essai(' . $Id_essai . ', ' . $Id_medecin . ')">Se retirer de cet essai</button>';}
-                    //afficher la liste des patients + les stats?
-                    //modifier les infos des patients
-                    //retirer un patient
-                    //traiter la candidature
-            //else{
-                    // if ('statut_essai' != 'Termine'){
-                        // //echo '<button class="nav-btn_essai" onclick="Postuler_Medecin_Essai(' . $Id_essai . ', ' . $Id_medecin . ')"> Participer à cet essai</button>';}
-                    //}
-       //}
-       //if (statut == 'admin'){
-            // Afficher la liste des patients, possibilité de les retirer?
-            //Afficher la liste des médecins
-            //suspendre l'essai
+            if($role =='medecin'){
+                if(Verif_Participation_Medecin($Id_user, $Id_essai)){//si ce médecin s'occupe de cet essai
+                     echo '<button class="nav-btn_essai" onclick="Retirer_Medecin_Essai(' . $Id_essai . ', ' . $Id_user . ')">Se retirer de cet essai</button>';
+                     Afficher_Patients($Id_essai,'Actif', $Id_entreprise);
+                     Afficher_Patients($Id_essai,'En attente', $Id_entreprise); }
+                    //modifier les infos des patients dans la page menant au patient
 
-       //}
-       // if (statut == 'entreprise'){
+                else{ // si ce médecin ne s'occupe pas de cet essai
+                    if ($Statut_essai != 'Termine'){
+                        echo '<button class="nav-btn_essai" onclick="Postuler_Medecin_Essai(' . $Id_essai . ', ' . $Id_user . ')"> Participer à cet essai</button>';}
+                    }
+                }
+            if ($role == 'admin'){
+                Afficher_Patients($Id_essai,'Actif', $Id_entreprise);
+                Afficher_Patients($Id_essai,'En attente', $Id_entreprise); 
+                Afficher_Medecins($Id_essai,'Actif', $Id_entreprise);
+                Afficher_Medecins($Id_essai,'En attente', $Id_entreprise);
+                echo '<button class="nav-btn_essai" onclick="Suspendre_Essai(' . $Id_essai . ')"> Suspendre cet essai</button>';
+                //modifier l'essai?
+                //demander_medecin?
+            
+            }
+
+            if ($role == 'entreprise'){
+                Afficher_Medecins($Id_essai,'Actif', $Id_entreprise);
+                Afficher_Medecins($Id_essai,'En attente', $Id_entreprise);
+                echo '<button class="nav-btn_essai" onclick="Suspendre_Essai(' . $Id_essai . ')"> Suspendre cet essai</button>';
                     //si le recrutement a commencé: afficher les statistiques
                     //demander un médecin
-                    //retirer un médecin
                     //modifier l'essai si le recrutement n'a pas débuté
-                    //suspendre l'essai
-       //}
-       
-       
+               
+       }
+
        ?>
-               <!-- mettre le contenu de la page ici -->
-                     
-    </div>
-                </main>              
+   </div>
+</main>
 </body>
+</html>

@@ -54,3 +54,33 @@ main {
     display: inline-block;
     text-decoration: none;
 }
+
+.frame {
+    border: 1px solid #ccc; /* Bordure grise */
+    padding: 15px;
+    margin: 20px auto; /* Centré avec marge */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 1200px; /* Plus large */
+    background-color: rgba(132, 219, 210, 0.475);
+    border: 5px solid rgba(64, 224, 208, 0.2);
+}
+
+/* Style du tableau */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(132, 219, 210, 0.475);
+}
+
+th, td {
+
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+}
+
+th {
+
+    background-color: rgba(132, 219, 210, 0.475);
+}
