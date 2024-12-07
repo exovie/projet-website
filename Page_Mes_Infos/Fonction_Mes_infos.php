@@ -105,19 +105,19 @@ function getHistoriqueEssais($conn, int $id_user) {
         $roleValue=$role['Role'];
         switch ($roleValue) {
             case 'Patient':
-                $query = "SELECT essais_cliniques.Id_essai, Statut, Date_creation
+                $query = "SELECT Titre, Statut, Date_creation
                           FROM patients_essais 
                           JOIN essais_cliniques  ON patients_essais.Id_essai = essais_cliniques.Id_essai
                           WHERE patients_essais.Id_patient = :id_user";
                 break;
             case 'Medecin':
-                $query = "SELECT essais_cliniques.Id_essai, Statut, Date_creation
+                $query = "SELECT Titre, Statut, Date_creation
                           FROM medecin_essais 
                           JOIN essais_cliniques  ON medecin_essais.Id_essai = essais_cliniques.Id_essai
                           WHERE medecin_essais.Id_medecin = :id_user";
                 break;
                 case 'Entreprise':
-                $query = "SELECT essais_cliniques.Id_essai, Statut, Date_creation
+                $query = "SELECT Titre, Statut, Date_creation
                           FROM essais_cliniques
                           WHERE Id_entreprise = :id_user";
             
