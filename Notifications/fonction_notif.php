@@ -104,7 +104,7 @@ function Lire_notif($Id_notif, $Id_user) {
     Fermer_base($pdo);
 };
 
-function Ne_plus_lire_no_notif($Id_notif, $Id_user) {
+function Ne_plus_lire_notif($Id_notif, $Id_user) {
         $pdo = Connexion_base();
         if ($_SESSION['role'] == 'Medecin') {
             // Mark the notification as read for all doctors
@@ -118,4 +118,17 @@ function Ne_plus_lire_no_notif($Id_notif, $Id_user) {
         //if role medecein => ouvert pour tous les medecins
         Fermer_base($pdo);
 };
+
+function Obtenir_statut_notification($id_notif, $id_destinataire) {
+    $pdo = Connexion_base();
+
+    $stmt = $pdo->prepare(
+        'SELECT Statut_notification FROM DESTINATAIRE WHERE Id_notif = :id_notif AND Id_destinataire = :id_destinataire');
+    $stmt->execute(['id_notif' => $id_notif,'id_destinataire' => $id_destinataire]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    Fermer_base($pdo);
+    // Retourner le statut si trouvé, sinon indiquer que la notification n'existe pas
+    return $result ? $result['Statut_notification'] : 'Notification introuvable';
+}
+
 ?>
