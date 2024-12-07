@@ -42,6 +42,13 @@
 </head>
 
 <?php 
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Inclure le module ou fichier PHP
+include 'module.php';
+
 // Fonction pour générer une ligne de résultat
 function addTestResult($functionName, $expected, $actual, $condition, $com='') {
     $class = $condition ? 'success' : 'failure';
@@ -60,13 +67,16 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
     <h2>Connexion à la Base de Données</h2>
     
     <?php
+    echo"la ";
+    include 'Fonctions.php';
+
     // Vérification de la connexion
-    try {
-        $pdo = Connexion_base();
+    echo "ici";
+    $pdo = Connexion_base();
+    if ($pdo){
         echo "<p class='success'>Connexion à la base de données réussie.</p>";
-    } catch (PDOException $e) {
-        echo "<p class='failure'>Erreur de connexion : " . $e->getMessage() . "</p>";
-        die();
+    } else {
+        echo "<p class='failure'>Erreur de connexion : " ;
     }
     ?>
 
@@ -374,6 +384,36 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
                 <th>Commentaire</th>
             </tr>
         </thead>
+        <?php 
+        include 'Notifications/fonction_notif.php'; 
+
+        //Verif notifications
+        $NotifT = Verif_notif(19,3,5);
+        addTestResult(
+            'Verif_notif existe',
+            'Il faut générer une nouvelle notification',
+            $NotifT ? 'Il faut générer une nouvelle notification' : "La notification précédente n'est pas ouverte",
+            $NotifT == true
+        );
+        $NotifNew = Verif_notif(19, 3, 98);
+        addTestResult(
+            "Verif_notif n'exite pas ",
+            "Il faut générer une nouvelle notification",
+            $NotifF ? 'Il faut générer une nouvelle notification' : "La notification précédente n'est pas ouverte",
+            $NotifF == true
+        );
+        $NotifF = Verif_notif(19,3, 16 );
+        addTestResult(
+            'Verif_notif Non ouverte',
+            "La notification précédente n'est pas ouverte",
+            $NotifF ? 'Il faut générer une nouvelle notification' : "La notification précédente n'est pas ouverte",
+            $NotifF == false
+        );
+
+
+
+
+        ?>
         <tbody>
 
 </body>
