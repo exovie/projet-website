@@ -45,9 +45,9 @@ include("../Fonctions.php");
             <div class="form-group">
                 <label for="role">Rôle :</label>
                 <select id="role" name="role" required>
-                    <option value="patient">Patient</option>
-                    <option value="medecin">Médecin</option>
-                    <option value="entreprise">Entreprise</option>
+                    <option value="Patient">Patient</option>
+                    <option value="Medecin">Médecin</option>
+                    <option value="Entreprise">Entreprise</option>
                 </select>
             </div>
                 <button type="submit" name="part1">Continuer</button>
