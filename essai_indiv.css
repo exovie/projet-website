@@ -1,0 +1,56 @@
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+main {
+    padding-top: 120px; /* Remplacez 60px par la hauteur exacte de votre bandeau */
+}
+
+.indiv_trials{
+    width: 60%; /* Largeur fixe pour uniformiser */
+    padding: 10px;
+    border: 5px solid rgba(64, 224, 208, 0.2);
+    border-radius: 20px;
+    background-color: rgba(132, 219, 210, 0.475);
+    text-align: left;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+    list-style: none;
+}
+
+.indiv_trials .indiv_trial_title {
+    font-weight: bold;
+    font-size: 40px; 
+}
+
+.indiv_trials li {
+    margin: 5px 0;
+    margin-bottom: 15px; /* Ajoute un espacement entre les lignes */
+    line-height: 1.6;  
+    font-size: 20px; 
+}
+
+#indiv_trial_boxes {
+    display: flex; /* Active Flexbox */
+    justify-content: center; /* Centre horizontalement */
+    align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
+    flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */ /* Espacement entre les boîtes */
+    padding: 20px; /* Optionnel : ajoute de l'espace interne */    
+}
+
+.nav-btn_essai {
+    position: fixed;
+    top: 220px;  /* Distance depuis le bas de la fenêtre */
+    right: 40px; 
+    background-color: rgb(24, 98, 104);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 28px;
+    display: inline-block;
+    text-decoration: none;
+}
