@@ -8,9 +8,9 @@ function Stat_data($conn, int $id_essai){
         // Requête pour récupérer les poids et les sexes des patients
         $query = $conn->prepare("
             SELECT Poids, Sexe, Taille, Date_naissance
-            FROM patients 
-            JOIN patients_essais ON patients.Id_patient = patients_essais.Id_patient
-            WHERE patients_essais.Id_essai = :id_essai
+            FROM PATIENTS 
+            JOIN PATIENTS_ESSAIS ON PATIENTS.Id_patient = PATIENTS_ESSAIS.Id_patient
+            WHERE PATIENTS_ESSAIS.Id_essai = :id_essai
         ");
 
         $query->bindParam(':id_essai', $id_essai, PDO::PARAM_INT);
