@@ -94,7 +94,7 @@ function Modif_Description_Essai(int $Id_essai,string $Titre, string $Contexte, 
         $Liste_medecin = $tableau["Id_medecin"];
         foreach ($tableau_medecin as $medecin) {
             $Id_medecin = $medecin['Id_medecin'];
-            Generer_notif(16, $Id_medecin); // Fonction pour générer une notification
+            Generer_notif(16, $Id_essai, $Id_medecin); // Fonction pour générer une notification
         }}
         Fermer_base($conn);
         echo "Notifs envoyées avec succès";
@@ -222,7 +222,7 @@ function Suspendre_Essai(int $Id_essai){
         $requete_bis->execute(array($Id_essai));
         $tableau = $requete_bis->fetch();
         $Id_entreprise = $tableau["Id_entreprise"];
-         Generer_notif(17, $Id_entreprise);
+         Generer_notif(17, $Id_essai, $Id_entreprise);
          Fermer_base($conn);
         // Envoi aux médecins
         $conn = Connexion_base();
