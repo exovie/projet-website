@@ -39,11 +39,6 @@ include_once 'Notifications/fonction_notif.php';
 
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
-        <?php
-        //if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['role'] == 'admin')) {
-                echo '<a href="admin_page.php" class="nav-btn">Gestion</a>';
-        //    }
-        ?>
         <div class="dropdown">
             <a href="Homepage.php#messagerie">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
@@ -77,6 +72,11 @@ include_once 'Notifications/fonction_notif.php';
             <?php endif; ?>
             </div>
         </div>
+        <?php
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['role'] == 'admin')) {
+                echo '<a href="admin_page.php" class="nav-btn">Gestion</a>';
+        }
+        ?>
     </div>
 
     <!-- Message Success -->

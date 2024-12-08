@@ -486,7 +486,6 @@ function SuccesEditor($SuccessCode){
         </div>
     </div>';}
 
-    ?>
 
 function get_company(int $id_company): array {
     $conn = Connexion_base();
@@ -595,3 +594,5 @@ function display_patient_medecin($patient){
     echo '<li>' . htmlspecialchars($patient['Cni']) . '</li>';
     echo '</ul>';  
 }
+
+?>
