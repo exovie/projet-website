@@ -57,7 +57,7 @@
     top: -20px;
 }
 .content {
-    padding-top: 70px;
+    padding-top: 100px;
     text-align: center;
 }
 .capsule-border {
@@ -331,7 +331,7 @@ button:hover {
 }
 
 .search-container {
-    width: 40%;
+    width: 100%;
     margin: 20px auto;
     display: flex;
     justify-content: center;
