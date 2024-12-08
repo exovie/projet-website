@@ -1,7 +1,7 @@
 <?php
 
 //Connection à la base
-include('Connexion_base.php');
+include("../Fonctions.php");
 $conn=Connexion_base();
 
 //Récupération des infos

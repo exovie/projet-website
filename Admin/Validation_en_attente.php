@@ -1,6 +1,6 @@
 <?php
 // Connexion à la base de données
-include('Connexion_base.php');
+include("../Fonctions.php");
 $conn = Connexion_base();
 
 // Vérifier l'action de validation ou de refus

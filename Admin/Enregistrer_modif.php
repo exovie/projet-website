@@ -1,7 +1,6 @@
 <?php
 session_start();
-
-include('Connexion_base.php');
+include("../Fonctions.php");
 
 $conn=Connexion_base();
 
