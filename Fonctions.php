@@ -228,7 +228,7 @@ function List_Medecin(int $id_medecin): array {
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':id_medecin', $id_medecin, PDO::PARAM_INT);
     $stmt->execute();
-        
+    
     // Récupérer les résultats
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
@@ -239,7 +239,6 @@ function List_Medecin(int $id_medecin): array {
     // Fermer la connexion
     Fermer_base($conn);
     }
-    return $resultats;
 }
 
 function display_medecin($medecin) {
