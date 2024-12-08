@@ -34,7 +34,7 @@ function Fermer_base($pdo){
 
 //attention aux dates, elles sont initialisées à 000/00/00 à la création, il faut donc les update et non les insert
 //verif_nombremedecin, manque le cas où le nombre re passe en dessous de 2, changer le 2 d'ailleurs
-//se pencher sur l'histoire de statut en pause des médecins dans suspendre essais
+
 
 function Ajout_Bdd_Essai(int $Id_entreprise, string $Titre, string $Contexte, string $Objectif_essai, string $Design_etude, string $Criteres_evaluation, string $Resultats_attendus, int $Id_essai_precedent, int $Nb_medecins, int $Nb_patients) {
     try{
@@ -508,13 +508,30 @@ function Verif_Participation_Medecin($Id_medecin, $Id_essai){
 
 function Afficher_Essai($Id_essai){
     $conn = Connexion_base();
-    $stmt = $conn->prepare("SELECT * FROM `ESSAIS_CLINIQUES` WHERE `Id_essai` = ?");
+    $stmt = $conn->prepare("SELECT ESSAIS_CLINIQUES.*, ENTREPRISES.Nom_entreprise  FROM ESSAIS_CLINIQUES 
+    INNER JOIN ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise WHERE ESSAIS_CLINIQUES.Id_essai = ?");
     $stmt->execute(array($Id_essai));
-
-    // Récupérer les résultats
     $resultats = $stmt->fetch(PDO::FETCH_ASSOC);
+    Fermer_base($conn);
+//on recupère les nom des médecins
+    $conn = Connexion_base();
+    $requete_medecin = $conn -> prepare("SELECT CONCAT('Dr. ', MEDECINS.Prenom, ' ', MEDECINS.Nom) AS Medecin
+    FROM MEDECINS INNER JOIN MEDECIN_ESSAIS ON MEDECINS.Id_medecin = MEDECIN_ESSAIS.Id_medecin
+    WHERE MEDECIN_ESSAIS.Id_essai = ?  AND (MEDECIN_ESSAIS.Statut_medecin = 'Actif' OR MEDECIN_ESSAIS.Statut_medecin = 'Termine')");
+     $requete_medecin -> execute(array($Id_essai));
+     $medecins = $requete_medecin -> fetchAll(PDO::FETCH_ASSOC);
+    Fermer_base($conn);
     echo '<ul class="indiv_trials">';
-    echo '<li class="indiv_trial_title"> ' . htmlspecialchars($resultats['Titre']) . '</li><br><br>'; 
+    echo '<li class="indiv_trial_title"> ' . htmlspecialchars($resultats['Titre']) . '</li><br>'; 
+    echo '<li><strong> Mené par l\'entreprise '. htmlspecialchars($resultats['Nom_entreprise']) .'</strong></li>';
+    echo '<li><strong> Encadrée par: </strong>';
+    $medecins_list = []; // Crée un tableau pour stocker les médecins
+foreach ($medecins as $medecin) {
+    $medecins_list[] = htmlspecialchars($medecin['Medecin']); // Ajoute chaque médecin au tableau
+}
+
+echo implode(', ', $medecins_list); // Affiche les médecins séparés par des virgules
+echo '</li><br><br>';
     echo '<li><strong>Contexte :</strong> ' . htmlspecialchars($resultats['Contexte']) . '</li>';
     echo '<li><strong>Objectif de l\'essai :</strong> ' . htmlspecialchars($resultats['Objectif_essai']) . '</li>';
     echo '<li><strong>Design de l\'étude :</strong> ' . htmlspecialchars($resultats['Design_etude']) . '</li>';
