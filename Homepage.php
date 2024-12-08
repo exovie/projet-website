@@ -5,7 +5,7 @@ $_SESSION['origin'] = 'Homepage';
 $db_name = "mysql:host=localhost;dbname=website_db"; 
 $_SESSION['db_name'] = $db_name;
 if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true) {
-    $_SESSION['role'] = $role;
+    $role= $_SESSION['role'];
 
 } else {
     $_SESSION['role'] = 'visiteur';
@@ -21,7 +21,7 @@ include_once 'Notifications/fonction_notif.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="'utf-8">
     <link rel="stylesheet" href='website.css'>
-    <link rel="stylesheet" href= 'navigationBar.css'>
+    <link rel="stylesheet" href='navigationBar.css'>
     <link rel="stylesheet" href='Notifications/Notifications_style.css'>
 </head>
 <body>
@@ -35,7 +35,11 @@ include_once 'Notifications/fonction_notif.php';
         </div>
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
         <a href="Entreprises.php" class="nav-btn">Entreprise</a>
-        <a href="Contact.php" class="nav-btn">Contact</a>
+
+        <!-- Accès à la page de Gestion -->
+        <?php if ($_SESSION['role'] == 'Admin'): ?>
+            <a href="Admin/Home_Admin.php" class="nav-btn">Gestion</a>
+        <?php endif; ?>
 
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
@@ -60,8 +64,8 @@ include_once 'Notifications/fonction_notif.php';
                 } elseif ($_SESSION['role'] == 'Entreprise') {
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "®</h1>";
                 } elseif(($_SESSION['role']=='Admin')){
-                    echo "<h1 style='font-size: 18px; text-align: center;'>Admin</h1>";}
-                else{
+                    echo "<h1 style='font-size: 18px; text-align: center;'>Admin</h1>";
+                } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
                 ?>
@@ -74,11 +78,6 @@ include_once 'Notifications/fonction_notif.php';
             <?php endif; ?>
             </div>
         </div>
-        <?php
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['role'] == 'admin')) {
-                echo '<a href="admin_page.php" class="nav-btn">Gestion</a>';
-        }
-        ?>
     </div>
 
     <!-- Message Success -->
@@ -107,8 +106,6 @@ include_once 'Notifications/fonction_notif.php';
             <?php Affiche_notif($_SESSION['Id_user'])?>
         </div>
     </div>
-
-    <!-- Contenu principal -->
 
     <!-- Contenu principal -->
     <div class="content">

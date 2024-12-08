@@ -16,7 +16,7 @@ include 'Notifications/fonction_notif.php';
   </head>
   <body>
         <!-- Code de la barre de navigation -->
-        <div class="navbar">
+    <div class="navbar">
         <div id="logo">
             <a href="Homepage.php">
                 <img src="Pictures/logo.png" alt="minilogo" class="minilogo">
@@ -24,12 +24,16 @@ include 'Notifications/fonction_notif.php';
         </div>
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
         <a href="Entreprises.php" class="nav-btn">Entreprise</a>
-        <a href="Contact.php" class="nav-btn">Contact</a>
+
+        <!-- Accès à la page de Gestion -->
+        <?php if ($_SESSION['role'] == 'Admin'): ?>
+            <a href="Admin/Home_Admin.php" class="nav-btn">Gestion</a>
+        <?php endif; ?>
 
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Entreprises.php#messagerie">
+            <a href="Homepage.php#messagerie">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
         </div>
@@ -48,7 +52,9 @@ include 'Notifications/fonction_notif.php';
                     echo "<h1 style='font-size: 18px; text-align: center;'>Dr " . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 } elseif ($_SESSION['role'] == 'Entreprise') {
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "®</h1>";
-                } else {
+                } elseif(($_SESSION['role']=='Admin')){
+                    echo "<h1 style='font-size: 18px; text-align: center;'>Admin</h1>";
+                } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
                 ?>
@@ -83,7 +89,7 @@ include 'Notifications/fonction_notif.php';
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
             <!-- Lien de fermeture qui redirige vers Homepage.php -->
-            <a href="/projet-website/Entreprises.php" class="close-btn">&times;</a>
+            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>
