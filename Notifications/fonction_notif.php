@@ -24,13 +24,23 @@ function Generer_notif($CodeNotif, $Id_essai, $Id_destinataire){
         // Code to generate the notification if it doesn't exist
         $stmt = $pdo->prepare("INSERT INTO NOTIFICATION (CodeNotif, Id_Essai, Date_Notif) VALUES (:code, :id_essai, :date)");
         $stmt->execute(['code' => $CodeNotif, 'id_essai' => $Id_essai, 'date' => date('Y-m-d H:i:s')]);
-
+        $stmt->closeCursor();
         $id_Notif = $pdo->lastInsertId(); // Get the ID of the notification
-
+        
+        if ($Id_essai == 'NULL'){
+        $users = $pdo->prepare("SELECT Id_user  FROM `USERS` WHERE Role ='Admin';");
+        $users->execute();
+        $users->closeCursor();
+        
+        foreach ($users as $user) {
+            $stmt = $pdo->prepare("INSERT INTO DESTINATAIRE (Id_notif, Id_destinataire, Statut_notification) VALUES (:id_notif, :id_dest, 'Non ouvert')");
+            $stmt->execute(['id_notif'=> $id_Notif, 'id_dest' => $user['Id_user']]);
+        }
+        } else{
         // Add the recipient to the Destinataire table
         $stmt = $pdo->prepare("INSERT INTO DESTINATAIRE (Id_notif, Id_destinataire, Statut_notification) VALUES (:id_notif, :id_dest, 'Non ouvert')");
         $stmt->execute(['id_notif'=> $id_Notif, 'id_dest' => $Id_destinataire]);
-
+        }
         Fermer_base($pdo);
         return $id_Notif;
     }else {
@@ -67,7 +77,7 @@ function List_Notif($Id_D) {
 
 function Lire_notif($Id_notif, $Id_user) {
     $pdo = Connexion_base();
-    if ($_SESSION['role'] == 'Medecin') {
+    if ($_SESSION['role'] == 'Medecin'|| $_SESSION['role'] == 'Admin') {
         // Mark the notification as read for all doctors
         $stmt = $pdo->prepare("UPDATE DESTINATAIRE SET Statut_notification = 'Ouvert' WHERE Id_notif = :id_notif");
         $stmt->execute(['id_notif' => $Id_notif]);
@@ -81,7 +91,7 @@ function Lire_notif($Id_notif, $Id_user) {
 
 function Ne_plus_lire_notif($Id_notif, $Id_user) {
         $pdo = Connexion_base();
-        if ($_SESSION['role'] == 'Medecin') {
+        if ($_SESSION['role'] == 'Medecin'|| $_SESSION['role'] == 'Admin') {
             // Mark the notification as read for all doctors
             $stmt = $pdo->prepare("UPDATE DESTINATAIRE SET Statut_notification = 'Non Ouvert' WHERE Id_notif = :id_notif");
             $stmt->execute(['id_notif' => $Id_notif]);
