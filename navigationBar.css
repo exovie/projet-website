@@ -19,7 +19,7 @@ h1 {
     top: 0;
     left: 0;
     width: 100%; 
-    background-color: turquoise;
+    background-color: rgb(64, 224, 208);
     display: flex;
     justify-content: space-around;
     align-items: center;
