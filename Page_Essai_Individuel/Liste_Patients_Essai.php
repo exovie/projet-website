@@ -4,7 +4,8 @@ qui participent à un essai*/
 
 session_start();
 include("Connexion_base.php");
-$id_essai = isset($_GET['id_essai']);
+
+$id_essai = isset($_POST['id_essai']);
 $conn= Connexion_base();
 
 function Liste_Patients_Essais($conn, int $id_essai){
@@ -12,9 +13,9 @@ function Liste_Patients_Essais($conn, int $id_essai){
     try {
   
         $query= $conn -> prepare("
-        SELECT Nom, Prenom, Date_naissance, Sexe, Telephone, Taille, Traitements, Allergies
+        SELECT patients.Id_patient, Nom, Prenom, Date_naissance, Sexe, Telephone, Poids, Taille, Traitements, Allergies
         FROM patients 
-        JOIN patients_essais ON patients_essais.Id_patient= patients.Id_patient
+        JOIN patients_essais ON patients_essais.Id_patient = patients.Id_patient
         WHERE patients_essais.Id_essai = :id_essai
         ");
         $query->bindParam(':id_essai', $id_essai, PDO::PARAM_INT);
@@ -66,11 +67,24 @@ function Liste_Patients_Essais($conn, int $id_essai){
             text-align: left;
         }
         th {
-            background-color: #4CAF50;
+            background-color: #4CAF9A;
             color: white;
         }
         tr:nth-child(even) {
             background-color: #f2f2f2;
+        }
+        .modifier-btn {
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: #007BFF;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+        }
+
+        .modifier-btn:hover {
+        background-color: #0056b3;
         }
     </style>
 </head>
@@ -132,9 +146,11 @@ $patients = Liste_Patients_Essais($conn, $id_essai);
                 <th>Date de Naissance</th>
                 <th>Sexe</th>
                 <th>Téléphone</th>
+                <th>Poids</th>
                 <th>Taille (cm)</th>
                 <th>Traitements</th>
                 <th>Allergies</th>
+                <th>Modifier</th> 
             </tr>
         </thead>
         <tbody>
@@ -146,9 +162,14 @@ $patients = Liste_Patients_Essais($conn, $id_essai);
                         <td><?= htmlspecialchars($patient['Date_naissance']) ?></td>
                         <td><?= htmlspecialchars($patient['Sexe']) ?></td>
                         <td><?= htmlspecialchars($patient['Telephone']) ?></td>
+                        <td><?= htmlspecialchars($patient['Poids']) ?></td>
                         <td><?= htmlspecialchars($patient['Taille']) ?></td>
                         <td><?= htmlspecialchars($patient['Traitements']) ?></td>
                         <td><?= htmlspecialchars($patient['Allergies']) ?></td>
+                        <td>
+                            <a href="Modifier_Patient_Essai.php?id_patient=<?= urlencode($patient['Id_patient']) ?>" 
+                            class="modifier-btn">Modifier</a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
