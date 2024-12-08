@@ -52,8 +52,9 @@ if (isset($_POST['Part1C'])) {
     $_SESSION['Id_user'] = $idCompte;
     $_SESSION['role'] = $roleCompte;
 
+    if ($roleCompte !== 'Admin'){
     $informationUSERS= RecupereInformations($pdo, $idCompte, $roleCompte);
-    $_SESSION['Nom'] = $informationUSERS[1];
+    $_SESSION['Nom'] = $informationUSERS[1];}
 
     $_SESSION['SuccessCode']= 2;
     Fermer_base($pdo);
