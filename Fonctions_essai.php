@@ -494,9 +494,10 @@ function Verif_Participation_Patient($Id_patient){
         $requete = $conn -> prepare("SELECT COUNT(*) AS is_active FROM `PATIENTS_ESSAIS` WHERE (`Id_patient` = ? AND `Statut_participation` = 'Actif')");
         $requete -> execute(array($Id_patient));
         $est_actif = $requete->fetch(PDO::FETCH_ASSOC);
+        Fermer_base($conn);
         // Retourner TRUE si actif, sinon FALSE
         return $est_actif['is_active'] > 0;
-        Fermer_base($conn);}
+       }
     catch (PDOException $e){
         echo "Erreur bdd/notifs: " . $e->getMessage(); }
 }
@@ -509,8 +510,9 @@ function Verif_Patient_Cet_Essai($Id_essai, $Id_patient){
         $requete -> execute(array($Id_patient, $Id_essai));
         $est_actif = $requete->fetch(PDO::FETCH_ASSOC);
         // Retourner TRUE si actif, sinon FALSE
+        Fermer_base($conn);
         return $est_actif['is_active'] > 0;
-        Fermer_base($conn);}
+        }
     catch (PDOException $e){
         echo "Erreur bdd/notifs: " . $e->getMessage(); }
 
@@ -524,8 +526,9 @@ function Verif_Participation_Medecin($Id_medecin, $Id_essai){
         $requete -> execute(array($Id_essai, $Id_medecin));
         $est_actif = $requete->fetch(PDO::FETCH_ASSOC);
         // Retourner TRUE si actif, sinon FALSE
+        Fermer_base($conn);
         return $est_actif['is_active'] > 0;
-        Fermer_base($conn);}
+        }
     catch (PDOException $e){
         echo "Erreur bdd/notifs: " . $e->getMessage(); }
 }     
