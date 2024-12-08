@@ -457,7 +457,7 @@ function Traiter_Candidature_Patient(int $Id_essai, int $Id_patient, int $Repons
     try{
         $conn = Connexion_base();
     if($Reponse == 1){
-        $requete_oui = $conn -> prepare("UPDATE `PATIENTS_ESSAIS` SET `Statut` = 'Actif' WHERE `Id_patient` = ?");
+        $requete_oui = $conn -> prepare("UPDATE `PATIENTS_ESSAIS` SET `Statut_participation` = 'Actif' WHERE `Id_patient` = ?");
         $requete_oui -> execute(array($Id_patient));
         // on prévient le patient de la validation
         Generer_notif(11, $Id_essai, $Id_patient);
@@ -469,7 +469,7 @@ function Traiter_Candidature_Patient(int $Id_essai, int $Id_patient, int $Repons
         Verif_nbPatient_Essai($Id_essai);
     }
     elseif($Reponse == 0){
-        $requete_non = $conn -> prepare("UPDATE `PATIENTS_ESSAIS` SET `Statut` = 'Refus' WHERE `Id_patient` = ?");
+        $requete_non = $conn -> prepare("UPDATE `PATIENTS_ESSAIS` SET `Statut_participation` = 'Refus' WHERE `Id_patient` = ?");
         $requete_non -> execute(array($Id_patient));
         // on prévient le patient du refus
         Generer_notif(21, $Id_essai, $Id_patient);

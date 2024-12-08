@@ -11,5 +11,5 @@ include 'Fonctions_essai.php';
 //Suspendre_Essai(1);
 //Afficher_essai(1);
 Traiter_Candidature_Medecin(3,21,1);
-
+Traiter_Candidature_Patient(11, 38,1);
 ?>
