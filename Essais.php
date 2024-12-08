@@ -16,6 +16,8 @@ $list_essai = Get_essais($role);
     <meta charset="'utf-8">
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href='navigationBar.css'>
+    <link rel="stylesheet" href='Notifications/Notifications_style.css'>
+
 
 </head>
 <body>
@@ -93,47 +95,53 @@ $list_essai = Get_essais($role);
         </div>
     </div>
     
-    <!-- Contenu principal -->
     <div class="content">
-      <!-- Barre de recherche -->
-      <div class="search-container">
-          <input type="text" class="search-box" placeholder="Rechercher..." id="searchInput">
-          <button class="search-button">Rechercher</button>
-      </div>
-      <!-- Sélection de filtres -->
-    <div class="filter-container">
-      <!-- Filtre de statut -->
-      <select name="statusFilter" class="filter-box">
-          <option value="Tous">Toutes les phases</option>
-          <option value="Recrutement">PHASE I</option>
-          <option value="En attente">PHASE II</option>
-          <option value="Terminé">PHASE III</option>
-      </select>
+    <!-- Barre de recherche -->
+    <form method="POST">
+        <div class="search-container">
+            <input type="text" name="navbar" class="search-box" placeholder="Rechercher..." id="searchInput">
+            <button type="submit" class="search-button">Rechercher</button>
+        </div>
 
-      <!-- Filtre de date -->
-      <select name="dateFilter" class="filter-box">
-          <option value="Tous">Toutes les dates</option>
-          <option value="Aujourd'hui">Aujourd'hui</option>
-          <option value="Cette semaine">Cette semaine</option>
-          <option value="Ce mois">Ce mois</option>
-      </select>
+        <!-- Sélection de filtres -->
+        <div class="filter-container">
+            <!-- Filtre de statut -->
+            <select name="phaseFilter" class="filter-box">
+                <option value="Tous">Toutes les phases</option>
+                <option value="Phase I">PHASE I</option>
+                <option value="Phase II">PHASE II</option>
+                <option value="Phase III">PHASE III</option>
+            </select>
 
-      <!-- Filtre de l'entreprise-->
-      <select name="dateFilter" class="filter-box">
-          <option value="Tous">Toutes les entreprises</option>
-          <option value="Aujourd'hui">Aujourd'hui</option>
-          <option value="Cette semaine">Cette semaine</option>
-          <option value="Ce mois">Ce mois</option>
-      </select>
-    </div>
+            <!-- Filtre de l'entreprise-->
+            <select name="companyFilter" class="filter-box">
+                <?php
+                enterprise_filter($list_essai);  // Liste des entreprises
+                ?>
+            </select>
+        </div>
+    </form>
+</div>
+
       <div>
           <div id="trial_boxes">
           <?php
-            List_essai($role, $db_name);
-          ?>
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                Display_essais($list_essai);
+            }
+            // Vérifier si le bouton a été cliqué
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['navbar'])) {
+                // Appeler une fonction PHP
+                $recherche = $_POST['navbar'];
+                $filtres = [$_POST['phaseFilter'], $_POST['companyFilter']]; 
+                recherche_EC($list_essai, $recherche, $filtres);
+            }
+
+            // Fonction PHP appelée
+            
+            ?>
           </div>
       </div>
     </div>
 </body>
 </html>
-
