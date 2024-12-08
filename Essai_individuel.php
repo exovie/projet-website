@@ -5,10 +5,10 @@ ini_set('display_errors', 1); // Affiche les erreurs à l'écran
 ini_set('display_startup_errors', 1); // Affiche les erreurs au démarrage de PHP
 //include 'Fonctions.php';
 include 'Fonctions_essai.php';
-$Id_essai = 1;
+$Id_essai = 3;
 $Id_entreprise = 7;
-$role = 'admin';
-$Id_user = 15;
+$role = 'medecin';
+$Id_user = 21;
 $Statut_essai = 'Recrutement';
 
 ?>
@@ -80,16 +80,21 @@ $Statut_essai = 'Recrutement';
                 }
  
 
-            if($role =='medecin'){
-                if(Verif_Participation_Medecin($Id_user, $Id_essai)){//si ce médecin s'occupe de cet essai
-                     echo '<button class="nav-btn_essai" onclick="Retirer_Medecin_Essai(' . $Id_essai . ', ' . $Id_user . ')">Se retirer de cet essai</button>';
-                     Afficher_Patients($Id_essai,'Actif');
-                     Afficher_Patients($Id_essai,'En attente'); }
-                    //modifier les infos des patients dans la page menant au patient
-
-                else{ // si ce médecin ne s'occupe pas de cet essai
-                    if ($Statut_essai != 'Termine'){
-                        echo '<button class="nav-btn_essai" onclick="Postuler_Medecin_Essai(' . $Id_essai . ', ' . $Id_user . ')"> Participer à cet essai</button>';}
+                if($role == 'medecin'){
+                    if(Verif_Participation_Medecin($Id_user, $Id_essai)){ // Si ce médecin s'occupe de cet essai
+                        echo '<button class="nav-btn_essai" onclick="Retirer_Medecin_Essai(' . $Id_essai . ', ' . $Id_user . ')">Se retirer de cet essai</button>';
+                        Afficher_Patients($Id_essai, 'Actif');
+                        Afficher_Patients($Id_essai, 'En attente');
+                    } else { // Si ce médecin ne s'occupe pas de cet essai
+                        if(Verif_Medecin_Sollicite($Id_essai, $Id_user)){
+                            echo '<div class="side-buttons_candidature">';
+                            echo '<p><strong>L\'entreprise souhaite vous solliciter sur cet essai, voulez-vous accepter ou refuser ?</strong></p>';
+                            echo '<button class="nav-btn_essai_candidature" onclick="Traiter_Candidature_Medecin('.$Id_essai.', '.$Id_user.', 1)">Accepter</button>';
+                            echo '<button class="nav-btn_essai_candidature" onclick="Traiter_Candidature_Medecin('.$Id_essai.', '.$Id_user.', 0)">Refuser</button>';
+                            echo '</div>';
+                        } elseif ($Statut_essai != 'Termine') {
+                            echo '<button class="nav-btn_essai" onclick="Postuler_Medecin_Essai(' . $Id_essai . ', ' . $Id_user . ')">Participer à cet essai</button>';
+                        }
                     }
                 }
             if ($role == 'admin'){
