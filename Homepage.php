@@ -59,7 +59,9 @@ include_once 'Notifications/fonction_notif.php';
                     echo "<h1 style='font-size: 18px; text-align: center;'>Dr " . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 } elseif ($_SESSION['role'] == 'Entreprise') {
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "®</h1>";
-                } else {
+                } elseif(($_SESSION['role']=='Admin')){
+                    echo "<h1 style='font-size: 18px; text-align: center;'>Admin</h1>";}
+                else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
                 ?>
