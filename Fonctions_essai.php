@@ -501,7 +501,19 @@ function Verif_Participation_Medecin($Id_medecin, $Id_essai){
         echo "Erreur bdd/notifs: " . $e->getMessage(); }
 }     
 
-
+//fonction qui vérifie si l'enterprise est l'organisatrice d'un essai donné
+function Verif_Organisation_Entreprise($Id_essai, $Id_entreprise){
+    try{
+        $conn = Connexion_base();
+        $requete = $conn -> prepare("SELECT COUNT(*) AS est_proprio FROM `ESSAIS_CLINIQUES` WHERE (`Id_essai` = ? AND `Id_entreprise` = ?)");
+        $requete -> execute(array($Id_essai, $Id_entreprise));
+        $est_proprio = $requete->fetch(PDO::FETCH_ASSOC);
+        // Retourner TRUE si actif, sinon FALSE
+        return $est_proprio['est_proprio'] > 0;
+        Fermer_base($conn);}
+    catch (PDOException $e){
+        echo "Erreur bdd/notifs: " . $e->getMessage(); }
+}    
 
 
 

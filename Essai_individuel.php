@@ -104,9 +104,10 @@ $Statut_essai = 'Recrutement';
             }
 
             if ($role == 'entreprise'){
-                Afficher_Medecins($Id_essai,'Actif');
-                Afficher_Medecins($Id_essai,'En attente');
-                echo '<button class="nav-btn_essai" onclick="Suspendre_Essai(' . $Id_essai . ')"> Suspendre cet essai</button>';
+                if(Verif_Organisation_Entreprise($Id_essai, $Id_user)){ //si l'entrepise gère cet essai
+                 Afficher_Medecins($Id_essai,'Actif');
+                 Afficher_Medecins($Id_essai,'En attente');
+                 echo '<button class="nav-btn_essai" onclick="Suspendre_Essai(' . $Id_essai . ')"> Suspendre cet essai</button>';}
                     //si le recrutement a commencé: afficher les statistiques
                     //demander un médecin
                     //modifier l'essai si le recrutement n'a pas débuté
