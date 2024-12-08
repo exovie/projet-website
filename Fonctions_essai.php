@@ -163,8 +163,7 @@ function Postuler_Medecin_Essai(int $Id_essai, int $Id_medecin){
             Generer_notif(5,$Id_essai, $Id_entreprise);
             Fermer_base($conn);
         }
-         catch (PDOExcepti
-on $e) {
+         catch (PDOException $e) {
         echo "Erreur notification: " . $e->getMessage(); }
 
     }
