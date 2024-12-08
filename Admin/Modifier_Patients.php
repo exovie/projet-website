@@ -1,7 +1,7 @@
 <?php
 
 //Connexion à la base de donnée
-include('Connexion_base.php');
+include("../Fonctions.php");
 $conn=Connexion_base();
 
 if (!isset($_GET['id'])) {

@@ -2,7 +2,7 @@
 /*Fichier php qui regroupe les fonctions utiliser pour la page Mes Infos*/
 
 //session_start();
-include("Connexion_base.php");
+include("../Fonctions.php");
 $conn = Connexion_base();
 
 //$role_user=$_SESSION['role'];

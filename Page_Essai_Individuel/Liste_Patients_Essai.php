@@ -3,7 +3,8 @@
 qui participent à un essai*/
 
 session_start();
-include("Connexion_base.php");
+include("../Fonctions.php");
+
 
 $id_essai = isset($_POST['id_essai']);
 $conn= Connexion_base();
@@ -13,10 +14,10 @@ function Liste_Patients_Essais($conn, int $id_essai){
     try {
   
         $query= $conn -> prepare("
-        SELECT patients.Id_patient, Nom, Prenom, Date_naissance, Sexe, Telephone, Poids, Taille, Traitements, Allergies
-        FROM patients 
-        JOIN patients_essais ON patients_essais.Id_patient = patients.Id_patient
-        WHERE patients_essais.Id_essai = :id_essai
+        SELECT PATIENTS.Id_patient, Nom, Prenom, Date_naissance, Sexe, Telephone, Poids, Taille, Traitements, Allergies
+        FROM PATIENTS 
+        JOIN PATIENTS_ESSAIS ON PATIENTS_ESSAIS.Id_patient = PATIENTS.Id_patient
+        WHERE PATIENTS_ESSAIS.Id_essai = :id_essai
         ");
         $query->bindParam(':id_essai', $id_essai, PDO::PARAM_INT);
         $query->execute();

@@ -3,7 +3,7 @@
 session_start();
 
 //Connexion à la base
-include("Connexion_base.php");
+include("../Fonctions.php");
 $conn = Connexion_base();
 
 include("Aff_Statistiques.php");
