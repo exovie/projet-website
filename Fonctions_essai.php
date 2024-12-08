@@ -8,6 +8,7 @@ ini_set('display_startup_errors', 1); // Affiche les erreurs au démarrage de PH
 
 // Inclure le module ou fichier PHP
 //include 'module.php';
+//include 'Notifications/fonction_notif.php';
 
 function Connexion_base(){
     $host = 'localhost';
@@ -90,9 +91,8 @@ function Modif_Description_Essai(int $Id_essai,string $Titre, string $Contexte, 
         //Envoi des notifs aux médecins de l'essai
         $requete_medecin = $conn -> prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
         $requete_medecin->execute(array($Id_essai));
-        $tableau = $requete_medecin->fetch();
-        $Liste_medecin = $tableau["Id_medecin"];
-        foreach ($tableau_medecin as $medecin) {
+        $tableau = $requete_medecin->fetchAll();
+        foreach ($tableau as $medecin) {
             $Id_medecin = $medecin['Id_medecin'];
             Generer_notif(16, $Id_essai, $Id_medecin); // Fonction pour générer une notification
         }}
