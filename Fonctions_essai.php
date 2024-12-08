@@ -163,7 +163,8 @@ function Postuler_Medecin_Essai(int $Id_essai, int $Id_medecin){
             Generer_notif(5,$Id_essai, $Id_entreprise);
             Fermer_base($conn);
         }
-         catch (PDOException $e) {
+         catch (PDOExcepti
+on $e) {
         echo "Erreur notification: " . $e->getMessage(); }
 
     }
@@ -420,7 +421,7 @@ function Traiter_Candidature_Medecin(int $Id_essai, int $Id_medecin, int $Repons
     try{
         $conn = Connexion_base();
     if($Reponse == 1){
-        echo'hello';
+     
         $requete_oui = $conn -> prepare("UPDATE `MEDECIN_ESSAIS` SET `Statut_medecin` = 'Actif' WHERE `Id_medecin` = ?");
         $requete_oui -> execute(array($Id_medecin));
         Fermer_base($conn);
