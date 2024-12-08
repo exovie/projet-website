@@ -239,8 +239,8 @@ function List_Medecin(int $id_medecin): array {
     // Fermer la connexion
     Fermer_base($conn);
     }
+    return $resultats;
 }
-
 
 function display_medecin($medecin) {
     $medecin = $medecin[0];

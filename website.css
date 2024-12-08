@@ -184,7 +184,7 @@
 
 .form-group input,
 .form-group select {
-    width: 95%;
+    width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -297,8 +297,41 @@ button:hover {
     height: 50px; /* Hauteur fixe */
 }
 
+.trials {
+    width: 70%; /* Largeur fixe pour uniformiser */
+    padding: 10px;
+    border: 5px solid rgba(64, 224, 208, 0.2);
+    border-radius: 20px;
+    background-color: rgba(132, 219, 210, 0.475);
+    text-align: left;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+    list-style: none;
+}
+
+
+.trials li {
+    margin: 5px 0;
+}
+
+#trial_boxes {
+    display: flex; /* Active Flexbox */
+    justify-content: center; /* Centre horizontalement */
+    align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
+    flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */ /* Espacement entre les boîtes */
+    padding: 20px; /* Optionnel : ajoute de l'espace interne */    
+}
+
+.trials .trial_title {
+    font-weight: bold;
+}
+
+.trials .trial_company {
+    font-style: italic;
+    color: rgb(24, 98, 104);
+}
+
 .search-container {
-    width: 100%;
+    width: 40%;
     margin: 20px auto;
     display: flex;
     justify-content: center;
@@ -347,40 +380,6 @@ button:hover {
     border-radius: 5px;
 
 }
-
-#trial_boxes {
-    display: flex; /* Active Flexbox */
-    justify-content: center; /* Centre horizontalement */
-    align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
-    flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */ /* Espacement entre les boîtes */
-    padding: 20px; /* Optionnel : ajoute de l'espace interne */    
-}
-
-.trials {
-    width: 70%; /* Largeur fixe pour uniformiser */
-    padding: 10px;
-    border: 5px solid rgba(64, 224, 208, 0.2);
-    border-radius: 20px;
-    background-color: rgba(132, 219, 210, 0.475);
-    text-align: left;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
-    list-style: none;
-}
-
-.trials li {
-    margin: 5px 0;
-}
-
-
-.trials .trial_title {
-    font-weight: bold;
-}
-
-.trials .trial_company {
-    font-style: italic;
-    color: rgb(24, 98, 104);
-}
-
 .medecins {
     width: 15%; /* Largeur fixe pour uniformiser */
     padding: 10px;
@@ -418,3 +417,4 @@ button:hover {
 #medecin {
     color: rgb(91, 24, 104);
 }
+

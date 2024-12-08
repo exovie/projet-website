@@ -109,6 +109,8 @@ include_once 'Notifications/fonction_notif.php';
     </div>
 
     <!-- Contenu principal -->
+
+    <!-- Contenu principal -->
     <div class="content">
     <h1>Clinicou, le site des essais cliniques !</h1>
     <p>Description à faire </p>
@@ -138,12 +140,6 @@ include_once 'Notifications/fonction_notif.php';
                 $counter++;
               }
             ?>
-            </div>
-            <p><a href="https://www.linkedin.com/in/oussamaammar/">Pour plus d'informations</a></p>
-            <img src="https://media.wired.com/photos/5f87340d114b38fa1f8339f9/master/w_1600%2Cc_limit/Ideas_Surprised_Pikachu_HD.jpg" alt="Surprised Pikachu">
-            <p>L'eau, dans 20, 30 ans <br> il n'y en aura plus</p>
-            <p><a href="#">retour au début</a></p>
-        </div>
     </div>
 </body>
 </body>
