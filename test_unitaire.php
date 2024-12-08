@@ -42,13 +42,6 @@
 </head>
 
 <?php 
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Inclure le module ou fichier PHP
-include 'module.php';
-
 // Fonction pour générer une ligne de résultat
 function addTestResult($functionName, $expected, $actual, $condition, $com='') {
     $class = $condition ? 'success' : 'failure';
@@ -67,11 +60,9 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
     <h2>Connexion à la Base de Données</h2>
     
     <?php
-    echo"la ";
     include 'Fonctions.php';
 
     // Vérification de la connexion
-    echo "ici";
     $pdo = Connexion_base();
     if ($pdo){
         echo "<p class='success'>Connexion à la base de données réussie.</p>";
@@ -269,9 +260,9 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
                 $userCreated[] = $id_firm;
             }
 
-        // Supprimer l'utilisateur ajouté
+        // Supprimer les utilisateurs ajoutés pour les tests
         foreach ($userCreated as $Id) {
-            $sql = $pdo->prepare("DELETE FROM `USERS` WHERE `USERS`.`Id_user` = :id_user;");
+            $sql = $pdo->prepare("DELETE FROM `USERS` WHERE `Id_user` = :id_user;");
             $sql->execute(['id_user' => $Id]);
         }
             ?>
@@ -386,35 +377,140 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
         </thead>
         <?php 
         include 'Notifications/fonction_notif.php'; 
+        $notifCreated = []; // Stocker les Id_notif des notifications ajoutées pour les supprimer après les tests
 
         //Verif notifications
         $NotifT = Verif_notif(19,3,5);
         addTestResult(
-            'Verif_notif existe',
+            'Verif_notif (existe)',
             'Il faut générer une nouvelle notification',
             $NotifT ? 'Il faut générer une nouvelle notification' : "La notification précédente n'est pas ouverte",
             $NotifT == true
         );
         $NotifNew = Verif_notif(19, 3, 98);
         addTestResult(
-            "Verif_notif n'exite pas ",
+            "Verif_notif (n'exite ) ",
             "Il faut générer une nouvelle notification",
-            $NotifF ? 'Il faut générer une nouvelle notification' : "La notification précédente n'est pas ouverte",
-            $NotifF == true
+            $NotifNew ? 'Il faut générer une nouvelle notification' : "La notification précédente n'est pas ouverte",
+            $NotifNew == true
         );
         $NotifF = Verif_notif(19,3, 16 );
         addTestResult(
-            'Verif_notif Non ouverte',
+            'Verif_notif (Non ouverte)',
             "La notification précédente n'est pas ouverte",
             $NotifF ? 'Il faut générer une nouvelle notification' : "La notification précédente n'est pas ouverte",
             $NotifF == false
         );
 
+        //Generer notification
+        $NotifGenerateT = Generer_notif(19,3,5);
+        addTestResult(
+            "Generer_notif (n'existe pas déjà)",
+            "Notification générée avec succès",
+            $NotifGenerateT !== false ? "Notification générée avec succès avec Id_notif = $NotifGenerateT": "Notification non générée",
+            $NotifGenerateT !==false     
+        );
+        if ($NotifGenerateT !== false) {
+            $notifCreated[] = $NotifGenerateT;
+        }
+        $NotifGenerateF = Generer_notif(19,3,16);
+        addTestResult(
+            "Generer_notif (existe déjà)",
+            "Notification générée avec succès",
+            $NotifGenerateF !== false ? "Notification générée avec succès avec Id_notif = $NotifGenerateF": "Notification non générée",
+            $NotifGenerateF ==false
+        );
+        if ($NotifGenerateF !== false) {
+            $notifCreated[] = $NotifGenerateF;
+        }
 
+        //Nombre de notifications 
+        $nbrNotifs = Pastille_nombre(22);
+        addTestResult(
+            "Pastille_nombre ",
+            "Nombre de notifications (int) ",
+            is_integer($nbrNotifs) ? $nbrNotifs : "Erreur de récupération",
+            is_integer($nbrNotifs)
+        );
 
+        //Listes des notifications
+        $list = List_Notif(23);
+        if (is_array($list)) {
+            $commList = "";
+            $commList .= "Id_Notif: " ;
+            // Itérer sur chaque notification et les afficher
+            foreach ($list as $key => $value) {
+                $commList .= $value['Id_notif'] . " - ";
+            }}
+        addTestResult(
+            "List_Notif",
+            "Liste des notifications",
+            is_array($list) ? "Liste des notifications" : "Erreur de récupération",
+            is_array($list),
+            is_array($list)?  $commList : 'Erreur de récupération'
+        );
 
+        //Lire une notification
+        Lire_notif(99, 11);
+        addTestResult(
+            'Lire_notif (users)',
+            'Notification Ouverte',
+            Obtenir_statut_notification(99, 11) == 'Ouvert'? 'Notification Ouverte' : 'Notification Non Ouverte',
+            Obtenir_statut_notification(99, 11) == 'Ouvert'
+        );
+        Ne_plus_lire_notif(99,11);
+        addTestResult(
+            'Ne_plus_lire_notif (users)',
+            'Notification Non Ouverte',
+            Obtenir_statut_notification(99, 11) == 'Ouvert'? 'Notification Ouverte' : 'Notification Non Ouverte',
+            Obtenir_statut_notification(99, 11) !== 'Ouvert'
+        );
+
+        //medecin
+        session_start();
+        $_SESSION['role'] = 'Medecin';
+        Lire_notif(112, 14);
+        addTestResult(
+            'Lire_notif (medecin)',
+            'Notification Ouverte',
+            Obtenir_statut_notification(112, 14) == 'Ouvert'? 'Notification Ouverte' : 'Notification Non Ouverte',
+            Obtenir_statut_notification(112, 14) == 'Ouvert'
+        );
+        Ne_plus_lire_notif(112,14);
+        addTestResult(
+            'Ne_plus_lire_notif (medecin)',
+            'Notification Non Ouverte',
+            Obtenir_statut_notification(112, 14) == 'Ouvert'? 'Notification Ouverte' : 'Notification Non Ouverte',
+            Obtenir_statut_notification(112, 14) !== 'Ouvert'
+        );
+        session_destroy();
+
+        // Supprimer les notiications ajoutées pour les tests
+        foreach ($notifCreated as $Id) {
+            $sql = $pdo->prepare("DELETE FROM `NOTIFICATION` WHERE `Id_notif` = :id_N;");
+            $sql->execute(['id_N' => $Id]);
+        }
         ?>
+        </tbody>
+    </table>
+    <i>Les notifications générées avec les Id_notif = <?php foreach ($notifCreated as $Id) {echo $Id, " , ";}?> ont été supprimés de la BdD.</i>
+    
+    <body>
+    <h2>Tests des Fonctions de ???</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fonction</th>
+                <th>Résultat Attendu</th>
+                <th>Résultat Obtenu</th>
+                <th>Commentaire</th>
+            </tr>
+        </thead>
         <tbody>
+            <?php
+            //include fonctions
 
+            ?>
 </body>
+
 </html>

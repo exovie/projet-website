@@ -4,7 +4,8 @@ $_SESSION['origin'] = 'Essais_cliniques';
 $role = $_SESSION['role'];
 $db_name = $_SESSION['db_name'];
 include 'Fonctions.php';
-$list_essai = Get_essais($role, $db_name);
+include 'Notifications/fonction_notif.php';
+$list_essai = Get_essais($role);
 ?>
 
 <!DOCTYPE html>
@@ -15,10 +16,11 @@ $list_essai = Get_essais($role, $db_name);
     <meta charset="'utf-8">
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href='navigationBar.css'>
+    <link rel="stylesheet" href='Notifications/Notifications_style.css'>
 
 </head>
 <body>
-<!-- Code de la barre de navigation -->
+    <!-- Code de la barre de navigation -->
     <div class="navbar">
         <div id="logo">
             <a href="Homepage.php">
@@ -28,11 +30,17 @@ $list_essai = Get_essais($role, $db_name);
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
         <a href="Entreprises.php" class="nav-btn">Entreprise</a>
         <a href="Contact.php" class="nav-btn">Contact</a>
+
+        <!-- Accès à la messagerie -->
+        <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Homepage.php">
+            <a href="Essais.php#messagerie">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
         </div>
+        <?php endif; ?>
+
+        <!-- Connexion / Inscription -->
         <div class="dropdown">
             <a>
                 <img src="Pictures/pictureProfil.png" alt="pictureProfil" style="cursor: pointer;">
@@ -75,6 +83,17 @@ $list_essai = Get_essais($role, $db_name);
         unset($_SESSION['ErrorCode']); // Nettoyage après affichage
     endif; 
     ?>
+    
+    <!-- Messagerie -->
+    <div id="messagerie" class="messagerie">
+        <div class="messagerie-content">
+            <!-- Lien de fermeture qui redirige vers Homepage.php -->
+            <a href="/projet-website/Essais.php" class="close-btn">&times;</a>
+            <h1>Centre de notifications</h1>
+            <!-- Contenu de la messagerie -->
+            <?php Affiche_notif($_SESSION['Id_user'])?>
+        </div>
+    </div>
     
     <!-- Contenu principal -->
     <div class="content">

@@ -1,13 +1,16 @@
 <?php
 session_start();
 $_SESSION['origin'] = 'Homepage';
+// Connexion à la base de données
 $db_name = "mysql:host=localhost;dbname=website_db"; 
 $_SESSION['db_name'] = $db_name;
+//role par défaut
 if (!isset($_SESSION['role'])) {
     $_SESSION['role'] ='visiteur';
 }
+//importation des fonctions
 include 'Fonctions.php';
-include 'Notifications/fonction_notif.php';
+include_once 'Notifications/fonction_notif.php';
 ?>
 
 <!DOCTYPE html>
@@ -18,6 +21,7 @@ include 'Notifications/fonction_notif.php';
     <meta charset="'utf-8">
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
+    <link rel="stylesheet" href='Notifications/Notifications_style.css'>
 </head>
 <body>
 
@@ -31,11 +35,17 @@ include 'Notifications/fonction_notif.php';
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
         <a href="Entreprises.php" class="nav-btn">Entreprise</a>
         <a href="Contact.php" class="nav-btn">Contact</a>
+
+        <!-- Accès à la messagerie -->
+        <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Homepage.php">
+            <a href="Homepage.php#messagerie">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
         </div>
+        <?php endif; ?>
+
+        <!-- Connexion / Inscription -->
         <div class="dropdown">
             <a>
                 <img src="Pictures/pictureProfil.png" alt="pictureProfil" style="cursor: pointer;">
@@ -79,6 +89,16 @@ include 'Notifications/fonction_notif.php';
     endif; 
     ?>
     
+    <!-- Messagerie -->
+    <div id="messagerie" class="messagerie">
+        <div class="messagerie-content">
+            <!-- Lien de fermeture qui redirige vers Homepage.php -->
+            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
+            <h1>Centre de notifications</h1>
+            <!-- Contenu de la messagerie -->
+            <?php Affiche_notif($_SESSION['Id_user'])?>
+        </div>
+    </div>
 
     <!-- Contenu principal -->
     <div class="content">
@@ -97,11 +117,6 @@ include 'Notifications/fonction_notif.php';
 
             ?>
             </div>
-            <p class="presentation">Les médecins membres :</p>
-            <p><a href="https://www.linkedin.com/in/oussamaammar/">Pour plus d'informations</a></p>
-            <img src="https://media.wired.com/photos/5f87340d114b38fa1f8339f9/master/w_1600%2Cc_limit/Ideas_Surprised_Pikachu_HD.jpg" alt="Surprised Pikachu">
-            <p>L'eau, dans 20, 30 ans <br> il n'y en aura plus</p>
-            <p><a href="#">retour au début</a></p>
         </div>
     </div>
 </body>

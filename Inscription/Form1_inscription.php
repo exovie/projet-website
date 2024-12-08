@@ -15,7 +15,7 @@ include("../Fonctions.php");
 <div class="content">
         <h1>Inscrivez-vous chez Clinicou</h1>
         <img src="/projet-website/Pictures/logo.png" alt="logo" id="grologo">
-    </div>
+</div>
 
     <!-- Modal -->
     <div id="modal" class="modal">

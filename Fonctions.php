@@ -349,7 +349,7 @@ function Valider_inscription($id_user) {
         } catch (PDOException $e) {
             return "Erreur : " . $e->getMessage();
         }
-     finally {
+    finally {
     // Fermer la connexion
     Fermer_base($conn);
     }
@@ -480,7 +480,8 @@ function enterprise_filter($liste_EC) {
     }
 }
 
-
+//-------------------------------------- Notifications --------------------------------------//
+// Fonction pour afficher un message d'erreur
 function ErrorEditor($errorCode, $modal='false'){
     //if $_SESSION['ErrorCode'] is set, it will display the corresponding error message
     $ScriptError= [
@@ -514,6 +515,7 @@ function ErrorEditor($errorCode, $modal='false'){
     }
 }
 
+// Fonction pour afficher un message de succès
 function SuccesEditor($SuccessCode){
     $ScriptSucces= [
         1=> 'Votre inscription a bien été enregistrée.',
