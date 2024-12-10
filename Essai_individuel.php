@@ -92,16 +92,18 @@ $Statut_essai = $Infos['Statut'];
                         Afficher_Patients($Id_essai, 'En attente');
                     } else { // Si ce médecin ne s'occupe pas de cet essai
                         if(Verif_Medecin_Sollicite($Id_essai, $Id_user)){
+                            echo '<form method="POST">';
                             echo '<div class="side-buttons_candidature">';
                             echo '<p><strong>L\'entreprise souhaite vous solliciter sur cet essai, voulez-vous accepter ou refuser ?</strong></p>';
-                            echo '<button class="nav-btn_essai_candidature" onclick="Traiter_Candidature_Medecin('.$Id_essai.', '.$Id_user.', 1)">Accepter</button>';
-                            echo '<button class="nav-btn_essai_candidature" onclick="Traiter_Candidature_Medecin('.$Id_essai.', '.$Id_user.', 0)">Refuser</button>';
+                            echo '<button name = "action" class="nav-btn_essai_candidature">Accepter</button>';
+                            echo '<button name = "action" class="nav-btn_essai_candidature" onclick="">Refuser</button>';
                             echo '</div>';
                         } elseif ($Statut_essai != 'Termine') {
                             echo '<button class="nav-btn_essai" onclick="Postuler_Medecin_Essai(' . $Id_essai . ', ' . $Id_user . ')">Participer à cet essai</button>';
                         }
+                        echo '</form>'
                     }
-                }
+                } #"Traiter_Candidature_Medecin('.$Id_essai.', '.$Id_user.', 1)
             if ($role == 'admin'){
                 Afficher_Patients($Id_essai,'Actif');
                 Afficher_Patients($Id_essai,'En attente'); 
@@ -123,7 +125,15 @@ $Statut_essai = $Infos['Statut'];
                     //modifier l'essai si le recrutement n'a pas débuté
                
        }
-
+       if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (isset($_POST['action'])) {
+            if ($_POST['action'] == 'accepter') {
+                Traiter_Candidature_Medecin('.$Id_essai.', '.$Id_user.', 1);
+            } elseif ($_POST['action'] == 'refuser') {
+                Traiter_Candidature_Medecin('.$Id_essai.', '.$Id_user.', 0);
+            }
+        }
+    }
        ?>
    </div>
 </main>
