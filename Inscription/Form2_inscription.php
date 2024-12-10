@@ -1,8 +1,6 @@
 <?php
 session_start();
 
-include("../Fonctions.php");
-
 /* Verification de si le premier formulaire a deja ete rempli*/
 if (!isset($_SESSION['email'], $_SESSION['role'])) {
     header("Location: /projet-website/Inscription/Form1_inscription.php");
@@ -13,13 +11,6 @@ $role = $_SESSION['role'];
 if (isset($_SESSION['FormsErr'])) {
     $FormsErr= $_SESSION['FormsErr'];
 }
-
-// Questions spécifiques
-$questions = [
-    'patient' => ['Nom','Prenom','Date de naissance','Sexe','Telephone','Profil Picture','Taille', 'Poids', 'Traitements', 'Allergies', 'CNI'],
-    'medecin' => ['Nom','Prenom','Spécialité','Telephone','Matricule', 'Profil Picture'],
-    'entreprise' => ['Nom Entreprise', 'Telephone','Profil Picture', 'SIRET']
-];
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -48,9 +39,16 @@ $questions = [
             <?php endif; ?>
 
             <!-- Affichage du formulaire -->
-            <?php foreach ($questions[$role] as $question): ?>
-            <div class="form-group">
+            <?php 
+            // Questions spécifiques
+            $questions = [
+                'Patient' => ['Nom','Prenom','Date de naissance','Sexe','Telephone','Profil Picture','Taille', 'Poids', 'Traitements', 'Allergies', 'CNI'],
+                'Medecin' => ['Nom','Prenom','Spécialité','Telephone','Matricule', 'Profil Picture'],
+                'Entreprise' => ['Nom Entreprise', 'Telephone','Profil Picture', 'SIRET']
+            ];
 
+            foreach ($questions[$role] as $question): ?>
+            <div class="form-group">
                 <?php if ($question == 'Sexe'): ?>
                     <label><?php echo htmlspecialchars($question); ?></label>
                     <select name="reponses[]" required>
