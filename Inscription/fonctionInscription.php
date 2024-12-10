@@ -73,9 +73,9 @@ function validateResponsesByRole($role, $responses) {
 
     // Définition des champs spécifiques à chaque rôle
     $questionsByRole = [
-        'patient' => ['Nom', 'Prenom', 'Date de naissance', 'Sexe', 'Telephone', 'Profil Picture', 'Taille', 'Poids', 'Traitements', 'Allergies', 'CNI'],
-        'medecin' => ['Nom', 'Prenom', 'Spécialité', 'Telephone', 'Matricule', 'Profil Picture'],
-        'entreprise' => ['Nom Entreprise', 'Telephone', 'Profil Picture', 'SIRET']
+        'Patient' => ['Nom', 'Prenom', 'Date de naissance', 'Sexe', 'Telephone', 'Profil Picture', 'Taille', 'Poids', 'Traitements', 'Allergies', 'CNI'],
+        'Medecin' => ['Nom', 'Prenom', 'Spécialité', 'Telephone', 'Matricule', 'Profil Picture'],
+        'Entreprise' => ['Nom Entreprise', 'Telephone', 'Profil Picture', 'SIRET']
     ];
 
     // Obtenir les questions pour le rôle donné
@@ -141,7 +141,7 @@ function addUser($pdo, $mdp, $email, $role) {
 
 // Fonction pour ajouter un utilisateur selon son rôle dans la base de données
 function addRole($pdo, $role, $newID, $reponses) {
-    if ($role === "patient") {
+    if ($role === "Patient") {
         $stmt = $pdo->prepare("INSERT INTO `PATIENTS` (`Id_patient`, `Nom`, `Prenom`, `Date_naissance`, `Sexe`, `Telephone`, `Profile_picture`, `Taille`, `Poids`, `Traitements`, `Allergies`, `Cni`) 
         VALUES (:id, :nom, :prenom, :dateN, :Sexe, :Tel, :PP, :taille, :poids, :traitement, :allergie, :cni)");  
         $stmt->execute(['id' => $newID,
@@ -150,7 +150,7 @@ function addRole($pdo, $role, $newID, $reponses) {
             'traitement' => trim($reponses[8]), 'allergie' => trim($reponses[9]),'cni' => $reponses[10]]);
         }
 
-    elseif ($role=== "medecin") {
+    elseif ($role=== "Medecin") {
         $stmt = $pdo->prepare("INSERT INTO `MEDECINS` (`Id_medecin`, `Nom`, `Prenom`, `Specialite`, `Telephone`, `Matricule`, `Profile_picture`,`Statut_inscription`) 
         VALUES (:id, :nom, :prenom, :specialite, :Tel, :matricule, :PP, '0')");
         $stmt->execute(['id' => $newID,
@@ -158,7 +158,7 @@ function addRole($pdo, $role, $newID, $reponses) {
             'matricule' => str_replace(' ', '', trim($reponses[4])), 'PP' => $reponses[5]]);
         }
 
-    elseif ($role=== "entreprise") {
+    elseif ($role=== "Entreprise") {
         $stmt = $pdo->prepare("INSERT INTO `ENTREPRISES` (`Id_entreprise`, `Nom_entreprise`, `Telephone`, `Profile_picture`, `Siret`, `Verif_inscription`) 
         VALUES (:id, :nom, :Tel, :PP, :siret, '0')");
         $stmt->execute(['id' => $newID,

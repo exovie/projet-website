@@ -12,7 +12,7 @@ $role = $_SESSION["role"];
 // Vérification du format des réponses
 $errorMessages = '';
 $date = $_POST['reponses'][2];
-if ($role == 'patient'){
+if ($role == 'Patient'){
     $ageErr= Verif_age($date); 
     if ($ageErr == false) {
         //$errorMessages= $errorMessages."Vous devez être majeur pour vous inscrire.";
