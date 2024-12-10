@@ -748,9 +748,13 @@ function A() {
     // Définir la logique pour la fonction
 }
 
-function Generer_Notif($code, $Id_essai, $Id_destinataire){}
-?>  
+function refreshPage() {
+    $currentPage = htmlspecialchars($_SERVER['PHP_SELF']);
+    header("Location: " . $currentPage);
+    exit();}
 
+function Generer_Notif($code, $Id_essai, $Id_destinataire){}
+?> 
 
 
 

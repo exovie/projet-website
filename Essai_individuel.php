@@ -10,6 +10,7 @@ $Id_entreprise = 7;
 $role = 'medecin';
 $Id_user = 21;
 $Statut_essai = 'Recrutement';
+$_SERVER['origin'] = 'Essai_individuel.php';
 
 ?>
 
@@ -18,7 +19,7 @@ $Statut_essai = 'Recrutement';
 <head>
     <title>Clinicou - HomePage</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="'utf-8">
+    <meta charset="utf-8">
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href='essai_indiv.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
@@ -69,7 +70,9 @@ $Statut_essai = 'Recrutement';
        <?php Afficher_Essai($Id_essai); ?>
         </div> 
         <div class="frame">
-        <?php   if($role == 'patient'){
+        <?php   
+        echo '<form method="POST">';
+        if($role == 'patient'){
                     if (Verif_Patient_Cet_Essai($Id_essai, $Id_user)){ //si ce patient est dans cet essai
                      echo '<button class="nav-btn_essai" onclick="Retirer_Patient_Essai(' . $Id_essai . ', ' . $Id_user . ')">Se retirer de cet essai</button>';}
                      
@@ -87,16 +90,16 @@ $Statut_essai = 'Recrutement';
                         Afficher_Patients($Id_essai, 'En attente');
                     } else { // Si ce médecin ne s'occupe pas de cet essai
                         if(Verif_Medecin_Sollicite($Id_essai, $Id_user)){
-                            echo '<form method="POST">';
+                            //echo '<form method="POST">';
                             echo '<div class="side-buttons_candidature">';
                             echo '<p><strong>L\'entreprise souhaite vous solliciter sur cet essai, voulez-vous accepter ou refuser ?</strong></p>';
-                            echo '<button name = "action" class="nav-btn_essai_candidature">Accepter</button>';
-                            echo '<button name = "action" class="nav-btn_essai_candidature" onclick="">Refuser</button>';
+                            echo '<button name = "action" value="accepter" class="nav-btn_essai_candidature">Accepter</button>';
+                            echo '<button name = "action" value="refuser" class="nav-btn_essai_candidature" onclick="">Refuser</button>';
                             echo '</div>';
                         } elseif ($Statut_essai != 'Termine') {
                             echo '<button class="nav-btn_essai" onclick="Postuler_Medecin_Essai(' . $Id_essai . ', ' . $Id_user . ')">Participer à cet essai</button>';
                         }
-                        echo '</form>'
+                        echo '</form>';
                     }
                 } #"Traiter_Candidature_Medecin('.$Id_essai.', '.$Id_user.', 1)
             if ($role == 'admin'){
@@ -120,13 +123,17 @@ $Statut_essai = 'Recrutement';
                     //modifier l'essai si le recrutement n'a pas débuté
                
        }
+       if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        //permet de changer l'affichage sans refresh
+       }
        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_POST['action'])) {
             if ($_POST['action'] == 'accepter') {
-                Traiter_Candidature_Medecin('.$Id_essai.', '.$Id_user.', 1);
+                Traiter_Candidature_Medecin($Id_essai, $Id_user, 1);
             } elseif ($_POST['action'] == 'refuser') {
-                Traiter_Candidature_Medecin('.$Id_essai.', '.$Id_user.', 0);
+                Traiter_Candidature_Medecin($Id_essai, $Id_user, 0);
             }
+            
         }
     }
        ?>
