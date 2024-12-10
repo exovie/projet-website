@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 30, 2024 at 05:03 PM
+-- Generation Time: Dec 10, 2024 at 11:33 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -86,15 +86,15 @@ INSERT INTO `DESTINATAIRE` (`Id_notif`, `Id_destinataire`, `Statut_notification`
 (74, 30, 'Ouvert'),
 (75, 42, 'Ouvert'),
 (87, 7, 'Ouvert'),
-(99, 11, 'Ouvert'),
+(99, 11, 'Non Ouvert'),
 (102, 14, 'Non ouvert'),
 (102, 22, 'Non ouvert'),
 (104, 14, 'Non ouvert'),
 (104, 22, 'Non ouvert'),
 (105, 11, 'Ouvert'),
-(112, 14, 'Non ouvert'),
-(112, 15, 'Non ouvert'),
-(112, 23, 'Non ouvert'),
+(112, 14, 'Non Ouvert'),
+(112, 15, 'Non Ouvert'),
+(112, 23, 'Non Ouvert'),
 (114, 19, 'Non ouvert'),
 (116, 20, 'Non ouvert'),
 (117, 21, 'Ouvert'),
@@ -135,7 +135,9 @@ INSERT INTO `ENTREPRISES` (`Id_entreprise`, `Nom_entreprise`, `Telephone`, `Prof
 (9, 'Quantum Dynamics', '5751376468', '', 41834918436514, 1),
 (10, 'BlueSky Innovations', '9038931626', '', 40735153784638, 1),
 (11, 'GreenWave Industries', '3014606655', '', 12750055895775, 1),
-(12, 'TechNova Solutions', '6446476253', '', 50990608789862, 1);
+(12, 'TechNova Solutions', '6446476253', '', 50990608789862, 1),
+(102, 'I3S', '2492942701', 0x6933532e706e67, 18008901306558, 0),
+(103, 'Polytech', '1489154000', 0x506f6c79746563682e706e67, 82204320400038, 0);
 
 -- --------------------------------------------------------
 
@@ -214,7 +216,8 @@ INSERT INTO `MEDECINS` (`Id_medecin`, `Nom`, `Prenom`, `Specialite`, `Telephone`
 (22, 'Cive', 'Jean', 'Dentiste', '1970984413', 10003445839, '', 1),
 (23, 'Vigeant', 'Valentin', 'Bio-informatique gynécologique', '9784558709', 10003373748, '', 1),
 (24, 'Grataloup', 'Guillaume', 'Chimiste en herbes médicinales', '4775597092', 10003405667, '', 1),
-(25, 'Topedik', 'Aure', 'Modélisateur en podologie', '9466897264', 10009373221, '', 1);
+(25, 'Topedik', 'Aure', 'Modélisateur en podologie', '9466897264', 10009373221, '', 1),
+(101, 'Fasola', 'Sophie', 'Communication', '1635220007', 63522000712, 0x6661736f6c612e706e67, 0);
 
 -- --------------------------------------------------------
 
@@ -735,7 +738,10 @@ INSERT INTO `USERS` (`Id_user`, `Passwd`, `Email`, `Role`) VALUES
 (97, '$2y$10$FCtKCD6d72WO6FbkM/reAuM1sGUHwNvBa55KPnOn2WhLEBtUkSiIe', 'joshua.snyder@people.com', 'Patient'),
 (98, '$2y$10$WeDWcy78mHtTDUdH4HWt7.MhfbUgHQJWsn8PZtfiU0O0TyrsmbWWi', 'daryl.williamson@people.com', 'Patient'),
 (99, '$2y$10$9bj7DOoiOixBhe0y3BZPROXIl1y9p/i1AhWtFxCeLJSWtuGVUkt2O', 'rachel.russell@people.com', 'Patient'),
-(100, '$2y$10$y.WBRHB0gkb3czR9beROfOpqxsiT14k0vDrYsNoRiwZz1EOLzBEpW', 'michael.steele@people.com', 'Patient');
+(100, '$2y$10$y.WBRHB0gkb3czR9beROfOpqxsiT14k0vDrYsNoRiwZz1EOLzBEpW', 'michael.steele@people.com', 'Patient'),
+(101, '$2y$10$Z26LIbtvatYQU0bZdbguG.GiMANbOeOk84s.PVoqQSwqxR8pGM83W', 'sophie.fasola@gmail.com', 'Medecin'),
+(102, '$2y$10$y3Bdv26C9u2vzyme7ZQy.uDEI5V9n5r58ud1hfdJ1ikGL9MoEBxze', 'i3s@pro.com', 'Entreprise'),
+(103, '$2y$10$kZznEE3jzO3tZ76lm5hZuumVt/IAupiQALIuuw8vjxiBufllhGNbi', 'polytech@pro.com', 'Entreprise');
 
 --
 -- Indexes for dumped tables
@@ -745,10 +751,8 @@ INSERT INTO `USERS` (`Id_user`, `Passwd`, `Email`, `Role`) VALUES
 -- Indexes for table `DESTINATAIRE`
 --
 ALTER TABLE `DESTINATAIRE`
-  ADD PRIMARY KEY (`Id_notif`, `Id_destinataire`),
-  ADD KEY `FK_DESTINATAIRE_USERS` (`Id_destinataire`),
-  DROP FOREIGN KEY `FK_DESTINATAIRE_NOTIFICATION`,
-  ADD CONSTRAINT `FK_DESTINATAIRE_NOTIFICATION` FOREIGN KEY (`Id_notif`) REFERENCES `NOTIFICATION` (`Id_notif`) ON DELETE SET NULL;
+  ADD PRIMARY KEY (`Id_notif`,`Id_destinataire`),
+  ADD KEY `FK_DESTINATAIRE_USERS` (`Id_destinataire`);
 
 --
 -- Indexes for table `ENTREPRISES`
@@ -816,13 +820,13 @@ ALTER TABLE `ESSAIS_CLINIQUES`
 -- AUTO_INCREMENT for table `NOTIFICATION`
 --
 ALTER TABLE `NOTIFICATION`
-  MODIFY `Id_notif` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=131;
+  MODIFY `Id_notif` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
 
 --
 -- AUTO_INCREMENT for table `USERS`
 --
 ALTER TABLE `USERS`
-  MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- Constraints for dumped tables
@@ -832,7 +836,7 @@ ALTER TABLE `USERS`
 -- Constraints for table `DESTINATAIRE`
 --
 ALTER TABLE `DESTINATAIRE`
-  ADD CONSTRAINT `FK_DESTINATAIRE_NOTIFICATION` FOREIGN KEY (`Id_notif`) REFERENCES `NOTIFICATION` (`Id_notif`),
+  ADD CONSTRAINT `FK_DESTINATAIRE_NOTIFICATION` FOREIGN KEY (`Id_notif`) REFERENCES `NOTIFICATION` (`Id_notif`) ON DELETE CASCADE,
   ADD CONSTRAINT `FK_DESTINATAIRE_USERS` FOREIGN KEY (`Id_destinataire`) REFERENCES `USERS` (`Id_user`);
 
 --
