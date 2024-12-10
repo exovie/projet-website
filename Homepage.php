@@ -68,8 +68,8 @@ include_once 'Notifications/fonction_notif.php';
                 } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
-                ?>
-                <a href="#">Mon Profil</a>
+                if ($_SESSION["role"]!=='Admin'&& $_SESSION['Logged_user'] === true)
+                {echo "<a href='Page_Mes_Infos/Menu_Mes_Infos.php'>Mon Profil</a>";} ?>
                 <a href="Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->

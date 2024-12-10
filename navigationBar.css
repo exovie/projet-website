@@ -25,7 +25,7 @@ h1 {
     align-items: center;
     padding: 10px 0;
     z-index: 1000; /* Assure que la barre reste au-dessus des autres éléments */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre légère */
     border-bottom: 2px solid #2a9d8f; /* Bordure basse */
     text-decoration: none;
 }

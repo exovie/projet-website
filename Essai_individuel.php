@@ -1,15 +1,20 @@
 <?php
 session_start();
-error_reporting(E_ALL); // Active le rapport de toutes les erreurs
-ini_set('display_errors', 1); // Affiche les erreurs à l'écran
-ini_set('display_startup_errors', 1); // Affiche les erreurs au démarrage de PHP
-//include 'Fonctions.php';
+$_SESSION['origin'] = 'Essai_individuel';
 include 'Fonctions_essai.php';
-$Id_essai = 3;
-$Id_entreprise = 7;
-$role = 'medecin';
-$Id_user = 21;
-$Statut_essai = 'Recrutement';
+include 'Notifications/fonction_notif.php';
+include 'Fonctions.php';
+$role = $_SESSION['role'];
+$Id_user = $_SESSION['Id_user'];
+$Id_essai = $_SESSION['Id_essai'];
+
+//Requete pour récupérer les informations nécessaires 
+$pdo= Connexion_base();
+$stmt = $pdo ->prepare('SELECT `Statut`, `Id_entreprise` FROM `ESSAIS_CLINIQUES` WHERE `Id_essai` = :Id_essai');
+$stmt -> execute(['Id_essai' => $Id_essai]);
+$Infos= $stmt->fetch(PDO::FETCH_ASSOC);
+$Id_entreprise = $Infos['Id_entreprise'];
+$Statut_essai = $Infos['Statut'];
 
 ?>
 

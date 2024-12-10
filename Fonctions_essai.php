@@ -48,7 +48,7 @@ function Ajout_Bdd_Essai(int $Id_entreprise, string $Titre, string $Contexte, st
         Fermer_base($conn);
 
     }
-    catch (PDOException $e) {
+    catch (PDOException $e) {Essais
         echo "Erreur bdd: " . $e->getMessage(); }
     try{
         $conn = Connexion_base();
@@ -747,9 +747,6 @@ function Afficher_Medecins($Id_essai, $Statut_medecin){
 function A() {
     // Définir la logique pour la fonction
 }
-
-function Generer_Notif($code, $Id_essai, $Id_destinataire){}
-?>  
 
 
 

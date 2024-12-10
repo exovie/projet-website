@@ -77,7 +77,7 @@ table.non-notifications {
     }
 
     .notif-column {
-            width:60px; /* Taille fixe en pixels ou utilisez une valeur en pourcentage */
+            width:20px; 
             text-align: left;
         }
 

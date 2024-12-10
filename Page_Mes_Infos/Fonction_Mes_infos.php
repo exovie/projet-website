@@ -2,7 +2,7 @@
 /*Fichier php qui regroupe les fonctions utiliser pour la page Mes Infos*/
 
 //session_start();
-include("../Fonctions.php");
+include_once("../Fonctions.php");
 $conn = Connexion_base();
 
 //$role_user=$_SESSION['role'];
@@ -16,19 +16,19 @@ $conn = Connexion_base();
 function getUserInfo($conn, int $id_user) {
 
     //Récupérer le role de l'Id_user
-    $sql = $conn -> prepare("SELECT role FROM users WHERE Id_user=:id_user");
+    $sql = $conn -> prepare("SELECT role FROM USERS WHERE Id_user=:id_user");
     $sql->execute(['id_user' => $id_user]);
     $role=$sql->fetch(PDO::FETCH_ASSOC)['role'] ?? null;
 
     switch ($role) {
         case 'Patient':
-            $query = "SELECT * FROM patients WHERE Id_patient = :id_user";
+            $query = "SELECT * FROM PATIENTS WHERE Id_patient = :id_user";
             break;
         case 'Medecin':
-            $query = "SELECT * FROM medecins WHERE Id_medecin = :id_user";
+            $query = "SELECT * FROM MEDECINS WHERE Id_medecin = :id_user";
             break;
         case 'Entreprise':
-            $query = "SELECT * FROM entreprises WHERE Id_entreprise = :id_user";
+            $query = "SELECT * FROM ENTREORISES WHERE Id_entreprise = :id_user";
             break;
         default:
             return null;
@@ -51,18 +51,18 @@ function updateUserInfo($conn, int $id_user) {
     print_r($_POST);
     switch ($roleValue) {
         case 'Patient':
-            $query = "UPDATE patients SET Nom = :Nom, Prenom = :Prenom, Date_naissance = :Date_naissance,
+            $query = "UPDATE PATIENTS SET Nom = :Nom, Prenom = :Prenom, Date_naissance = :Date_naissance,
                       Sexe = :Sexe, Telephone = :Telephone, Taille = :Taille, Poids = :Poids, 
                       Traitements = :Traitements, Allergies = :Allergies
                       WHERE Id_Patients = :id_user";
             break;
         case 'Medecin':
-            $query = "UPDATE medecins SET Nom = :Nom, Prenom = :Prenom, Specialite = :Specialite,
+            $query = "UPDATE MEDECINS SET Nom = :Nom, Prenom = :Prenom, Specialite = :Specialite,
                       Telephone = :Telephone, Matricule = :Matricule WHERE Id_medecin = :id_user";
             break;
         case 'Entreprise':
             echo "Rentre dans entreprise";
-            $query = "UPDATE entreprises SET Nom_entreprise = :Nom_entreprise, Telephone = :Telephone, Profil_picture = :Profil_picture,
+            $query = "UPDATE ENTREPRISES SET Nom_entreprise = :Nom_entreprise, Telephone = :Telephone, Profil_picture = :Profil_picture,
                       Siret = :Siret WHERE Id_entreprise = :id_user";
             echo "Passer";
             break;

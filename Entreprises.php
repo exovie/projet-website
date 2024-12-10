@@ -2,6 +2,7 @@
 session_start();
 include 'Fonctions.php';
 include 'Notifications/fonction_notif.php';
+$_SESSION['origin'] = 'Entreprises';
 ?>
 
 <!DOCTYPE html>

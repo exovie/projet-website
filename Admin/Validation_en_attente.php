@@ -1,6 +1,7 @@
 <?php
 // Connexion à la base de données
 include("../Fonctions.php");
+include_once '../Notifications/fonction_notif.php';
 $conn = Connexion_base();
 
 // Vérifier l'action de validation ou de refus
@@ -63,81 +64,16 @@ $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Validation en attente</title>
-    <link rel="stylesheet" href='website.css'>
-    <link rel="stylesheet" href= 'navigationBar.css'>
-    <style>
-        .validation-list {
-            width: 80%;
-            margin-top: 50px;
-            background-color: white;
-            justify-content: center;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        button {
-            padding: 5px 10px;
-            cursor: pointer;
-            border: none;
-            color: white;
-            font-weight: bold;
-        }
-
-        .validate-btn {
-            background-color: gray;
-        }
-
-        .validate-btn.active {
-            background-color: green;
-        }
-
-        .reject-btn {
-            background-color: gray;
-        }
-
-        .reject-btn.active {
-            background-color: red;
-        }
-
-        .back-btn {
-            display: block;
-            width: 200px;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-
-        .back-btn:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <link rel="stylesheet" href='../website.css'>
+    <link rel="stylesheet" href= '../navigationBar.css'>
+    <link rel="stylesheet" href='../Notifications/Notifications_style.css'>
+    <link rel="stylesheet" href='Admin.css'>
 </head>
 <body>
         <!-- Code de la barre de navigation -->
-        <div class="navbar">
+    <div class="navbar">
         <div id="logo">
-            <a href="Homepage.php">
+            <a href="../Homepage.php">
                 <img src="../Pictures/logo.png" alt="minilogo" class="minilogo">
             </a>
         </div>
@@ -152,7 +88,7 @@ $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Home_Admin.php#messagerie">
+            <a href="Liste_medecins.php#messagerie">
                 <img src="../Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
         </div>
@@ -208,7 +144,7 @@ $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
             <!-- Lien de fermeture qui redirige vers Home_Admin.php -->
-            <a href="Home_Admin.php" class="close-btn">&times;</a>
+            <a href="Liste_medecins.php" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>
@@ -216,8 +152,9 @@ $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <!-- Contenu de la page -->
-<div class="validation-list">
-    <h2>Utilisateurs en attente de validation</h2>
+<div class="content">
+<div class="table-list">
+    <h1>Utilisateurs en attente de validation</h1>
     <table>
         <thead>
             <tr>
@@ -285,6 +222,6 @@ $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Bouton revenir à la page d'accueil -->
     <a href="Home_Admin.php" class="back-btn">Revenir à la page d'accueil</a>
 </div>
-
+</div>
 </body>
 </html>

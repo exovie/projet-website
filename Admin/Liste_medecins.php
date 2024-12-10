@@ -21,41 +21,57 @@ $medecins = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Liste des Médecins</title>
     <link rel="stylesheet" href='../website.css'>
     <link rel="stylesheet" href= '../navigationBar.css'>
+    <link rel="stylesheet" href='../Notifications/Notifications_style.css'>
+    <link rel="stylesheet" href='Admin.css'>
     <style>
         /* Styles pour la table */
+        .table-list {
+            width: 80%;
+            margin-top: 50px;
+            background-color: white;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+    
+        h1 {
+            margin-top: 120px;
+            padding: 10px; /* Espace entre le texte et la bordure */
+            border-radius: 6px; /* Coins arrondis de la bordure */
+            color: rgb(24, 98, 104);
+        }
         table {
             border-collapse: collapse;
             width: 100%; /* Table occupe toute la largeur de son conteneur */
         }
 
         th, td {
-            border: 1px solid black;
-            padding: 12px;
-            text-align: center;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
 
         th {
-            background-color: #4CAF9A;
-            color: white;
-        }
-
-        td {
             background-color: #f2f2f2;
         }
 
         /* Styles pour le bouton "Retour" */
         .back-button {
-            margin-top: 20px;
-            padding: 10px 15px;
-            background-color: #f44336;
+            display: block;
+            width: 200px;
+            padding: 10px;
+            background-color: #4CAF50;
             color: white;
-            border: none;
-            cursor: pointer;
+            text-align: center;
             border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
         }
 
         .back-button:hover {
-            background-color: #e53935;
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -143,7 +159,7 @@ $medecins = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Contenu de la page -->
     <h1>Liste des Médecins</h1>
-    <div class="content">
+    <div class="table-list">
     <table>
         <thead>
             <tr>
@@ -169,13 +185,13 @@ $medecins = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars($medecin['Telephone']) ?></td>
                     
                     <td>
-                        <button onclick="window.location.href='Modifier_Medecins.php?id=<?= $medecin['Id_medecin'] ?>'">Modifier</button>
+                        <button class='validate-btn' onclick="window.location.href='Modifier_Medecins.php?id=<?= $medecin['Id_medecin'] ?>'">Modifier</button>
                     </td>
                     <td>
                     <form action="Supprimer_utilisateur.php" method="POST" style="display:inline;">
                     <input type="hidden" name="id" value="<?= htmlspecialchars($medecin['Id_medecin']) ?>">
                     <input type="hidden" name="role" value="Medecin">
-                    <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">Supprimer</button>
+                    <button class='reject-btn'type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">Supprimer</button>
                     </form>
                 </td>
                 </tr>
@@ -183,7 +199,7 @@ $medecins = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </tbody>
     </table>
 
-    <button onclick="window.location.href='Home_Admin.php'">Retour</button>
+    <button class="back-btn" onclick="window.location.href='Home_Admin.php'">Revenir à la page d'accueil</button>
     </div>
 </body>
 </html>

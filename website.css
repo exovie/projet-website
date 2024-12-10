@@ -57,6 +57,7 @@
     top: -20px;
 }
 .content {
+    margin-top: 60px; /* Pour laisser de l'espace sous la barre de navigation */
     padding-top: 100px;
     text-align: center;
 }

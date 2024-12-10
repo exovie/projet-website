@@ -120,7 +120,7 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
             );
 
             // Test de validateResponsesByRole Patient
-            $role = 'patient';
+            $role = 'Patient';
             $responsesPatient = [
                 'John', 'Doe', '2015-01-01', 'M', '12345', 'profile.jpg', 180, 75, 'Aucun', 'Aucune', '123456789123'
             ];
@@ -158,7 +158,7 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
             );
 
             // Test de validateResponsesByRole  Medecin
-            $role = 'medecin';
+            $role = 'Medecin';
             $responsesMedecin = [
                 'John', 'Doe', 'Chirurgien', '9784858707', '10003378191', 'profile.jpg'
             ];
@@ -178,7 +178,7 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
             );
 
             // Test de validateResponsesByRole Entreprise
-            $role = 'entreprise';
+            $role = 'Entreprise';
             $responsesEntreprise = [
                 'BigPharma', '1234567890', 'adresse.jpg', '12345678901234'
             ];
@@ -213,7 +213,7 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
             }
 
             //Test de addRole Patient
-            $role = "patient";
+            $role = "Patient";
             $emailPatient = "test@patent.com";
             $mdpPatient = "Patent123";
             $id_patent = addUser($pdo, $mdpPatient, $emailPatient, $role);
@@ -229,7 +229,7 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
             }
 
             //Test de addRole Patient
-            $role = "medecin";
+            $role = "Medecin";
             $emailMedecin = "test@medecin.com";
             $mdpMedecin = "Medecin123";
             $id_Medecin = addUser($pdo, $mdpPatient, $emailPatient, $role);
@@ -245,7 +245,7 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
             }
 
             //Test de addRole Entreprise
-            $role = "entreprise";
+            $role = "Entreprise";
             $emailEntreprise = "test@firm.com";
             $mdpEntreprise = "Firm123";
             $id_firm = addUser($pdo, $mdpEntreprise, $emailEntreprise, $role);
@@ -484,6 +484,8 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
             Obtenir_statut_notification(112, 14) !== 'Ouvert'
         );
         session_destroy();
+
+        //
 
         // Supprimer les notiications ajoutées pour les tests
         foreach ($notifCreated as $Id) {

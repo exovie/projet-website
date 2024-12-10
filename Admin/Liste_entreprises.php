@@ -21,51 +21,16 @@ $entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Liste des Entreprises</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <link rel="stylesheet" href='website.css'>
-    <link rel="stylesheet" href= 'navigationBar.css'>
-    <style>
-        /* Styles pour la table */
-        table {
-            border-collapse: collapse;
-            width: 100%; /* Table occupe toute la largeur de son conteneur */
-        }
-
-        th, td {
-            border: 1px solid black;
-            padding: 12px;
-            text-align: center;
-        }
-
-        th {
-            background-color: #4CAF9A;
-            color: white;
-        }
-
-        td {
-            background-color: #f2f2f2;
-        }
-
-        /* Styles pour le bouton "Retour" */
-        .back-button {
-            margin-top: 20px;
-            padding: 10px 15px;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .back-button:hover {
-            background-color: #e53935;
-        }
-    </style>
+    <link rel="stylesheet" href='../website.css'>
+    <link rel="stylesheet" href='../navigationBar.css'>
+    <link rel="stylesheet" href='../Notifications/Notifications_style.css'>
+    <link rel="stylesheet" href='Admin.css'>
 </head>
 <body>
     <!-- Code de la barre de navigation -->
     <div class="navbar">
         <div id="logo">
-            <a href="Homepage.php">
+            <a href="../Homepage.php">
                 <img src="../Pictures/logo.png" alt="minilogo" class="minilogo">
             </a>
         </div>
@@ -145,7 +110,7 @@ $entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Contenu de la page -->
     <h1>Liste des Entreprises</h1>
-    <div class="content">
+    <div class="table-list">
     <table>
         <thead>
             <tr>
@@ -166,13 +131,13 @@ $entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars($entreprise['Siret']) ?></td>
                     <td><?= htmlspecialchars($entreprise['Telephone']) ?></td>
                     <td>
-                        <button onclick="window.location.href='Modifier_Entreprises.php?id=<?= $entreprise['Id_entreprise'] ?>'">Modifier</button>
+                        <button class='validate-btn' onclick="window.location.href='Modifier_Entreprises.php?id=<?= $entreprise['Id_entreprise'] ?>'">Modifier</button>
                     </td>
                     <td>
                         <form action="Supprimer_utilisateur.php" method="POST" style="display:inline;">
                         <input type="hidden" name="id" value="<?= htmlspecialchars($entreprise['Id_entreprise']) ?>">
                         <input type="hidden" name="role" value="Entreprise">
-                        <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">Supprimer</button>
+                        <button class='reject-btn'type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">Supprimer</button>
                     </form>
             </td>
                 </tr>
@@ -180,7 +145,7 @@ $entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </tbody>
     </table>
     
-    <button class="back-button" onclick="window.location.href='Home_Admin.php'">Retour</button>
+    <button class="back-btn" onclick="window.location.href='Home_Admin.php'">Revenir à la page d'accueil</button>
             </div>
 </body>
 </html>

@@ -1,10 +1,10 @@
 <?php
 session_start();
+include '../Fonctions.php';
+include_once '../Notifications/fonction_notif.php';
+$id_user =$_SESSION['id_user'];
 
-include("Fonction_Mes_infos.php");
-//$id_user =$_SESSION['id_user'];
-$id_user= 14 ;
-
+$conn = Connexion_base() ;
 // Récupération de l'historique des essais
 $historique = getHistoriqueEssais($conn, $id_user);
 ?>

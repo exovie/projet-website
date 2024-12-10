@@ -27,6 +27,7 @@ if (!$medecin) {
     <title>Modifier Médecin</title>
     <link rel="stylesheet" href='../website.css'>
     <link rel="stylesheet" href= '../navigationBar.css'>
+    <link rel="stylesheet" href= '../Notifications/notification.css'>
     <style>
         /* Conteneur principal pour le contenu centré */
         .container {
@@ -180,7 +181,7 @@ if (!$medecin) {
                 <button type="submit" class="save-btn">Enregistrer les modifications</button>
             </div>
         </form>
-        <form id="form-modification" method="POST" action="Liste_Medecins.php">
+        <form id="form-modification" method="POST" action="Liste_medecins.php">
             <!-- Conteneur des boutons -->
             <div class="buttons-container">
                 <button type="submit" class="cancel-bt">Retour à la liste des médecins</button>

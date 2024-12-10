@@ -1,8 +1,6 @@
 <?php
 /*Fonction qui calcule et génère les statistiques d’un essai lorsque que la phase de recrutement est finie*/
 
-
-
 function Stat_data($conn, int $id_essai){
     try {
         // Requête pour récupérer les poids et les sexes des patients

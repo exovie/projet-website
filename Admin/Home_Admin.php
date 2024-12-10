@@ -18,13 +18,26 @@ include_once '../Notifications/fonction_notif.php';
     <meta charset="UTF-8">
     <link rel="stylesheet" href='../website.css'>
     <link rel="stylesheet" href= '../navigationBar.css'>
+    <link rel="stylesheet" href='../Notifications/Notifications_style.css'>
+    <link rel="stylesheet" href='Admin.css'>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;}
+    </style>
+    </style>
 </head>
 <body>
 
     <!-- Code de la barre de navigation -->
     <div class="navbar">
         <div id="logo">
-            <a href="Homepage.php">
+            <a href="../Homepage.php">
                 <img src="../Pictures/logo.png" alt="minilogo" class="minilogo">
             </a>
         </div>
@@ -102,14 +115,20 @@ include_once '../Notifications/fonction_notif.php';
         </div>
     </div>
 
-    <!-- Contenu principal -->
-    <h1>Bienvenue, Admin</h1>
-    <div class="button-container">
-        <button onclick="window.location.href='Liste_patients.php'">Liste Patients</button>
-        <button onclick="window.location.href='liste_medecins.php'">Liste Médecins</button>
-        <button onclick="window.location.href='liste_entreprises.php'">Liste Entreprises</button>
-        <button onclick="window.location.href='validation_en_attente.php'">Validation en attente</button>
-    </div>
+    <div class="Ad-btn-container">
+    <button class='Ad-btn' onclick="window.location.href='Liste_patients.php'">Liste Patients</button>
+    <button class='Ad-btn' onclick="window.location.href='Liste_medecins.php'">Liste Médecins</button>
+    <button class='Ad-btn' onclick="window.location.href='Liste_entreprises.php'">Liste Entreprises</button>
+    <button class='Ad-btn' onclick="window.location.href='Validation_en_attente.php'">
+        Validation en attente
+        <?php 
+        $showBadge = Pastille_nombre($_SESSION['Id_user'], true);
+        if ($showBadge > 0): ?>
+            <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
+        <?php endif; ?>
+    </button>
+</div>
+
 
 </body>
 </html>

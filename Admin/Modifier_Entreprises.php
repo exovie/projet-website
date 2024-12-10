@@ -25,6 +25,7 @@ if (!$entreprise) {
     <title>Modifier Entreprise</title>
     <link rel="stylesheet" href='../website.css'>
     <link rel="stylesheet" href= '../navigationBar.css'>
+    <link rel="stylesheet" href= '../Notifications/notification.css'>
     <style>
         /* Conteneur principal pour le contenu centré */
         .container {
@@ -175,7 +176,7 @@ if (!$entreprise) {
                 <button type="submit" class="save-btn">Enregistrer les modifications</button>
             </div>
         </form>
-        <form id="form-modification" method="POST" action="Liste_Entreprises.php">
+        <form id="form-modification" method="POST" action="Liste_entreprises.php">
             <!-- Conteneur des boutons -->
             <div class="buttons-container">
                 <button type="submit" class="cancel-bt">Retour à la liste des entreprises</button>
