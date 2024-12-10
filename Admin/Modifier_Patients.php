@@ -10,7 +10,7 @@ if (!isset($_GET['id'])) {
 }
 
 $id_patient = intval($_GET['id']);
-$query = "SELECT Id_Patient, Nom, Prenom, Sexe, Telephone FROM patients WHERE Id_Patient = :id_patient";
+$query = "SELECT Id_Patient, Nom, Prenom, Sexe, Telephone FROM PATIENTS WHERE Id_Patient = :id_patient";
 $stmt = $conn->prepare($query);
 $stmt->execute(['id_patient' => $id_patient]);
 $patient = $stmt->fetch(PDO::FETCH_ASSOC);

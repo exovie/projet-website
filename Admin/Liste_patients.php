@@ -6,9 +6,9 @@ $conn=Connexion_base();
 
 //Récupération des infos
 $query = "
-    SELECT p.Id_Patient, p.Nom, p.Prenom, p.Sexe, p.Telephone
-    FROM patients p
-    JOIN users u ON p.Id_Patient = u.Id_user
+    SELECT Id_Patient, Nom, Prenom, Sexe, Telephone
+    FROM PATIENTS
+    JOIN USERS  ON PATIENTS.Id_Patient = USERS.Id_user
 ";
 $stmt = $conn->query($query);
 $patients = $stmt->fetchAll(PDO::FETCH_ASSOC);
