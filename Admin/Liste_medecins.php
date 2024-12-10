@@ -1,13 +1,13 @@
 <?php
 
 //Connection à la base
-include('Connexion_base.php');
+include("../Fonctions.php");
 $conn=Connexion_base();
 
 //Récupération des infos
 $query = "
     SELECT Id_medecin, Nom, Prenom, Specialite, Matricule, Telephone
-    FROM medecins
+    FROM MEDECINS
 ";
 $stmt = $conn->query($query);
 $medecins = $stmt->fetchAll(PDO::FETCH_ASSOC);

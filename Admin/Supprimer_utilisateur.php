@@ -1,6 +1,6 @@
 <?php
 // Inclure la connexion à la base de données
-include('Connexion_base.php');
+include("../Fonctions.php");
 $conn = Connexion_base();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

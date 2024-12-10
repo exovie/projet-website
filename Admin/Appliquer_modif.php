@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('Connexion_base.php');
+include("../Fonctions.php");
 
 $conn = Connexion_base();
 
@@ -12,14 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['modifications'])) 
     try {
 
         if ($role === 'Patient') {
-            $query = "UPDATE patients SET 
+            $query = "UPDATE PATIENTS SET 
                         Nom = :Nom, 
                         Prenom = :Prenom, 
                         Sexe = :Sexe, 
                         Telephone = :Telephone 
                       WHERE Id_Patient = :id";
         } elseif ($role === 'Medecin') {
-            $query = "UPDATE medecins SET 
+            $query = "UPDATE MEDECINS SET 
                         Nom = :Nom, 
                         Prenom = :Prenom, 
                         Specialite = :Specialite, 
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['modifications'])) 
                         Statut_inscription= 1
                       WHERE Id_medecin = :id";
         } elseif ($role === 'Entreprise') {
-            $query = "UPDATE entreprises SET 
+            $query = "UPDATE ENTREPRISES SET 
                         Nom_entreprise = :Nom_entreprise, 
                         Telephone = :Telephone, 
                         Siret = :Siret 

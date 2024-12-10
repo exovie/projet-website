@@ -1,6 +1,6 @@
 <?php
 //Connection à la base
-include('Connexion_base.php');
+include("../Fonctions.php");
 $conn=Connexion_base();
 
 
@@ -10,7 +10,7 @@ if (!isset($_GET['id'])) {
 }
 
 $id_entreprise = intval($_GET['id']);
-$query = "SELECT Id_entreprise, Nom_entreprise, Telephone, Siret FROM entreprises WHERE Id_entreprise = :id_entreprise";
+$query = "SELECT Id_entreprise, Nom_entreprise, Telephone, Siret FROM ENTREPRISES WHERE Id_entreprise = :id_entreprise";
 $stmt = $conn->prepare($query);
 $stmt->execute(['id_entreprise' => $id_entreprise]);
 $entreprise = $stmt->fetch(PDO::FETCH_ASSOC);

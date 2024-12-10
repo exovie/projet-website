@@ -2,7 +2,7 @@
 /*Création des essais */
 
 session_start();
-include("Connexion_base.php");
+include("../Fonctions.php");
 //$role_user=$_SESSION['role'];
 //id_user=$_SESSION['id_user'];
 $role_user="Entreprise";

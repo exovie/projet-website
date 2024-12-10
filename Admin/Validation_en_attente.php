@@ -1,6 +1,6 @@
 <?php
 // Connexion à la base de données
-include('Connexion_base.php');
+include("../Fonctions.php");
 $conn = Connexion_base();
 
 // Vérifier l'action de validation ou de refus
@@ -11,9 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Mettre à jour la base de données en fonction du rôle
         if ($role == 'Medecin') {
-            $query = "UPDATE medecins SET Statut_inscription = 1 WHERE Id_medecin = :userId";
+            $query = "UPDATE MEDECINS SET Statut_inscription = 1 WHERE Id_medecin = :userId";
         } elseif ($role == 'Entreprise') {
-            $query = "UPDATE entreprises SET Verif_inscription = 1 WHERE Id_entreprise = :userId";
+            $query = "UPDATE ENTREPRISES SET Verif_inscription = 1 WHERE Id_entreprise = :userId";
         }
 
         $stmt = $conn->prepare($query);
@@ -27,9 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Supprimer l'utilisateur de la base de données en fonction du rôle
         if ($role == 'Medecin') {
-            $query = "DELETE FROM medecins WHERE Id_medecin = :userId";
+            $query = "DELETE FROM MEDECINS WHERE Id_medecin = :userId";
         } elseif ($role == 'Entreprise') {
-            $query = "DELETE FROM entreprises WHERE Id_entreprise = :userId";
+            $query = "DELETE FROM ENTREPRISES WHERE Id_entreprise = :userId";
         }
 
         $stmt = $conn->prepare($query);
@@ -40,18 +40,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Récupérer les médecins et les entreprises en attente de validation
 $query = "
-    SELECT u.Id_user, u.Role, 
+    SELECT USERS.Id_user, USERS.Role, 
            CASE 
-               WHEN u.Role = 'Medecin' THEN m.Statut_inscription
-               WHEN u.Role = 'Entreprise' THEN e.Verif_inscription
+               WHEN USERS.Role = 'Medecin' THEN MEDECINS.Statut_inscription
+               WHEN USERS.Role = 'Entreprise' THEN ENTREPRISES.Verif_inscription
            END AS Verification,
-           m.Id_medecin, m.Nom AS Nom_medecin, m.Prenom, m.Specialite, m.Telephone, m.Matricule,
-           e.Id_entreprise, e.Nom_entreprise, e.Telephone AS Tel_entreprise, e.Siret
-    FROM users u
-    LEFT JOIN medecins m ON u.Id_user = m.Id_medecin AND u.Role = 'Medecin'
-    LEFT JOIN entreprises e ON u.Id_user = e.Id_entreprise AND u.Role = 'Entreprise'
-    WHERE (m.Statut_inscription = 0 AND u.Role = 'Medecin') 
-       OR (e.Verif_inscription = 0 AND u.Role = 'Entreprise')
+           MEDECINS.Id_medecin, MEDECINS.Nom AS Nom_medecin, MEDECINS.Prenom, MEDECINS.Specialite, MEDECINS.Telephone, MEDECINS.Matricule,
+           ENTREPRISES.Id_entreprise, ENTREPRISES.Nom_entreprise, ENTREPRISES.Telephone AS Tel_entreprise, ENTREPRISES.Siret
+    FROM USERS
+    LEFT JOIN MEDECINS ON USERS.Id_user = MEDECINS.Id_medecin AND USERS.Role = 'Medecin'
+    LEFT JOIN ENTREPRISES ON USERS.Id_user = ENTREPRISES.Id_entreprise AND USERS.Role = 'Entreprise'
+    WHERE (MEDECINS.Statut_inscription = 0 AND USERS.Role = 'Medecin') 
+       OR (ENTREPRISES.Verif_inscription = 0 AND USERS.Role = 'Entreprise')
 ";
 $stmt = $conn->query($query);
 $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);

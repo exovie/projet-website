@@ -1,5 +1,5 @@
 <?php
-
+include("../Fonctions.php");
 // Vérification du rôle de l'utilisateur
 session_start();
 $_SESSION['Role'] = 'Admin';

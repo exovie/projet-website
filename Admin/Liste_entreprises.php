@@ -1,13 +1,13 @@
 <?php
 
 //Connection à la base
-include('Connexion_base.php');
+include("../Fonctions.php");
 $conn=Connexion_base();
 
 //Récupération des infos
 $query = "
     SELECT Id_entreprise, Nom_entreprise, Telephone, Siret
-    FROM entreprises
+    FROM ENTREPRISES
 ";
 $stmt = $conn->query($query);
 $entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
