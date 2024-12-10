@@ -461,7 +461,8 @@ function SuccesEditor($SuccessCode){
         1=> 'Votre inscription a bien été enregistrée.',
         2=> 'Bienvenue ' . $_SESSION['Nom'] .'. Ravi de vous revoir !',
         3=> 'Votre déconnexion a bien été prise en compte.',
-        4=> 'Votre candidature a bien été enregistrée. Vous recevrez une notification dès qu\'elle sera traitée.'
+        4=> 'Votre candidature a bien été enregistrée. Vous recevrez une notification dès qu\'elle sera traitée.',
+        5=> 'Les modifications ont bien été enregistrées.'
     ];
 
 

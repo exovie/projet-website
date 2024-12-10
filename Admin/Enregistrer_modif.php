@@ -1,7 +1,6 @@
 <?php
 session_start();
 include("../Fonctions.php");
-
 $conn=Connexion_base();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

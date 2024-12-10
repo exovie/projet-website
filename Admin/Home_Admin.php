@@ -1,13 +1,12 @@
 <?php
-include("../Fonctions.php");
+
 // Vérification du rôle de l'utilisateur
 session_start();
-$_SESSION['Role'] = 'Admin';
-if ($_SESSION['Role'] !== 'Admin') {
-    header('Location: login.php'); // Redirection si non Admin
+if ($_SESSION['role'] !== 'Admin') {
+    header('Location: ../Connexion/Form1_connexion.php#modal'); // Redirection si non Admin
     exit;
 }
-include '../Fonctions.php';
+include("../Fonctions.php");
 include_once '../Notifications/fonction_notif.php';
 ?>
 
@@ -19,55 +18,13 @@ include_once '../Notifications/fonction_notif.php';
     <meta charset="UTF-8">
     <link rel="stylesheet" href='../website.css'>
     <link rel="stylesheet" href= '../navigationBar.css'>
-    <link rel="stylesheet" href='../Notifications/Notifications_style.css'>
-    <style>
-        body {
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: turquoise;
-            font-family: Arial, sans-serif;
-        }
-        h1 {
-            position: absolute;
-            top: 60px; /* Déplace le message un peu plus bas */
-            text-align: center;
-            color: black;
-        }
-        .button-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Deux colonnes de largeur égale */
-            gap: 20px;
-            margin-top: 50px; /* Ajoute un espace en haut si nécessaire */
-        }
-        button {
-            background-color: turquoise;
-            color: black;
-            font-size: 18px;
-            font-weight: bold;
-            border: 3px solid white;
-            border-radius: 8px;
-            padding: 15px;
-            width: 200px; /* Largeur fixe pour tous les boutons */
-            height: 70px; /* Hauteur fixe pour tous les boutons */
-            cursor: pointer;
-            text-align: center;
-        }
-        button:hover {
-            background-color: white;
-            color: turquoise;
-        }
-    </style>
 </head>
 <body>
 
     <!-- Code de la barre de navigation -->
     <div class="navbar">
         <div id="logo">
-            <a href="../Homepage.php">
+            <a href="Homepage.php">
                 <img src="../Pictures/logo.png" alt="minilogo" class="minilogo">
             </a>
         </div>
@@ -108,7 +65,7 @@ include_once '../Notifications/fonction_notif.php';
                 }
                 ?>
                 <a href="#">Mon Profil</a>
-                <a href="Deconnexion.php">Déconnexion</a>
+                <a href="../Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->
                 <a href="../Connexion/Form1_connexion.php#modal">Connexion</a>
@@ -137,8 +94,8 @@ include_once '../Notifications/fonction_notif.php';
     <!-- Messagerie -->
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
-            <!-- Lien de fermeture qui redirige vers Homepage.php -->
-            <a href="/projet-website/Admin/Home_Admin.php" class="close-btn">&times;</a>
+            <!-- Lien de fermeture qui redirige vers Home_Admin.php -->
+            <a href="Home_Admin.php" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>

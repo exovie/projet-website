@@ -1,6 +1,7 @@
 <?php
 //Connection à la base
 include("../Fonctions.php");
+include_once '../Notifications/fonction_notif.php';
 $conn=Connexion_base();
 
 
@@ -24,22 +25,9 @@ if (!$medecin) {
 <html>
 <head>
     <title>Modifier Médecin</title>
-    <link rel="stylesheet" href='website.css'>
-    <link rel="stylesheet" href= 'navigationBar.css'>
+    <link rel="stylesheet" href='../website.css'>
+    <link rel="stylesheet" href= '../navigationBar.css'>
     <style>
-        /* Styles généraux pour la page */
-        body {
-            background-color: turquoise; /* Fond de la page en turquoise */
-            font-family: Arial, sans-serif; /* Police pour le texte */
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center; /* Centrage horizontal */
-            align-items: center; /* Centrage vertical */
-            height: 100vh; /* Hauteur de la fenêtre de vue */
-            text-align: center; /* Centrer le texte */
-        }
-
         /* Conteneur principal pour le contenu centré */
         .container {
             background-color: white; /* Fond blanc pour les éléments */
@@ -54,12 +42,6 @@ if (!$medecin) {
             margin-top: 400px;
         }
 
-        /* Styles pour le titre */
-        h1 {
-            margin-bottom: 20px; /* Espacement en dessous du titre */
-            color: #333; /* Couleur du titre */
-            font-size: 24px; /* Taille du titre */
-        }
 
         /* Styles pour le formulaire */
         form {
@@ -83,17 +65,6 @@ if (!$medecin) {
             box-sizing: border-box; /* Assure que padding et border ne dépassent pas la largeur */
         }
 
-        /* Styles des boutons */
-        button {
-            padding: 10px 20px;
-            color: white; /* Couleur du texte du bouton */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 48%; /* Largeur des boutons */
-        }
-
         /* Bouton "Enregistrer les modifications" (vert) */
         .save-btn {
             background-color: #4CAF50;
@@ -112,24 +83,34 @@ if (!$medecin) {
     </style>
 </head>
 <body>
-     <!-- Code de la barre de navigation -->
-     <div class="navbar">
+        <!-- Code de la barre de navigation -->
+        <div class="navbar">
         <div id="logo">
-            <a href="Homepage.php">
-                <img src="Pictures/logo.png" alt="minilogo" class="minilogo">
+            <a href="../Homepage.php">
+                <img src="../Pictures/logo.png" alt="minilogo" class="minilogo">
             </a>
         </div>
-        <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
-        <a href="Entreprises.php" class="nav-btn">Entreprise</a>
-        <a href="Contact.php" class="nav-btn">Contact</a>
+        <a href="../Essais.php" class="nav-btn">Essais Cliniques</a>
+        <a href="../Entreprises.php" class="nav-btn">Entreprise</a>
+
+        <!-- Accès à la page de Gestion -->
+        <?php if ($_SESSION['role'] == 'Admin'): ?>
+            <a href="Home_Admin.php" class="nav-btn">Gestion</a>
+        <?php endif; ?>
+
+        <!-- Accès à la messagerie -->
+        <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Homepage.php">
-                <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
+            <a href="Modifier_Medecins.php#messagerie">
+                <img src="../Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
         </div>
+        <?php endif; ?>
+
+        <!-- Connexion / Inscription -->
         <div class="dropdown">
             <a>
-                <img src="Pictures/pictureProfil.png" alt="pictureProfil" style="cursor: pointer;">
+                <img src="../Pictures/pictureProfil.png" alt="pictureProfil" style="cursor: pointer;">
             </a>
             <div class="dropdown-content">
             <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
@@ -139,20 +120,51 @@ if (!$medecin) {
                     echo "<h1 style='font-size: 18px; text-align: center;'>Dr " . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 } elseif ($_SESSION['role'] == 'Entreprise') {
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "®</h1>";
-                } else {
+                } elseif(($_SESSION['role']=='Admin')){
+                    echo "<h1 style='font-size: 18px; text-align: center;'>Admin</h1>";
+                } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
                 ?>
                 <a href="#">Mon Profil</a>
-                <a href="Deconnexion.php">Déconnexion</a>
+                <a href="../Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->
-                <a href="Connexion/Form1_connexion.php#modal">Connexion</a>
-                <a href="Inscription/Form1_inscription.php#modal">S'inscrire</a>
+                <a href="../Connexion/Form1_connexion.php#modal">Connexion</a>
+                <a href="../Inscription/Form1_inscription.php#modal">S'inscrire</a>
             <?php endif; ?>
             </div>
         </div>
     </div>
+
+    <!-- Message Success -->
+    <?php 
+    if (isset($_SESSION['SuccessCode'])): 
+        SuccesEditor($_SESSION['SuccessCode']);
+        unset($_SESSION['SuccessCode']); // Nettoyage après affichage
+    endif; 
+    ?>
+
+    <!-- Message Erreur -->
+    <?php 
+    if (isset($_SESSION['ErrorCode'])): 
+        ErrorEditor($_SESSION['ErrorCode']);
+        unset($_SESSION['ErrorCode']); // Nettoyage après affichage
+    endif; 
+    ?>
+    
+    <!-- Messagerie -->
+    <div id="messagerie" class="messagerie">
+        <div class="messagerie-content">
+            <!-- Lien de fermeture qui redirige vers Home_Admin.php -->
+            <a href="Modifier_Medecins.php" class="close-btn">&times;</a>
+            <h1>Centre de notifications</h1>
+            <!-- Contenu de la messagerie -->
+            <?php Affiche_notif($_SESSION['Id_user'])?>
+        </div>
+    </div>
+
+    <!-- Contenu de la page -->
     <div class="container">
         <h1>Modifier les informations du Médecin</h1>
         <form id="form-modification" method="POST" action="Enregistrer_modif.php">
