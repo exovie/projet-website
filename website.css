@@ -418,3 +418,13 @@ button:hover {
 #medecin {
     color: rgb(91, 24, 104);
 }
+
+.image_nom {
+    display: flex;
+    align-items: center; /* Aligner verticalement les éléments */
+    list-style: none;
+}
+
+.image_nom li {
+    margin-right: 10px;
+}
