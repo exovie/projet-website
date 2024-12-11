@@ -496,6 +496,7 @@ function Traiter_Candidature_Medecin(int $Id_essai, int $Id_medecin, int $Repons
         
     }
     if($Reponse == 0){
+        $conn = Connexion_base();
         $requete_non = $conn -> prepare("DELETE FROM `MEDECIN_ESSAIS` WHERE `Id_medecin` = ?");
         $requete_non -> execute(array($Id_medecin));
         //on prévient le médecin du refus
@@ -698,7 +699,7 @@ function Afficher_Patients($Id_essai, $Statut_participation){
                 <td>' . htmlspecialchars($patient["Prenom"]) . '</td>
                 <td>';
                 
-                if ($Statut_participation == 'Actif'){
+                if ($Statut_participation == 'Actif'){ #TODO corriger le premier bouton et qu'il soit fonctionnel pour rediriger vers la page de céline
                     echo '
                         <button class="btn" onclick="A(' . htmlspecialchars($patient["Id_patient"]) . ')">Consulter la fiche</button>   
                         <button name = "action" value="retirer patient" class="btn delete">Retirer de l\'essai</button>
@@ -734,7 +735,7 @@ function Afficher_Patients($Id_essai, $Statut_participation){
     echo '</tbody></table>';
 }
 
-function Afficher_Medecins($Id_essai, $Statut_medecin){
+function Afficher_Medecins($Id_essai, $Statut_medecin, $Id_user, $role){
     if($Statut_medecin=='Actif'){
          $tableau_medecins = Recup_Medecins($Id_essai)[0];
     echo '<h1>Liste des Medecins</h1>';}
@@ -771,15 +772,15 @@ function Afficher_Medecins($Id_essai, $Statut_medecin){
                 <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
                 <td>';
                
-                if ($Statut_medecin == 'Actif'){
+                if ($Statut_medecin == 'Actif' && (verif_entreprise($Id_essai, $Id_user) || $role === 'admin')){
                     echo '
-                        <button name = "action" value="retirer medecin" class="btn delete">Retirer de l\'essai</button>
+                        <button name="action" value="retirer medecin" type="submit" class="btn delete">Retirer de l\'essai</button>
                     ';
                 }
                 if ($Statut_medecin == 'En attente'){
                     echo '
-                    <button name = "action" value="accepter medecin" class="btn delete">Accepter le médecin</button>
-                    <button name = "action" value="refuser medecin" class="btn delete">Refuser le médecin</button>
+                    <button name="action" value="accepter medecin" type="submit" class="btn delete">Accepter le médecin</button>
+                    <button name="action" value="refuser medecin" type="submit" class="btn delete">Refuser le médecin</button>
                 ';
                 
                 }
@@ -843,8 +844,9 @@ foreach($praticien as $medecin) {
         <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
         <td>';
             echo '
-                
-                <button (' . htmlspecialchars($Id_essai) . ', ' . htmlspecialchars($medecin["Id_medecin"]) . ')">Demander ce médecin</button>
+                <form method="POST" action="hub.php">
+                    <button name="demande_medecin" value="' . htmlspecialchars($Id_essai . '_' . $medecin["Id_medecin"]) . '" type="submit">Demander ce médecin</button>
+                </form>
             ';
 
     
