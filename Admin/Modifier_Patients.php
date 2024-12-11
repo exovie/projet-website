@@ -164,8 +164,8 @@ if (!$patient) {
 
     <!-- Contenu de la page -->
     <div class="container">
-        <h1>Modifier les informations du patient</h1>
-        <form id="form-modification" method="POST" action="Enregistrer_modif.php">
+        <h3>Modifier les informations du patient</h3>
+        <form-modif id="form-modification" method="POST" action="Enregistrer_modif.php">
             <input type="hidden" name="role" value="Patient">
             <input type="hidden" name="id" value="<?= htmlspecialchars($patient['Id_Patient']) ?>">
             
@@ -194,7 +194,7 @@ if (!$patient) {
             <div class="buttons-container">
                 <button type="submit" class="cancel-bt">Retour à la liste des patients</button>
             </div>
-        </form>
+        </form-modif>
     </div>
 </body>
 </html>

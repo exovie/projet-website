@@ -23,6 +23,7 @@ $modifications = $_SESSION['modifications'];
     <link rel="stylesheet" href='../website.css'>
     <link rel="stylesheet" href= '../navigationBar.css'>
     <title>Confirmer les modifications</title>
+
     <style>
         .container {
             background-color: white;
@@ -51,6 +52,7 @@ $modifications = $_SESSION['modifications'];
             background-color: #d32f2f;
         }
     </style>
+
 </head>
 <body>
         <!-- Code de la barre de navigation -->

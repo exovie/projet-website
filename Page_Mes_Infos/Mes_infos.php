@@ -10,16 +10,7 @@ $role= $_SESSION['role'];
 // Récupération des informations de l'utilisateur
 $userInfo = getUserInfo($conn, $id_user);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Mise à jour des informations de l'utilisateur
-    $success = updateUserInfo($conn, $id_user);
-    if ($success) {
-        $userInfo = getUserInfo($conn, $id_user); // Actualiser les données affichées
-        $message = "Vos informations ont été mises à jour avec succès.";
-    } else {
-        $message = "Erreur lors de la mise à jour des informations.";
-    }
-}
+
 ?>
 
 
@@ -145,22 +136,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <?php
+    // Récupérer le rôle de l'utilisateur
+$sql= $conn -> prepare("SELECT Role FROM USERS WHERE Id_user= :id_user");
+$sql->execute(['id_user' => $id_user]);
+$result=$sql->fetch(PDO::FETCH_ASSOC);
+$role=$result['Role'];
+
+    ?>
     <h1>Profil utilisateur</h1>
-    <?php if (isset($message)) : ?>
-        <p class="message"><?= htmlspecialchars($message) ?></p>
-    <?php endif; ?>
+    
 
     <?php if ($userInfo) : ?>
-        <form method="post">
-            <?php foreach ($userInfo as $key => $value): ?>
-                <?php if ($key === 'Id_Patients' || $key === 'Id_medecin' || $key === 'Id_entreprise') continue; ?>
-                <label for="<?= $key ?>"><?= ucfirst(str_replace('_', ' ', $key)) ?> :</label>
-                <input type="text" id="<?= $key ?>" name="<?= $key ?>" value="<?= htmlspecialchars($value) ?>">
-            <?php endforeach; ?>
-            <button type="submit">Modifier</button>
+        <form method="POST" enctype="multipart/form-data">
+        <?php foreach ($userInfo as $key => $value): ?>
+            <?php 
+                // Ignorer les clés spécifiques
+                if ($key === 'Id_Patients' || $key === 'Id_medecin' || $key === 'Id_entreprise' || $key === 'Profile_picture') {
+                    continue;
+                }
+            ?>
+            
+            <label for="<?= $key ?>"><?= ucfirst(str_replace('_', ' ', $key)) ?> :</label>
+            <input type="text" id="<?= $key ?>" name="<?= $key ?>" value="<?= htmlspecialchars($value) ?>">
+        <?php endforeach; ?>
+            <!-- Afficher la photo de profil si elle existe -->
+        <label for="Profile_picture">Photo de profil:</label>
+        <?php if (!empty($userInfo['Profile_picture'])): ?>
+            <img src="<?= $userInfo['Profile_picture'] ?>" alt="Photo de profil" style="max-width: 100px; max-height: 100px;">
+        <?php endif; ?>
+
+        <!-- Option pour télécharger une nouvelle photo de profil -->
+        <input type="file" name="Profile_picture" id="Profile_picture">
+        <button type="submit">Modifier</button>
         </form>
     <?php else: ?>
         <p>Aucune information trouvée pour cet utilisateur.</p>
     <?php endif; ?>
+
+    
+    <?php 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Mise à jour des informations de l'utilisateur
+    $success = updateUserInfo($conn, $id_user);
+
+    // Affichage des messages d'erreur stockés dans $_SESSION
+    if (isset($_SESSION['FormsErr'])): ?>
+        <p class="message"><?= htmlspecialchars($_SESSION['FormsErr']) ?></p>
+        <?php 
+        unset($_SESSION['FormsErr']); // Supprimer le message après affichage
+    endif;
+
+}
+?>
+ <button onclick="window.location.href='Menu_Mes_Infos.php';">Retour à la page précédente</button>
 </body>
 </html>

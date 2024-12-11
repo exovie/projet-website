@@ -1,14 +1,14 @@
 <?php
 session_start();
 
-// Vérifiez si l'utilisateur est autorisé
-// if ($_SESSION['role'] !== "Entreprise") {
-//     // Redirigez l'utilisateur s'il n'est pas "Entreprise"
-//     header("Location: unauthorized.php");
-//     exit;
-// }
+//Vérifiez si l'utilisateur est autorisé
+if ($_SESSION['role'] !== "Entreprise") {
+    // Redirigez l'utilisateur s'il n'est pas "Entreprise"
+    header("Location: unauthorized.php");
+    exit;
+}
 
-// Logique de la page "Créer un essai" ici
+
 ?>
 
 <!DOCTYPE html>
@@ -21,7 +21,7 @@ session_start();
     <link rel="stylesheet" href= 'navigationBar.css'>
     <style>
         body {
-            background-color: turquoise; /* Arrière-plan cyan */
+            background-color: #b0f5e7; 
             display: flex; /* Utiliser flexbox pour centrer */
             justify-content: center; /* Centre horizontalement */
             align-items: center; /* Centre verticalement */

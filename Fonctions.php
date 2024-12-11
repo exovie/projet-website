@@ -224,12 +224,17 @@ function List_Medecin(int $id_medecin): array {
     SELECT *
     FROM MEDECINS
     WHERE Id_medecin = :id_medecin;
+    SELECT *
+    FROM MEDECINS
+    WHERE Id_medecin = :id_medecin;
     ";
     $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':id_medecin', $id_medecin, PDO::PARAM_INT);
     $stmt->bindParam(':id_medecin', $id_medecin, PDO::PARAM_INT);
     $stmt->execute();
     
     // Récupérer les résultats
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         echo "Erreur : " . $e->getMessage();

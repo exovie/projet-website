@@ -4,9 +4,13 @@ include '../Fonctions.php';
 include_once '../Notifications/fonction_notif.php';
 $id_user =$_SESSION['id_user'];
 
+include("Fonction_Mes_infos.php");
+$id_user =$_SESSION['Id_user'];
 $conn = Connexion_base() ;
+
 // Récupération de l'historique des essais
 $historique = getHistoriqueEssais($conn, $id_user);
+
 ?>
 
 <!DOCTYPE html>
@@ -18,6 +22,11 @@ $historique = getHistoriqueEssais($conn, $id_user);
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
     <style>
+    body{
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #b0f5e7;
+    }
     /* Style pour encadrer le tableau */
     .table-container {
         border: 2px solid #007BFF; /* Bordure bleue autour du cadre */
@@ -33,7 +42,9 @@ $historique = getHistoriqueEssais($conn, $id_user);
         width: 100%;
         border-collapse: collapse;
     }
-
+    h1{
+        margin-top:70px;
+    }
     th, td {
         border: 1px solid #ddd;
         padding: 10px;
@@ -55,7 +66,7 @@ $historique = getHistoriqueEssais($conn, $id_user);
 </style>
 
 </head>
-<<body>
+<body>
     <!-- Code de la barre de navigation -->
     <div class="navbar">
         <div id="logo">
@@ -106,8 +117,9 @@ $historique = getHistoriqueEssais($conn, $id_user);
             <table>
                 <thead>
                     <tr>
-                        <th>ID Essai</th>
+                        <th>Titre</th>
                         <th>Date de Création</th>
+                        <th>Date de Fin</th>
                         <th>Statut</th>
                         <th>Action</th>
                     </tr>
@@ -117,6 +129,7 @@ $historique = getHistoriqueEssais($conn, $id_user);
                         <tr>
                             <td><?= htmlspecialchars($essai['Titre']) ?></td>
                             <td><?= htmlspecialchars($essai['Date_creation']) ?></td>
+                            <td><?= htmlspecialchars(!empty($essai['Date_fin']) ? $essai['Date_fin'] : 'NULL') ?></td>
                             <td><?= htmlspecialchars($essai['Statut']) ?></td>
                             <td>
                                 <!-- Mettre le lien vers la page de l'essai clinique en question -->
@@ -126,6 +139,7 @@ $historique = getHistoriqueEssais($conn, $id_user);
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            <button onclick="window.location.href='Menu_Mes_Infos.php';">Retour à la page précédente</button>
         </div>
     <?php else: ?>
         <p>Aucun essai clinique trouvé pour cet utilisateur.</p>

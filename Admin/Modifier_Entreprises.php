@@ -68,16 +68,17 @@ if (!$entreprise) {
             background-color: #4CAF50;
         }
         .save-btn:hover {
-            background-color: #45a049; /* Couleur au survol */
+         background-color: #45a049; /* Couleur au survol */
         }
 
-        /* Bouton "Retour à la page précédente" (rouge) */
+        /* Bouton "Retour à la page précédente" */
         .cancel-btn {
-            background-color: #f44336;
+        background-color: #f44336;
         }
         .cancel-btn:hover {
-            background-color: #d32f2f; /* Couleur au survol */
-        }
+        background-color: #d32f2f; /* Couleur au survol */
+    }
+
     </style>
 </head>
 <body>
@@ -164,8 +165,8 @@ if (!$entreprise) {
 
     <!-- Contenu de la page -->
     <div class="container">
-        <h1>Modifier les informations de l'Entreprise</h1>
-        <form id="form-modification" method="POST" action="Enregistrer_modif.php">
+        <h3>Modifier les informations de l'Entreprise</h3>
+        <form-modif id="form-modification" method="POST" action="Enregistrer_modif.php">
             <input type="hidden" name="role" value="Entreprise">
             <input type="hidden" name="id" value="<?= htmlspecialchars($entreprise['Id_entreprise']) ?>">
             <label>Nom de l'entreprise <input type="text" name="Nom" value="<?= htmlspecialchars($entreprise['Nom_entreprise']) ?>"></label><br>
@@ -181,7 +182,7 @@ if (!$entreprise) {
             <div class="buttons-container">
                 <button type="submit" class="cancel-bt">Retour à la liste des entreprises</button>
             </div>
-        </form>
+        </form-modif>
         </div>
 </body>
 </html>
