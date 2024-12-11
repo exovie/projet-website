@@ -19,23 +19,6 @@
     position: relative; /* Nécessaire pour positionner la pastille */
 }
 
-.notification-badge {
-    position: absolute;
-    top: -5px; /* Ajustez pour placer la pastille juste au-dessus */
-    right: -5px; /* Ajustez pour aligner la pastille sur le bord droit */
-    background-color: red;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 50%;
-    padding: 5px;
-    min-width: 20px; /* Taille minimale de la pastille */
-    min-height: 20px; /* Taille minimale de la pastille */
-    text-align: center;
-    line-height: 20px; /* Centrer le texte verticalement */
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3); /* Optionnel : effet d'ombre */
-}
-
 .Ad-btn:hover {
     background-color: rgb(24, 98, 104);
     color: white;

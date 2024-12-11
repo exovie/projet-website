@@ -2,6 +2,7 @@
 
 // Vérification du rôle de l'utilisateur
 session_start();
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 if ($_SESSION['role'] !== 'Admin') {
     header('Location: ../Connexion/Form1_connexion.php#modal'); // Redirection si non Admin
     exit;
@@ -55,6 +56,12 @@ include_once '../Notifications/fonction_notif.php';
             <a href="Home_Admin.php#messagerie">
                 <img src="../Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
+            <!-- Affichage de la pastille -->
+            <?php 
+            $showBadge = Pastille_nombre($_SESSION['Id_user']);
+            if ($showBadge > 0): ?>
+                <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
@@ -76,8 +83,8 @@ include_once '../Notifications/fonction_notif.php';
                 } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
-                ?>
-                <a href="#">Mon Profil</a>
+                if ($_SESSION["role"]!=='Admin'&& $_SESSION['Logged_user'] === true)
+                {echo "<a href='Page_Mes_Infos/Menu_Mes_Infos.php'>Mon Profil</a>";} ?>
                 <a href="../Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->
@@ -122,9 +129,9 @@ include_once '../Notifications/fonction_notif.php';
     <button class='Ad-btn' onclick="window.location.href='Validation_en_attente.php'">
         Validation en attente
         <?php 
-        $showBadge = Pastille_nombre($_SESSION['Id_user'], true);
-        if ($showBadge > 0): ?>
-            <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
+        $showBadgeA = Pastille_nombre($_SESSION['Id_user'], true);
+        if ($showBadgeA > 0): ?>
+            <span class="notification-badge"><?= htmlspecialchars($showBadgeA) ?></span>
         <?php endif; ?>
     </button>
 </div>

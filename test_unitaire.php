@@ -434,7 +434,7 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
         );
 
         //Listes des notifications
-        $list = List_Notif(23);
+        $list = List_Notif(23, 'Medecin');
         if (is_array($list)) {
             $commList = "";
             $commList .= "Id_Notif: " ;
@@ -484,8 +484,6 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
             Obtenir_statut_notification(112, 14) !== 'Ouvert'
         );
         session_destroy();
-
-        //
 
         // Supprimer les notiications ajoutées pour les tests
         foreach ($notifCreated as $Id) {

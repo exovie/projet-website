@@ -130,11 +130,11 @@ function Ne_plus_lire_notif($Id_notif, $Id_user) {
         $pdo = Connexion_base();
         if ($_SESSION['role'] == 'Medecin'|| $_SESSION['role'] == 'Admin') {
             // Mark the notification as read for all doctors
-            $stmt = $pdo->prepare("UPDATE DESTINATAIRE SET Statut_notification = 'Non Ouvert' WHERE Id_notif = :id_notif");
+            $stmt = $pdo->prepare("UPDATE DESTINATAIRE SET Statut_notification = 'Non ouvert' WHERE Id_notif = :id_notif");
             $stmt->execute(['id_notif' => $Id_notif]);
         } else {
             // Mark the notification as read for the user
-            $stmt = $pdo->prepare("UPDATE DESTINATAIRE SET Statut_notification = 'Non Ouvert' WHERE Id_notif = :id_notif AND Id_destinataire = :id_user");
+            $stmt = $pdo->prepare("UPDATE DESTINATAIRE SET Statut_notification = 'Non ouvert' WHERE Id_notif = :id_notif AND Id_destinataire = :id_user");
             $stmt->execute(['id_notif' => $Id_notif, 'id_user' => $Id_user]);
         }
         Fermer_base($pdo);
@@ -157,13 +157,13 @@ function Affiche_notif($Id_D) {
     $All = List_Notif($Id_D, $_SESSION['role']);
     if (!empty($All)) {
     foreach ($All as $Notif) {
-        //Définition des variables
+        //Définition des variables 
         $CodeNotif = $Notif['CodeNotif'];
         $Date = $Notif['Date_Notif'];
+        $Id_Notif = $Notif['Id_notif'];
         $Entreprise = $Notif['Nom_entreprise'];
         $titre_Essai = $Notif['Titre'];
         $Id_Essai = $Notif['Id_Essai']; 
-        $Id_Notif = $Notif['Id_notif'];
 
         $IndexNotif = [
             1 => "Vous avez une nouvelle demande d’inscription à consulter.",
@@ -193,26 +193,26 @@ function Affiche_notif($Id_D) {
 
         // Détermine la classe du tableau en fonction du statut
         $tableClass = ($Notif['Statut_notification'] == 'Non Ouvert') ? 'opened-notifications' : 'non-notifications';
-        
         echo "<table class='$tableClass'>";
 
         echo "<tr>";
-        echo "<td class='notif-column'>";
 
-        
+        echo "<td class='notif-column'>";
         // Statut de la notification
-        if ($Notif['Statut_notification'] == 'Non Ouvert') {
+        if ($Notif['Statut_notification'] == 'Non ouvert') {
             echo "
             <form method='post' style='display: inline;'>
-                <input type='hidden' name='Lire' value='Lire_notif'>
+                <input type ='hidden' name='Id_Notif' value =". htmlspecialchars($IndexNotif[$CodeNotif]) . ";'>
+                <input type='hidden' name='Lire' value='Lire'>
                 <button type='submit' style='border: none; background: none; padding: 0;'>
                     <img src='/projet-website/Pictures/eyes_close.png' alt='Marquer comme lu' title='Marquer comme lu' style='width: 24px; height: 24px;'>
                 </button>
             </form>";
         } else {
             echo "
-            <form method='post'  style='display: inline;'>
-                <input type='hidden' name='Ne_plus' value='Ne_plus_lire_notif'>
+            <form method='post' style='display: inline;'>
+                <input type ='hidden' name='Id_Notif' value =". htmlspecialchars($IndexNotif[$CodeNotif]) . ";'>            
+                <input type='hidden' name='Ne_plus', value='Ne_plus'>
                 <button type='submit' style='border: none; background: none; padding: 0;'>
                     <img src='/projet-website/Pictures/open_eye.png' alt='Marquer comme non lu' title='Marquer comme non lu' style='width: 24px; height: 24px;'>
                 </button>
@@ -248,10 +248,14 @@ function Affiche_notif($Id_D) {
 }
 
 if (isset($_POST["Ne_plus"])) {
-    Ne_plus_lire_notif($Id_Notif, $_SESSION['Id_user']);
+    Ne_plus_lire_notif($Id_Notif, $Id_D);
+    header("Location: " . $_SESSION['origin']."#messagerie");
+    exit();
 }
 if (isset($_POST['Lire'])) {
-    Lire_notif($Id_Notif, $_SESSION['Id_user']);
+    Lire_notif($Id_Notif, $Id_D);
+    header("Location: " . $_SESSION['origin']."#messagerie");
+    exit();
 }
 
 ?>

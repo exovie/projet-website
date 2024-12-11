@@ -23,6 +23,11 @@ if ($id_notif == 1){
 
 else {
     echo 'dans le else de fin ';
+    echo 'Id_Essai : '.$Id_Essai;
+    echo $_SERVER['REQUEST_URI'];
+    echo '<br>';
+    echo 'USER '.$_SESSION['Id_user'];
+    echo '<br>';
     $_SESSION['Essai'] = $Id_Essai;
     header('projet-website/Essai_individuel.php');
     exit();

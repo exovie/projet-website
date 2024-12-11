@@ -34,16 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href='../Notifications/Notifications_style.css'>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
         form {
             max-width: 600px;
             margin: 0 auto;
-        }
-        h1 {
-            margin-top: 80px;
         }
         input, textarea {
             width: 100%;

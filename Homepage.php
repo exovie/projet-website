@@ -1,6 +1,6 @@
 <?php
 session_start();
-$_SESSION['origin'] = 'Homepage';
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 // Connexion à la base de données
 $db_name = "mysql:host=localhost;dbname=website_db"; 
 $_SESSION['db_name'] = $db_name;
@@ -47,6 +47,12 @@ include_once 'Notifications/fonction_notif.php';
             <a href="Homepage.php#messagerie">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
+            <!-- Affichage de la pastille -->
+            <?php 
+            $showBadge = Pastille_nombre($_SESSION['Id_user']);
+            if ($showBadge > 0): ?>
+                <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
