@@ -4,6 +4,7 @@ $_SESSION['origin'] = 'Essais_cliniques';
 $role = $_SESSION['role'];
 $db_name = $_SESSION['db_name'];
 include 'Fonctions.php';
+$list_essai = Get_essais($role);
 ?>
 
 <!DOCTYPE html>
@@ -51,69 +52,55 @@ include 'Fonctions.php';
     </div>
     <!-- Contenu principal -->
     <div class="content">
-      <!-- Barre de recherche -->
-      <div class="search-container">
-          <input type="text" class="search-box" placeholder="Rechercher..." id="searchInput">
-          <button class="search-button">Rechercher</button>
-      </div>
-      <!-- Sélection de filtres -->
-    <div class="filter-container">
-      <!-- Filtre de statut -->
-      <select name="statusFilter" class="filter-box">
-          <option value="Tous">Toutes les phases</option>
-          <option value="Recrutement">PHASE I</option>
-          <option value="En attente">PHASE II</option>
-          <option value="Terminé">PHASE III</option>
-      </select>
+    <!-- Barre de recherche -->
+    <form method="POST">
+        <div class="search-container">
+            <input type="text" name="navbar" class="search-box" placeholder="Rechercher..." id="searchInput">
+            <button type="submit" class="search-button">Rechercher</button>
+        </div>
 
-      <!-- Filtre de date -->
-      <select name="dateFilter" class="filter-box">
-          <option value="Tous">Toutes les dates</option>
-          <option value="Aujourd'hui">Aujourd'hui</option>
-          <option value="Cette semaine">Cette semaine</option>
-          <option value="Ce mois">Ce mois</option>
-      </select>
+        <!-- Sélection de filtres -->
+        <div class="filter-container">
+            <!-- Filtre de statut -->
+            <select name="phaseFilter" class="filter-box">
+                <option value="Tous">Toutes les phases</option>
+                <option value="Phase I">PHASE I</option>
+                <option value="Phase II">PHASE II</option>
+                <option value="Phase III">PHASE III</option>
+            </select>
 
-      <!-- Filtre de l'entreprise-->
-      <select name="dateFilter" class="filter-box">
-          <option value="Tous">Toutes les entreprises</option>
-          <option value="Aujourd'hui">Aujourd'hui</option>
-          <option value="Cette semaine">Cette semaine</option>
-          <option value="Ce mois">Ce mois</option>
-      </select>
-    </div>
+            <!-- Filtre de l'entreprise-->
+            <select name="companyFilter" class="filter-box">
+                <?php
+                enterprise_filter($list_essai);  // Liste des entreprises
+                ?>
+            </select>
+        </div>
+    </form>
+</div>
+
       <div>
           <div id="trial_boxes">
+            <form method="POST" action="Essai_individuel.php">
           <?php
-            List_essai($role, $db_name);
-          ?>
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                Display_essais($list_essai);
+            }
+            // Vérifier si le bouton a été cliqué
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['navbar'])) {
+                // Appeler une fonction PHP
+                $recherche = $_POST['navbar'];
+                $filtres = [$_POST['phaseFilter'], $_POST['companyFilter']]; 
+                recherche_EC($list_essai, $recherche, $filtres);
+            }
+            
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['essai_indi'])) {
+                header("Location: Essai_individuel.php");
+            }
+            ?>
+            </form>
           </div>
       </div>
     </div>
 </body>
 </html>
-
-<!--
-<form action="TD2_exo3.php" method="post">
-  <label for="nom">Entrez le produit voulu et la quantité au format suivant :</label>
-  <input type="text" id="nom" placeholder="produit, quantité" name="nom" required>
-  
-  <br><br>
-  <input type="submit" value="Envoyer">
-</form> 
-
-    foreach ($clinical_trials as $essai_clinique) {
-        echo '<ul>';
-        echo '<li>Titre : ' . $essai_clinique['Titre'] . '</li>';
-        echo '<li>Contexte : ' . $essai_clinique['Contexte'] . '</li>';
-        echo '<li>Objectif de l\'essai : ' . $essai_clinique['Objectif_essai'] . '</li>';
-        echo '<li>Design de l\'étude : ' . $essai_clinique['Design_etude'] . '</li>';
-        echo '<li>Critère d\'évaluation : ' . $essai_clinique['Critere_evaluation'] . '</li>';
-        echo '<li>Résultats attendus : ' . $essai_clinique['Resultats_attendus'] . '</li>';
-        echo '<li>Date de lancement : ' . $essai_clinique['Date_lancement'] . '</li>';
-        echo '<li>Date de fin : ' . $essai_clinique['Date_fin'] . '</li>';
-        echo '<li>Date de création : ' . $essai_clinique['Date_creation'] . '</li>';
-        echo '<li>Statut : ' . $essai_clinique['Statut'] . '</li>';
-        echo '</ul>';
-    }
--->
