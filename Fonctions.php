@@ -231,7 +231,7 @@ function Display_essais($resultats) {
 function List_Medecin(int $id_medecin): array {
     $conn = Connexion_base();
 
-    try {
+    try { 
         $sql = "
     SELECT *
     FROM MEDECINS
@@ -702,8 +702,7 @@ function company_trial ($id_essai) {
 
     $sql = "
         SELECT Id_entreprise
-        FROM ENTREPRISES
-        JOIN ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
+        FROM ESSAIS_CLINIQUES
         WHERE ESSAIS_CLINIQUES.Id_essai = :Id_essai;
     "; 
 
@@ -717,5 +716,103 @@ function company_trial ($id_essai) {
         return $result['TableName'];
     } else {
         echo "Id_user $id_essai n'existe dans aucune table liée.";
+    }
+}
+
+
+function get_medecin_trial(int $id_medecin, $id_essai): array {
+    $conn = Connexion_base();
+
+    try {
+        $sql = "
+            SELECT Id_medecin
+            FROM MEDECINS_ESSAIS
+            WHERE MEDECINS_ESSAIS.Id_essai = :Id_essai;
+        "; 
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_essai', $id_essai, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    // Récupérer les résultats
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return [];
+    
+    } finally {
+    // Fermer la connexion
+    Fermer_base($conn);
+    }
+}
+
+function affichage_request_medecin($Id_essai, $praticien){
+
+    echo '<h1>Liste des Medecins</h1>';
+    echo '
+        <table>
+            <thead>
+                <tr>
+                
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Spécialité</th>
+                    <th>Matricule</th>
+                    <th>Numéro de téléphone</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>';
+    foreach($praticien as $medecin) {
+        $medecin = $medecin[0];
+        echo '<tr>
+            <td>' . htmlspecialchars($medecin["Nom"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Prenom"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Specialite"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Matricule"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
+            <td>';
+                echo '
+                    
+                    <button (' . htmlspecialchars($Id_essai) . ', ' . htmlspecialchars($medecin["Id_medecin"]) . ')">Retirer de l\'essai</button>
+                ';
+                echo '
+                <button ('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 1 . ')">Accepter le médecin</button>
+                <button ('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 0 . ')">Refuser le médecin</button>
+            ';
+        
+    }
+    echo '</tr>';
+            
+    echo '</tbody></table>';
+}
+
+function verif_entreprise($Id_essai, $Id_entreprise) {
+    $conn = Connexion_base();
+
+    try {
+        $sql = "
+            SELECT EXISTS (
+                SELECT 1
+                FROM ESSAIS_CLINIQUES
+                WHERE Id_entreprise = :Id_entreprise
+                AND Id_essai = :Id_essai
+            ) AS EssaiTrouve;
+        "; 
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':Id_entreprise', $Id_entreprise, PDO::PARAM_INT);
+        $stmt->bindParam(':Id_essai', $Id_essai, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        // Récupérer le résultat de la requête
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Si l'essai est trouvé, retourne true, sinon false
+        return (bool)$result['EssaiTrouve'];
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return false;
+    } finally {
+        // Fermer la connexion
+        Fermer_base($conn);
     }
 }

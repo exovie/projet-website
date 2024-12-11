@@ -10,6 +10,7 @@ if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true) {
 } else {
     $_SESSION['role'] = 'visiteur';
 }
+$role = $_SESSION['role'];
 include 'Fonctions.php';
 include_once 'Notifications/fonction_notif.php';
 ?>
@@ -151,7 +152,40 @@ include_once 'Notifications/fonction_notif.php';
                 $counter++;
               }
             ?>
+            </div>
+        </div>
     </div>
-</body>
+    
+
+
+    <?php
+        if ($role === 'entreprise' && verif_entreprise($Id_essai, $Id_entreprise)) {
+         if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'medecins' est réellement présent dans $_POST
+            $postdata = $_SESSION['postdata']; 
+            unset($_SESSION['postdata']);
+            if (isset($postdata['medecins'])) {
+            $id_medecins = Get_id('MEDECINS', 'Id_medecin');
+            $medecins = [];
+                if (!empty($id_medecins)) { // Vérifie que le tableau n'est pas vide
+                    foreach ($id_medecins as $id_medecin) {
+                        $medecins[] = List_Medecin($id_medecin);   
+                    }
+                    affichage_request_medecin(11, $medecins);       
+                } else {
+                    // Gérer le cas où il n'y a pas de médecins à afficher
+                    echo "Aucun médecin trouvé.";
+                }
+        }
+        } else {
+            echo '
+            <form method="POST" action="hub.php">
+                <button name="medecins" type="submit" class="search-button">Rechercher</button>
+            </form>
+            ';
+        }
+    }
+        
+    ?>
+
 </body>
 </html>
