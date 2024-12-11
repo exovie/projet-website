@@ -3,7 +3,7 @@
 
 //session_start();
 include_once("../Fonctions.php");
-include(":/fonctionInscription.php");
+include_once(":/fonctionInscription.php");
 $conn = Connexion_base();
 
 
@@ -13,7 +13,7 @@ function getUserInfo($conn, int $id_user) {
     //Récupérer le role de l'Id_user
     $sql = $conn -> prepare("SELECT Role FROM USERS WHERE Id_user=:id_user");
     $sql->execute(['id_user' => $id_user]);
-    $role=$sql->fetch(PDO::FETCH_ASSOC)['role'] ?? null;
+    $role=$sql->fetch(PDO::FETCH_ASSOC)['Role'] ?? null;
     
     switch ($role) {
         case 'Patient':
@@ -181,27 +181,25 @@ function getHistoriqueEssais($conn, int $id_user) {
 
     try {
         //Récupérer le role de l'Id_user
-        $sql = $conn -> prepare("SELECT Role FROM users WHERE Id_user=:id_user");
+        $sql = $conn -> prepare("SELECT Role FROM USERS WHERE Id_user=:id_user");
         //$query->bindParam(':id_user', $id_user, PDO::PARAM_INT);
         $sql->execute(['id_user' => $id_user]);
         $role=$sql->fetch(PDO::FETCH_ASSOC);
         $roleValue=$role['Role'];
         switch ($roleValue) {
             case 'Patient':
-                $query = "SELECT Id_essai, Titre, Statut, Date_fin, Date_creation
-                          FROM patients_essais 
-                          JOIN essais_cliniques  ON patients_essais.Id_essai = essais_cliniques.Id_essai
-                          WHERE patients_essais.Id_patient = :id_user";
+                $query = "SELECT e.Id_essai, e.Titre, e.Statut, e.Date_fin, e.Date_creation
+                FROM PATIENTS_ESSAIS p JOIN ESSAIS_CLINIQUES e ON p.Id_essai = e.Id_essai
+                WHERE p.Id_patient = :id_user ORDER BY e.Date_creation DESC";
                 break;
             case 'Medecin':
-                $query = "SELECT Id_essai, Titre, Statut, Date_fin, Date_creation, 
-                          FROM medecin_essais 
-                          JOIN essais_cliniques  ON medecin_essais.Id_essai = essais_cliniques.Id_essai
-                          WHERE medecin_essais.Id_medecin = :id_user";
+                $query = " SELECT e.Id_essai, e.Titre, e.Statut, e.Date_fin, e.Date_creation
+                FROM MEDECIN_ESSAIS m JOIN ESSAIS_CLINIQUES e ON m.Id_essai = e.Id_essai
+                WHERE m.Id_medecin = :id_user ORDER BY e.Date_creation DESC";
                 break;
                 case 'Entreprise':
                 $query = "SELECT Id_essai, Titre, Statut, Date_fin, Date_creation
-                          FROM essais_cliniques
+                          FROM ESSAIS_CLINIQUES
                           WHERE Id_entreprise = :id_user";
             
             break;

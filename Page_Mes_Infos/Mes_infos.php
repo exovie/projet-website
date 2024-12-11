@@ -4,13 +4,12 @@ include '../Fonctions.php';
 include_once '../Notifications/fonction_notif.php';
 include 'Fonction_Mes_infos.php';
 
-$id_user =$_SESSION['Id_user'];
+$Id_user =$_SESSION['Id_user'];
 $role= $_SESSION['role'];
+$conn = Connexion_base();
 
 // Récupération des informations de l'utilisateur
-$userInfo = getUserInfo($conn, $id_user);
-
-
+$userInfo = getUserInfo($conn, $Id_user);
 ?>
 
 
