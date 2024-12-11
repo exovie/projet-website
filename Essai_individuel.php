@@ -8,10 +8,11 @@ include 'Fonctions_essai.php';
 include 'Fonctions.php';
 
 if (isset($_POST['essai_indi'])) {
-    $Id_essai = $_POST['essai_indi'];
+    $_SESSION['Id_essai'] = $_POST['essai_indi'];
 } elseif (isset($_SESSION['postdata']['medecins'])) {
-    $Id_essai =$_SESSION['postdata']['medecins'];
+    $_SESSION['Id_essai'] =$_SESSION['postdata']['medecins'];
 }
+$Id_essai = $_SESSION['Id_essai'];
 
 $role = 'entreprise';
 $Id_user = 5;
