@@ -21,6 +21,7 @@ $historique = getHistoriqueEssais($conn, $id_user);
     <link rel="stylesheet" href='../website.css'>
     <link rel="stylesheet" href= '../navigationBar.css'>
     <link rel="stylesheet" href='../Notifications/Notifications_style.css'>
+    <link rel="stylesheet" href='../Admin/Admin.css'>
     <style>
     /* Style pour encadrer le tableau */
     .table-container {
@@ -32,21 +33,6 @@ $historique = getHistoriqueEssais($conn, $id_user);
         background-color: #ffffff; /* Fond blanc pour l'intérieur du cadre */
         border-radius: 10px; /* Coins arrondis pour un effet plus doux */
     }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    th, td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-    }
-
-    th {
-        background-color: #f4f4f4;
-    }
-
     a {
         text-decoration: none;
         color: #007BFF;
@@ -152,7 +138,7 @@ $historique = getHistoriqueEssais($conn, $id_user);
     <h1>Historique des Essais Cliniques</h1>
     <?php if (count($historique) > 0): ?>
         <!-- Encadrer le tableau avec un conteneur -->
-        <div class="table-container">
+        <div class="table-list">
             <table>
                 <thead>
                     <tr>
@@ -172,13 +158,13 @@ $historique = getHistoriqueEssais($conn, $id_user);
                             <td><?= htmlspecialchars($essai['Statut']) ?></td>
                             <td>
                                 <!-- Mettre le lien vers la page de l'essai clinique en question -->
-                                <a href="Page_Essai.php?id_essai=<?= urlencode($essai['Id_essai']) ?>">Voir l'essai</a>
+                                <button class='validate-btn' onclick="window.location.href='Page_Essai.php?id_essai=<?= urlencode($essai['Id_essai']) ?>'">Voir l'essai</button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            <button onclick="window.location.href='Menu_Mes_Infos.php';">Retour à la page précédente</button>
+            <button class="back-btn" onclick="window.location.href='Menu_Mes_Infos.php';">Retour à la page précédente</button>
         </div>
     <?php else: ?>
         <p>Aucun essai clinique trouvé pour cet utilisateur.</p>
