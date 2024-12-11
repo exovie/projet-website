@@ -211,7 +211,7 @@ $_SESSION['origin'] = 'Essai_individuel.php';
 ?>
 
 <?php
-if($role == 'entreprise' || $role == 'admin'){
+if($Id_user == Get_Entreprise($Id_essai) || $role == 'admin'){
 if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'medecins' est réellement présent dans $_POST
     $postdata = $_SESSION['postdata']; 
     unset($_SESSION['postdata']);
