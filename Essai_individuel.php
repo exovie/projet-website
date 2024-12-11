@@ -15,7 +15,7 @@ if (isset($_POST['essai_indi'])) {
 $Id_essai = $_SESSION['Id_essai'];
 
 $role = 'entreprise';
-$Id_user = 5;
+$Id_user = 11;
 $Statut_essai = 'En attente';
 $_SESSION['origin'] = 'Essai_individuel.php';
 
@@ -30,7 +30,7 @@ $_SESSION['origin'] = 'Essai_individuel.php';
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href='essai_indiv.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
-
+    afficha
 
 </head>
 <body>
@@ -161,9 +161,6 @@ $_SESSION['origin'] = 'Essai_individuel.php';
                    echo'<div class="side-buttons__statistique">
                    <a href="Homepage.php" class="nav-btn">Afficher les Stastistiques</a>
                    </div>';
-                   echo'<div class="side-buttons__statistique">
-                   <a href="Homepage.php" class="nav-btn">Demander un médecin</a>
-                   </div>';
                     Afficher_Medecins($Id_essai,'Actif');
                     Afficher_Medecins($Id_essai,'En attente');
                      if($Statut_essai == 'En cours'){
@@ -214,6 +211,7 @@ $_SESSION['origin'] = 'Essai_individuel.php';
 ?>
 
 <?php
+if($role == 'entreprise' || $role == 'admin'){
 if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'medecins' est réellement présent dans $_POST
     $postdata = $_SESSION['postdata']; 
     unset($_SESSION['postdata']);
@@ -236,7 +234,7 @@ if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'med
         <button name="medecins" value=' . $Id_essai . ' type="submit" class="search-button">Voir la liste des médecins</button>
     </form>
     ';
-}
+}}
 ?>
 
    </div>
