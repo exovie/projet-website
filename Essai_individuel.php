@@ -8,6 +8,12 @@ $role = $_SESSION['role'];
 $Id_user = $_SESSION['Id_user'];
 $Id_essai = $_SESSION['Id_essai'];
 
+if (isset($_POST['essai_indi'])) {
+    $Id_essai = $_POST['essai_indi'];
+} elseif (isset($_SESSION['postdata']['medecins'])) {
+    $Id_essai =$_SESSION['postdata']['medecins'];
+}
+
 //Requete pour récupérer les informations nécessaires 
 $pdo= Connexion_base();
 $stmt = $pdo ->prepare('SELECT `Statut`, `Id_entreprise` FROM `ESSAIS_CLINIQUES` WHERE `Id_essai` = :Id_essai');
@@ -175,6 +181,7 @@ $Statut_essai = $Infos['Statut'];
                     //modifier l'essai si le recrutement n'a pas débuté
                
        }}
+       echo '</form>';
       
        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
@@ -227,10 +234,9 @@ if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'med
         }
 }
 } else {
-    echo '<p>'.$Id_essai.'</p>';
     echo '
     <form method="POST" action="hub.php">
-        <button name="medecins" type="submit" class="search-button">Rechercher</button>
+        <button name="medecins" value=' . $Id_essai . ' type="submit" class="search-button">Voir la liste des médecins</button>
     </form>
     ';
 }
