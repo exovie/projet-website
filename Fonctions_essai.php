@@ -818,7 +818,7 @@ function Generer_Notif($code, $Id_essai, $Id_destinataire){}
 
 function affichage_request_medecin($Id_essai, $praticien){
 
-echo '<h1>Liste des Medecins</h1>';
+echo '<h1>Choisissez un médecin parmi cette liste</h1>';
 echo '
     <table>
         <thead>
@@ -844,12 +844,9 @@ foreach($praticien as $medecin) {
         <td>';
             echo '
                 
-                <button (' . htmlspecialchars($Id_essai) . ', ' . htmlspecialchars($medecin["Id_medecin"]) . ')">Retirer de l\'essai</button>
+                <button (' . htmlspecialchars($Id_essai) . ', ' . htmlspecialchars($medecin["Id_medecin"]) . ')">Demander ce médecin</button>
             ';
-            echo '
-            <button ('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 1 . ')">Accepter le médecin</button>
-            <button ('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 0 . ')">Refuser le médecin</button>
-        ';
+
     
 }
 echo '</tr>';

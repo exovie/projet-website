@@ -34,7 +34,7 @@ $Statut_essai = $Infos['Statut'];
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href='essai_indiv.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
-
+    afficha
 
 </head>
 <body>
@@ -165,9 +165,6 @@ $Statut_essai = $Infos['Statut'];
                    echo'<div class="side-buttons__statistique">
                    <a href="Homepage.php" class="nav-btn">Afficher les Stastistiques</a>
                    </div>';
-                   echo'<div class="side-buttons__statistique">
-                   <a href="Homepage.php" class="nav-btn">Demander un médecin</a>
-                   </div>';
                     Afficher_Medecins($Id_essai,'Actif');
                     Afficher_Medecins($Id_essai,'En attente');
                      if($Statut_essai == 'En cours'){
@@ -218,6 +215,7 @@ $Statut_essai = $Infos['Statut'];
 ?>
 
 <?php
+if($role == 'entreprise' || $role == 'admin'){
 if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'medecins' est réellement présent dans $_POST
     $postdata = $_SESSION['postdata']; 
     unset($_SESSION['postdata']);
@@ -240,7 +238,7 @@ if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'med
         <button name="medecins" value=' . $Id_essai . ' type="submit" class="search-button">Voir la liste des médecins</button>
     </form>
     ';
-}
+}}
 ?>
 
    </div>
