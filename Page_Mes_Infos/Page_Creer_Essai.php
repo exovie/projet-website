@@ -1,14 +1,14 @@
 <?php
 session_start();
 
-// Vérifiez si l'utilisateur est autorisé
-// if ($_SESSION['role'] !== "Entreprise") {
-//     // Redirigez l'utilisateur s'il n'est pas "Entreprise"
-//     header("Location: unauthorized.php");
-//     exit;
-// }
+//Vérifiez si l'utilisateur est autorisé
+if ($_SESSION['role'] !== "Entreprise") {
+    // Redirigez l'utilisateur s'il n'est pas "Entreprise"
+    header("Location: unauthorized.php");
+    exit;
+}
 
-// Logique de la page "Créer un essai" ici
+
 ?>
 
 <!DOCTYPE html>

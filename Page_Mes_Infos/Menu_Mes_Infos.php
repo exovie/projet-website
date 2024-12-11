@@ -1,9 +1,7 @@
 <?php
-// Exemple : Récupérer le rôle depuis une session ou une base de données
-$role='Entreprise';
-//$role = $_SESSION['role']; // Par exemple : "Patient", "Medecin", ou "Entreprise"
-$id_user=6;
-//$id_user = $_SESSION['id_user'];
+
+$role = $_SESSION['role']; 
+$id_user = $_SESSION['id_user'];
 ?>
 
 <!DOCTYPE html>

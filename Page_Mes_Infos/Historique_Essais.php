@@ -2,8 +2,7 @@
 session_start();
 
 include("Fonction_Mes_infos.php");
-//$id_user =$_SESSION['id_user'];
-$id_user =6;
+$id_user =$_SESSION['id_user'];
 
 // Récupération de l'historique des essais
 $historique = getHistoriqueEssais($conn, $id_user);

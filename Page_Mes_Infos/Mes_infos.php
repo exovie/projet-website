@@ -1,13 +1,11 @@
 <?php
 session_start();
 include("Fonction_Mes_infos.php");
+$id_user =$_SESSION['id_user'];
 
-//$id_user =$_SESSION['id_user'];
-$id_user = 40;
 // Récupération des informations de l'utilisateur
 $userInfo = getUserInfo($conn, $id_user);
 
-//==========================================
 
 ?>
 

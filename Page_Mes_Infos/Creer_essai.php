@@ -3,12 +3,9 @@
 
 session_start();
 include("Connexion_base.php");
-//$role_user=$_SESSION['role'];
-//id_user=$_SESSION['id_user'];
-$role_user="Entreprise";
-$id_user=6;
-$id_entreprise= $id_user;
-//$id_user = isset($_GET['id_user']) ? (int)$_GET['id_user'] : 6;
+$role_user=$_SESSION['role'];
+id_user=$_SESSION['id_user'];
+
 $conn= Connexion_base();
 
     try {
