@@ -2,7 +2,8 @@
 
 session_start();
 include("Fonction_Modif_Essais.php");
-$Id_essai =$_SESSION['Id_essai'];
+//$Id_essai =$_SESSION['Id_essai'];
+$Id_essai =3;
 
 // Récupération des informations de l'utilisateur
 $EssaiInfo = getEssaiInfo($conn, $Id_essai);
@@ -43,15 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
     <style>
-        body {
-            background-color: #b0f5e7; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0; 
-            font-family: Arial, sans-serif; 
-        }
+
         form {
             background-color: white; 
             padding: 50px; 
@@ -61,10 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 100%; 
             margin-top: 20px;
         }
-        h1 {
-            text-align: center; 
-            margin-bottom: 150px; 
-        }
+
         label {
             display: block; 
             margin-bottom: 8px; 
@@ -72,16 +62,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         input, textarea {
             width: 100%; 
-            padding: 12px; 
+            padding: 20px; 
             margin-bottom: 15px; 
             border: 1px solid #ccc; 
             border-radius: 5px; 
             box-sizing: border-box; 
-            font-size: 16px; 
+            font-size: 13px; 
         }
         textarea {
             resize: vertical; 
-            max-height: 200px; /* Hauteur maximale pour limiter l'expansion */
+            max-height: 500px; /* Hauteur maximale pour limiter l'expansion */
             overflow-y: scroll; /* Ajout de la barre de défilement verticale */
         }
         input[readonly], textarea[readonly] {
@@ -169,6 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <div class="content">
     <h1>Modification des informations de l'essai</h1>
     <!-- Affichage du message -->
     <?php if ($message): ?>
@@ -207,5 +198,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="submit" value="Enregistrer">
     <a href="Page_Essai.php" class="back-button">Retour à la page de l'essai</a>
 </form>
+</div>
 </body>
 </html>
