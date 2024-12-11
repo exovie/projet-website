@@ -1,14 +1,6 @@
 <?php
-
-
-error_reporting(E_ALL); // Active le rapport de toutes les erreurs
-ini_set('display_errors', 1); // Affiche les erreurs à l'écran
-ini_set('display_startup_errors', 1); // Affiche les erreurs au démarrage de PHP
-
-
-// Inclure le module ou fichier PHP
-//include 'module.php';
-//include 'Notifications/fonction_notif.php';
+include 'Notifications/fonction_notif.php';
+session_start();
 
 function Connexion_base(){
     $host = 'localhost';
@@ -48,8 +40,11 @@ function Ajout_Bdd_Essai(int $Id_entreprise, string $Titre, string $Contexte, st
         Fermer_base($conn);
 
     }
-    catch (PDOException $e) {Essais
-        echo "Erreur bdd: " . $e->getMessage(); }
+    catch (PDOException $e) {
+        $_SESSION['ErrorCode'] = 10;
+        header("Location: " . $_SESSION['origin']);
+        exit;
+    }
     try{
         $conn = Connexion_base();
         //récupération de l'id_essai qui vient d'être publié
@@ -100,7 +95,9 @@ function Modif_Description_Essai(int $Id_essai,string $Titre, string $Contexte, 
         echo "Notifs envoyées avec succès";
     }
     catch (PDOException $e) {
-        echo "Erreur bdd/notifs: " . $e->getMessage();
+        $_SESSION['ErrorCode'] = 11;
+        header("Location: " . $_SESSION['origin']);
+        exit;
 }
 
 }
@@ -117,7 +114,9 @@ function Modif_Infos_Patient(int $Id_patient, int $Id_essai, int $Poids, string 
         echo "Info patients modifiées avec succès";
     }
     catch (PDOException $e) {
-        echo "Erreur bdd: " . $e->getMessage();
+        $_SESSION['ErrorCode'] = 9;
+        header("Location: " . $_SESSION['origin']);
+        exit;
 }
 }
 
@@ -137,15 +136,16 @@ function Demander_Medecin_essai(int $Id_essai, int $Id_medecin){
     try{
         Generer_notif(3,$Id_essai, $Id_medecin);
     }
-     catch (PDOException $e) {
-    echo "Erreur notification: " . $e->getMessage(); }
+    catch (PDOException $e) {
+        $_SESSION['ErrorCode'] = 12;
+        header("Location: " . $_SESSION['origin']);
+        exit; }
 
 }
 
 //vérifiée
 //méthode médecin: médecin qui demande à participer à un essai
 function Postuler_Medecin_Essai(int $Id_essai, int $Id_medecin){
-  
     try{
         $conn = Connexion_base();
         $requete = $conn -> prepare("INSERT INTO MEDECIN_ESSAIS(`Id_medecin`, `Id_essai`, `Statut_medecin`) VALUES (?,?,'En attente')");
@@ -163,8 +163,10 @@ function Postuler_Medecin_Essai(int $Id_essai, int $Id_medecin){
             Generer_notif(5,$Id_essai, $Id_entreprise);
             Fermer_base($conn);
         }
-         catch (PDOException $e) {
-        echo "Erreur notification: " . $e->getMessage(); }
+        catch (PDOException $e) {
+            $_SESSION['ErrorCode'] = 12;
+            header("Location: " . $_SESSION['origin']);
+            exit;}
 
     }
 //vérifiée

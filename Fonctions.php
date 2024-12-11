@@ -235,7 +235,6 @@ function List_Medecin(int $id_medecin): array {
     
     // Récupérer les résultats
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         echo "Erreur : " . $e->getMessage();
         return [];
@@ -438,6 +437,11 @@ function ErrorEditor($errorCode, $modal='false'){
         6=> "Cet email est déjà utilisé. Veuillez en choisir un autre ou vous connecter.",
         7=> "Erreur lors de la protection du mot de passe.",
         8=> "Erreur lors de l'ajout de l'utilisateur.",
+        9=> "Erreur lors de la mise à jour de l'utilisateur.",
+        10=>"Erreur lors de l'ajout de l'essai clinique",
+        11=>"Erreur lors de la mise à jour de l'essai clinique",
+        12=>"Erreur lors de la requête de participation",
+        13=>"Erreur lors de la suppression de l'utilisateur"
     ];
 
     // Check if the error code exists in the array
