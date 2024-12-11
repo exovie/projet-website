@@ -24,7 +24,6 @@ include_once '../Notifications/fonction_notif.php';
     </style>
 </head>
 <body>
-
     <!-- Code de la barre de navigation -->
     <div class="navbar">
         <div id="logo">
@@ -43,7 +42,7 @@ include_once '../Notifications/fonction_notif.php';
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Home_Admin.php#messagerie">
+            <a href= "<?= $_SESSION['origin'] ?>#messagerie">
                 <img src="../Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
             <!-- Affichage de la pastille -->
@@ -74,7 +73,7 @@ include_once '../Notifications/fonction_notif.php';
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
                 if ($_SESSION["role"]!=='Admin'&& $_SESSION['Logged_user'] === true)
-                {echo "<a href='Page_Mes_Infos/Menu_Mes_Infos.php'>Mon Profil</a>";} ?>
+                {echo "<a href='../Page_Mes_Infos/Menu_Mes_Infos.php'>Mon Profil</a>";} ?>
                 <a href="../Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->
@@ -105,7 +104,7 @@ include_once '../Notifications/fonction_notif.php';
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
             <!-- Lien de fermeture qui redirige vers Home_Admin.php -->
-            <a href="Home_Admin.php" class="close-btn">&times;</a>
+            <a href="<?= $_SESSION['origin'] ?>" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>

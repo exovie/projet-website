@@ -28,21 +28,8 @@ if (!$entreprise) {
     <link rel="stylesheet" href='../website.css'>
     <link rel="stylesheet" href= '../navigationBar.css'>
     <link rel="stylesheet" href= '../Notifications/notification.css'>
+    <link rel="stylesheet" href='/Admin/Admin.css'>
     <style>
-        /* Conteneur principal pour le contenu centré */
-        .container {
-            background-color: white; /* Fond blanc pour les éléments */
-            padding: 30px;
-            border-radius: 10px; /* Coins arrondis */
-            width: 60%; /* Largeur du conteneur */
-            max-width: 500px; /* Limite la largeur du conteneur */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre autour du conteneur */
-            margin-top: 10vh; /* Décale le conteneur vers le bas (1/3 de la hauteur de la fenêtre) */
-            text-align: center; /* Centre le texte dans le conteneur */
-            justify-content: flex-start;
-            margin-top: 200px;
-        }
-
         /* Styles pour le formulaire */
         form {
             display: flex;
@@ -85,7 +72,7 @@ if (!$entreprise) {
 </head>
 <body>
         <!-- Code de la barre de navigation -->
-        <div class="navbar">
+    <div class="navbar">
         <div id="logo">
             <a href="../Homepage.php">
                 <img src="../Pictures/logo.png" alt="minilogo" class="minilogo">
@@ -102,9 +89,15 @@ if (!$entreprise) {
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Modifier_Entreprises.php#messagerie">
+            <a href= "<?= $_SESSION['origin'] ?>#messagerie">
                 <img src="../Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
+            <!-- Affichage de la pastille -->
+            <?php 
+            $showBadge = Pastille_nombre($_SESSION['Id_user']);
+            if ($showBadge > 0): ?>
+                <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
@@ -126,8 +119,8 @@ if (!$entreprise) {
                 } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
-                ?>
-                <a href="#">Mon Profil</a>
+                if ($_SESSION["role"]!=='Admin'&& $_SESSION['Logged_user'] === true)
+                {echo "<a href='../Page_Mes_Infos/Menu_Mes_Infos.php'>Mon Profil</a>";} ?>
                 <a href="../Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->
@@ -158,14 +151,14 @@ if (!$entreprise) {
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
             <!-- Lien de fermeture qui redirige vers Home_Admin.php -->
-            <a href="Modifier_Entreprises.php" class="close-btn">&times;</a>
+            <a href="<?= $_SESSION['origin'] ?>" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>
         </div>
     </div>
 
-    <!-- Contenu de la page -->
+    <!-- Contenu Principal-->
     <div class="container">
         <h3>Modifier les informations de l'Entreprise</h3>
         <form-modif id="form-modification" method="POST" action="Enregistrer_modif.php">

@@ -46,9 +46,15 @@ $entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Liste_entreprises.php#messagerie">
+            <a href= "<?= $_SESSION['origin'] ?>#messagerie">
                 <img src="../Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
+            <!-- Affichage de la pastille -->
+            <?php 
+            $showBadge = Pastille_nombre($_SESSION['Id_user']);
+            if ($showBadge > 0): ?>
+                <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
@@ -70,8 +76,8 @@ $entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
-                ?>
-                <a href="#">Mon Profil</a>
+                if ($_SESSION["role"]!=='Admin'&& $_SESSION['Logged_user'] === true)
+                {echo "<a href='../Page_Mes_Infos/Menu_Mes_Infos.php'>Mon Profil</a>";} ?>
                 <a href="../Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->
@@ -102,14 +108,15 @@ $entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
             <!-- Lien de fermeture qui redirige vers Home_Admin.php -->
-            <a href="Liste_entreprises.php" class="close-btn">&times;</a>
+            <a href="<?= $_SESSION['origin'] ?>" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>
         </div>
     </div>
 
-    <!-- Contenu de la page -->
+    <!-- Contenu Principal-->
+    <div class="content">
     <h1>Liste des Entreprises</h1>
     <div class="table-list">
     <table>
@@ -148,5 +155,6 @@ $entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     <button class="back-btn" onclick="window.location.href='Home_Admin.php'">Revenir à la page d'accueil</button>
             </div>
+</div>
 </body>
 </html>

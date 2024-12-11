@@ -89,3 +89,17 @@ button {
 .back-btn:hover {
     background-color: rgb(29, 186, 197);
 }
+
+/* Conteneur principal pour le contenu centré */
+.container {
+    background-color: white; /* Fond blanc pour les éléments */
+    padding: 30px;
+    border-radius: 10px; /* Coins arrondis */
+    width: 60%; /* Largeur du conteneur */
+    max-width: 500px; /* Limite la largeur du conteneur */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre autour du conteneur */
+    margin-top: 10vh; /* Décale le conteneur vers le bas (1/3 de la hauteur de la fenêtre) */
+    text-align: center; /* Centre le texte dans le conteneur */
+    justify-content: flex-start;
+    margin-top: 400px;
+}
