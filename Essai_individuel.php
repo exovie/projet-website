@@ -175,7 +175,6 @@ $Statut_essai = $Infos['Statut'];
                     //modifier l'essai si le recrutement n'a pas débuté
                
        }}
-       echo '</POST>';
       
        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
@@ -207,9 +206,36 @@ $Statut_essai = $Infos['Statut'];
             }
         }
     }
-    
 
-       ?>
+?>
+
+<?php
+if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'medecins' est réellement présent dans $_POST
+    $postdata = $_SESSION['postdata']; 
+    unset($_SESSION['postdata']);
+    if (isset($postdata['medecins'])) {
+    $id_medecins = Get_id('MEDECINS', 'Id_medecin');
+    $medecins = [];
+        if (!empty($id_medecins)) { // Vérifie que le tableau n'est pas vide
+            foreach ($id_medecins as $id_medecin) {
+                $medecins[] = List_Medecin($id_medecin);   
+            }
+            affichage_request_medecin(11, $medecins);       
+        } else {
+            // Gérer le cas où il n'y a pas de médecins à afficher
+            echo "Aucun médecin trouvé.";
+        }
+}
+} else {
+    echo '<p>'.$Id_essai.'</p>';
+    echo '
+    <form method="POST" action="hub.php">
+        <button name="medecins" type="submit" class="search-button">Rechercher</button>
+    </form>
+    ';
+}
+?>
+
    </div>
 </main>
 </body>

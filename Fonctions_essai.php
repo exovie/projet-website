@@ -1,6 +1,6 @@
 <?php
-include 'Notifications/fonction_notif.php';
-session_start();
+
+include_once 'Notifications/fonction_notif.php';
 
 function Connexion_base(){
     $host = 'localhost';
@@ -203,22 +203,10 @@ function Postuler_Medecin_Essai(int $Id_essai, int $Id_medecin){
         $requete -> execute(array($Id_medecin, $Id_essai));
         echo "Demande de participation enregistrée avec succès pour cet essai!";
         Fermer_base($conn);
-        } catch (PDOException $e) {
-        echo "Erreur bdd postuler medecin: " . $e->getMessage(); }
-        try{
-            $conn = Connexion_base();
-            $requete_bis = $conn -> prepare("SELECT `Id_entreprise` FROM `ESSAIS_CLINIQUES` WHERE `Id_essai`=?");
-            $requete_bis->execute(array($Id_essai));
-            $tableau = $requete_bis->fetch();
-            $Id_entreprise = $tableau["Id_entreprise"];
-            Generer_notif(5,$Id_essai, $Id_entreprise);
-            Fermer_base($conn);
-        }
-        catch (PDOException $e) {
-            $_SESSION['ErrorCode'] = 12;
-            header("Location: " . $_SESSION['origin']);
-            exit;}
-
+        $Id_enterprise = Get_Entreprise($Id_essai);
+        Generer_notif(5,$Id_essai, $Id_medecin);}
+         catch (PDOException $e) {
+        echo "Erreur notification: " . $e->getMessage(); }
     }
 
 //vérifiée
@@ -826,8 +814,77 @@ function A() {
 
 
 function Generer_Notif($code, $Id_essai, $Id_destinataire){}
-?> 
 
 
+function affichage_request_medecin($Id_essai, $praticien){
 
+echo '<h1>Liste des Medecins</h1>';
+echo '
+    <table>
+        <thead>
+            <tr>
+            
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Spécialité</th>
+                <th>Matricule</th>
+                <th>Numéro de téléphone</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>';
+foreach($praticien as $medecin) {
+    $medecin = $medecin[0];
+    echo '<tr>
+        <td>' . htmlspecialchars($medecin["Nom"]) . '</td>
+        <td>' . htmlspecialchars($medecin["Prenom"]) . '</td>
+        <td>' . htmlspecialchars($medecin["Specialite"]) . '</td>
+        <td>' . htmlspecialchars($medecin["Matricule"]) . '</td>
+        <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
+        <td>';
+            echo '
+                
+                <button (' . htmlspecialchars($Id_essai) . ', ' . htmlspecialchars($medecin["Id_medecin"]) . ')">Retirer de l\'essai</button>
+            ';
+            echo '
+            <button ('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 1 . ')">Accepter le médecin</button>
+            <button ('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 0 . ')">Refuser le médecin</button>
+        ';
+    
+}
+echo '</tr>';
+        
+echo '</tbody></table>';
+}
+
+function verif_entreprise($Id_essai, $Id_entreprise) {
+$conn = Connexion_base();
+
+try {
+    $sql = "
+        SELECT EXISTS (
+            SELECT 1
+            FROM ESSAIS_CLINIQUES
+            WHERE Id_entreprise = :Id_entreprise
+            AND Id_essai = :Id_essai
+        ) AS EssaiTrouve;
+    "; 
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_entreprise', $Id_entreprise, PDO::PARAM_INT);
+    $stmt->bindParam(':Id_essai', $Id_essai, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    // Récupérer le résultat de la requête
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Si l'essai est trouvé, retourne true, sinon false
+    return (bool)$result['EssaiTrouve'];
+} catch (PDOException $e) {
+    echo "Erreur : " . $e->getMessage();
+    return false;
+} finally {
+    // Fermer la connexion
+    Fermer_base($conn);
+}
+}
 

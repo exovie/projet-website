@@ -213,6 +213,7 @@ function Get_essais($role) {
 
 function Display_essais($resultats) {
     foreach ($resultats as $essai) {
+        echo '<button name="essai_indi" value="' . htmlspecialchars($essai['Id_essai']) . '" type="submit" class="search-button">';
         echo '<ul class = "trials">';
         echo '<li class = "trial_title">' . htmlspecialchars($essai['Titre']) . '</li>';
         echo '<li class = "trial_company">' . htmlspecialchars($essai['Nom_Entreprise']) . '</li>';
@@ -224,7 +225,7 @@ function Display_essais($resultats) {
         } else {
             echo '<li><strong>Médecin associé :</strong> Aucun médecin assigné</li>';
         }
-        echo '</ul>';
+        echo '</ul> </button>';
     }
 }
 
@@ -236,12 +237,8 @@ function List_Medecin(int $id_medecin): array {
     SELECT *
     FROM MEDECINS
     WHERE Id_medecin = :id_medecin;
-    SELECT *
-    FROM MEDECINS
-    WHERE Id_medecin = :id_medecin;
     ";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':id_medecin', $id_medecin, PDO::PARAM_INT);
     $stmt->bindParam(':id_medecin', $id_medecin, PDO::PARAM_INT);
     $stmt->execute();
     
@@ -272,86 +269,6 @@ function display_medecin($medecin) {
     echo '<li class = "specialite">' . htmlspecialchars($medecin['Specialite']) . '</li>';
     echo '</ul>';
 }
-
-function Valider_inscription($id_user) {
-    $conn = Connexion_base();
-        try {
-            // Vérifier si l'utilisateur est dans la table MEDECINS
-            $queryMedecin = "SELECT Id_medecin FROM MEDECINS WHERE Id_medecin = ?";
-            $stmtMedecin = $conn->prepare($queryMedecin);
-            $stmtMedecin->execute([$id_user]);
-    
-            if ($stmtMedecin->rowCount() > 0) {
-                // Si l'utilisateur est un médecin, mettre à jour le statut
-                $updateQuery = "UPDATE MEDECINS SET Verif_inscription = 1 WHERE Id_medecin = ?";
-                $stmtUpdate = $conn->prepare($updateQuery);
-                $stmtUpdate->execute([$id_user]);
-                return "Statut_inscription mis à jour pour le médecin avec l'ID $id_user.";
-            }
-    
-            // Vérifier si l'utilisateur est dans la table ENTREPRISES
-            $queryEntreprise = "SELECT Id_entreprise FROM ENTREPRISES WHERE Id_entreprise = ?";
-            $stmtEntreprise = $conn->prepare($queryEntreprise);
-            $stmtEntreprise->execute([$id_user]);
-    
-            if ($stmtEntreprise->rowCount() > 0) {
-                // Si l'utilisateur est une entreprise, mettre à jour le statut
-                $updateQuery = "UPDATE ENTREPRISES SET Verif_inscription = 'True' WHERE Id_entreprise = ?";
-                $stmtUpdate = $conn->prepare($updateQuery);
-                $stmtUpdate->execute([$id_user]);
-                return "Statut_inscription mis à jour pour l'entreprise avec l'ID $id_user.";
-            }
-    
-            // Si l'utilisateur n'est trouvé dans aucune des deux tables
-            return "L'utilisateur avec l'ID $id_user n'est ni un médecin ni une entreprise.";
-        } catch (PDOException $e) {
-            return "Erreur : " . $e->getMessage();
-        }
-     finally {
-    // Fermer la connexion
-    Fermer_base($conn);
-    }
-}
-
-function refus_inscription($id_user) {
-    $conn = Connexion_base();
-    try {
-        // Vérifier si l'utilisateur est dans la table MEDECINS
-        $queryMedecin = "SELECT Id_medecin FROM MEDECINS WHERE Id_medecin = ?";
-        $stmtMedecin = $conn->prepare($queryMedecin);
-        $stmtMedecin->execute([$id_user]);
-
-        if ($stmtMedecin->rowCount() > 0) {
-            // Si l'utilisateur est un médecin, supprimer l'enregistrement
-            $deleteQuery = "DELETE FROM MEDECINS WHERE Id_medecin = ?";
-            $stmtDelete = $conn->prepare($deleteQuery);
-            $stmtDelete->execute([$id_user]);
-            return "L'utilisateur médecin avec l'ID $id_user a été supprimé.";
-        }
-
-        // Vérifier si l'utilisateur est dans la table ENTREPRISES
-        $queryEntreprise = "SELECT Id_entreprise FROM ENTREPRISES WHERE Id_entreprise = ?";
-        $stmtEntreprise = $conn->prepare($queryEntreprise);
-        $stmtEntreprise->execute([$id_user]);
-
-        if ($stmtEntreprise->rowCount() > 0) {
-            // Si l'utilisateur est une entreprise, supprimer l'enregistrement
-            $deleteQuery = "DELETE FROM ENTREPRISES WHERE Id_entreprise = ?";
-            $stmtDelete = $conn->prepare($deleteQuery);
-            $stmtDelete->execute([$id_user]);
-            return "L'utilisateur entreprise avec l'ID $id_user a été supprimé.";
-        }
-
-        // Si l'utilisateur n'est trouvé dans aucune des deux tables
-        return "L'utilisateur avec l'ID $id_user n'est ni un médecin ni une entreprise.";
-    } catch (PDOException $e) {
-        return "Erreur : " . $e->getMessage();
-    } finally {
-        // Fermer la connexion
-        Fermer_base($conn);
-    }
-}
-
 
 
 function recherche_EC($liste_EC, $recherche, $filtres) { 
@@ -394,6 +311,7 @@ function recherche_EC($liste_EC, $recherche, $filtres) {
         // Affichage des résultats
         if (!empty($results)) {
             foreach ($results as $essai) {
+                echo '<button name="essai_indi" value="' . htmlspecialchars($essai['Id_essai']) . '" type="submit" class="search-button">';
                 echo '<ul class="trials">';
                 echo '<li class="trial_title">' . htmlspecialchars($essai['Titre']) . '</li>';
                 echo '<li class="trial_company">' . htmlspecialchars($essai['Nom_Entreprise']) . '</li>';
@@ -405,7 +323,7 @@ function recherche_EC($liste_EC, $recherche, $filtres) {
                 } else {
                     echo '<li><strong>Médecin associé :</strong> Aucun médecin assigné</li>';
                 }
-                echo '</ul>';
+                echo '</ul> </button>';
             }
         } else {
             echo '<p>Aucun essai ne correspond à votre recherche.</p>';
@@ -438,78 +356,6 @@ function enterprise_filter($liste_EC) {
         echo '<option value="' . $enterpriseName . '">' . $enterpriseName . '</option>';
     }
 }
-
-//-------------------------------------- Notifications --------------------------------------//
-// Fonction pour afficher un message d'erreur
-function ErrorEditor($errorCode, $modal='false'){
-    //if $_SESSION['ErrorCode'] is set, it will display the corresponding error message
-    $ScriptError= [
-        1 => "qsjk", 
-        2=> "Erreur lors de la récupération des informations",
-        3=> "L'email saisi ne correspond à aucun compte. Veuillez le vérifier et réessayer.",
-        4=> "Votre compte n'a pas encore été validé par un administrateur. Veuillez réessayer ultérieurement.",
-        5=> "Le mot de passe saisi est incorrect. Veuillez réessayer.",
-        6=> "Cet email est déjà utilisé. Veuillez en choisir un autre ou vous connecter.",
-        7=> "Erreur lors de la protection du mot de passe.",
-        8=> "Erreur lors de l'ajout de l'utilisateur.",
-        9=> "Erreur lors de la mise à jour de l'utilisateur.",
-        10=>"Erreur lors de l'ajout de l'essai clinique",
-        11=>"Erreur lors de la mise à jour de l'essai clinique",
-        12=>"Erreur lors de la requête de participation",
-        13=>"Erreur lors de la suppression de l'utilisateur"
-    ];
-
-    // Check if the error code exists in the array
-    $errorMessage = isset($ScriptError[$errorCode]) ? $ScriptError[$errorCode] : "Erreur inconnue.";
-
-
-    //If the error code is display on another modal 
-    if ($modal == 'true') {
-        echo'<p class="error-message">' . htmlspecialchars($errorMessage). '</p>'; 
-    }
-    else {
-    //Display the modal with the message
-    echo '
-    <div id="modal" class="modal" style="display: flex; text-align: center;">
-        <div class="modal-content">
-        <p class="error-message">' . htmlspecialchars($errorMessage) . '</p>
-            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
-        </div>
-    </div>';
-    }
-}
-
-// Fonction pour afficher un message de succès
-function SuccesEditor($SuccessCode){
-    $ScriptSucces= [
-        1=> 'Votre inscription a bien été enregistrée.',
-        2=> 'Bienvenue ' . $_SESSION['Nom'] .'. Ravi de vous revoir !',
-        3=> 'Votre déconnexion a bien été prise en compte.',
-        4=> 'Votre candidature a bien été enregistrée. Vous recevrez une notification dès qu\'elle sera traitée.',
-        5=> 'Les modifications ont bien été enregistrées.'
-    ];
-
-
-    $CommSucces = [
-        1 => 'Si votre inscription concerne un compte Médecin ou Entreprise,votre demande est soumise à la validation d\' administateur. </p>' . 
-        '<p> Si vous vous êtes inscrit en tant que Patient,vous pouvez déjà vous connecter pour candidater à l\'un de nos essais cliniques !', 
-
-        3=> 'Au plaisir de vous revoir.'
-    ];
-
-    $SuccesMessage = isset($ScriptSucces[$SuccessCode]) ? $ScriptSucces[$SuccessCode] :'Succès inconnu.';
-    $Commentaire = isset($CommSucces[$SuccessCode]) ? $CommSucces[$SuccessCode] : '';
-
-    // Affiche le modal avec le message
-    echo '
-    <div id="modal" class="modal" style="display: flex; text-align: center;">
-        <div class="modal-content">
-            <p class="validation-message">' . htmlspecialchars($SuccesMessage) . '</p>
-            <p> '. ($Commentaire). '</p>
-            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
-        </div>
-    </div>';}
-
 
 function get_company(int $id_company): array {
     $conn = Connexion_base();
@@ -816,3 +662,4 @@ function verif_entreprise($Id_essai, $Id_entreprise) {
         Fermer_base($conn);
     }
 }
+

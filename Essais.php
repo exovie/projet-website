@@ -132,6 +132,7 @@ $list_essai = Get_essais($role);
 
       <div>
           <div id="trial_boxes">
+            <form method="POST" action="Essai_individuel.php">
           <?php
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 Display_essais($list_essai);
@@ -143,10 +144,12 @@ $list_essai = Get_essais($role);
                 $filtres = [$_POST['phaseFilter'], $_POST['companyFilter']]; 
                 recherche_EC($list_essai, $recherche, $filtres);
             }
-
-            // Fonction PHP appelée
             
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['essai_indi'])) {
+                header("Location: Essai_individuel.php");
+            }
             ?>
+            </form>
           </div>
       </div>
     </div>
