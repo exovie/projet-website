@@ -1,4 +1,5 @@
 <?php
+include("../Fonctions.php");
 // Vérification du rôle de l'utilisateur
 session_start();
 $_SESSION['origin'] =  $_SERVER['REQUEST_URI'];

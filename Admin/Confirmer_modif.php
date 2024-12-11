@@ -1,7 +1,7 @@
 <?php
 //Connexion à la base
 include("../Fonctions.php");
-include ("FOnctions_admin.php");
+include ("Fonctions_admin.php");
 include_once '../Notifications/fonction_notif.php';
 $conn=Connexion_base();
 
