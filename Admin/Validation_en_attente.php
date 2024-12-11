@@ -65,6 +65,7 @@ $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Validation en attente</title>
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
+    <link rel="stylesheet" href='admin.css'>
     <style>
         body {
             background-color: turquoise;
@@ -84,21 +85,6 @@ $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f2f2f2;
         }
 
         button {

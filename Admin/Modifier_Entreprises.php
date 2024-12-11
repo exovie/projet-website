@@ -26,6 +26,7 @@ if (!$entreprise) {
     <title>Modifier Entreprise</title>
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
+    <link rel="stylesheet" href='admin.css'>
     <style>
         /* Styles généraux pour la page */
         body {
@@ -39,8 +40,7 @@ if (!$entreprise) {
             height: 100vh; /* Hauteur de la fenêtre de vue */
             text-align: center; /* Centrer le texte */
         }
-
-        /* Conteneur principal pour le contenu centré */
+         /* Conteneur principal pour le contenu centré */
         .container {
             background-color: white; /* Fond blanc pour les éléments */
             padding: 30px;
@@ -53,62 +53,32 @@ if (!$entreprise) {
             justify-content: flex-start;
             margin-top: 200px;
         }
-
-        /* Styles pour le titre */
-        h1 {
-            margin-bottom: 20px; /* Espacement en dessous du titre */
-            color: #333; /* Couleur du titre */
-            font-size: 24px; /* Taille du titre */
-        }
-
-        /* Styles pour le formulaire */
-        form {
-            display: flex;
-            flex-direction: column; /* Alignement des éléments en colonne */
-            gap: 15px; /* Espacement entre les éléments du formulaire */
-        }
-
-        label {
-            font-size: 15px; /* Taille de la police pour les labels */
-            display: inline-block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"], select {
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #ccc; /* Bordure grise pour les champs */
-            border-radius: 5px; /* Coins arrondis pour les champs */
-            width: 100%; /* Les champs prennent toute la largeur disponible */
-            box-sizing: border-box; /* Assure que padding et border ne dépassent pas la largeur */
-        }
-
         /* Styles des boutons */
-        button {
-            padding: 10px 20px;
+        button{
+            padding: 10px 10px;
             color: white; /* Couleur du texte du bouton */
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
-            width: 48%; /* Largeur des boutons */
+            font-size: 14px;
+            width: 60%; /* Largeur des boutons */
         }
-
-        /* Bouton "Enregistrer les modifications" (vert) */
+        /* Bouton "Enregistrer les modifications" */
         .save-btn {
             background-color: #4CAF50;
         }
         .save-btn:hover {
-            background-color: #45a049; /* Couleur au survol */
+         background-color: #45a049; /* Couleur au survol */
         }
 
-        /* Bouton "Retour à la page précédente" (rouge) */
+        /* Bouton "Retour à la page précédente" */
         .cancel-btn {
-            background-color: #f44336;
+        background-color: #f44336;
         }
         .cancel-btn:hover {
-            background-color: #d32f2f; /* Couleur au survol */
-        }
+        background-color: #d32f2f; /* Couleur au survol */
+    }
+
     </style>
 </head>
 <body>
@@ -154,8 +124,8 @@ if (!$entreprise) {
         </div>
     </div>
     <div class="container">
-        <h1>Modifier les informations de l'Entreprise</h1>
-        <form id="form-modification" method="POST" action="Enregistrer_modif.php">
+        <h3>Modifier les informations de l'Entreprise</h3>
+        <form-modif id="form-modification" method="POST" action="Enregistrer_modif.php">
             <input type="hidden" name="role" value="Entreprise">
             <input type="hidden" name="id" value="<?= htmlspecialchars($entreprise['Id_entreprise']) ?>">
             <label>Nom de l'entreprise <input type="text" name="Nom" value="<?= htmlspecialchars($entreprise['Nom_entreprise']) ?>"></label><br>
@@ -165,13 +135,13 @@ if (!$entreprise) {
             <div class="buttons-container">
                 <button type="submit" class="save-btn">Enregistrer les modifications</button>
             </div>
-        </form>
-        <form id="form-modification" method="POST" action="Liste_Entreprises.php">
+        </form-modif>
+        <form-modif id="form-modification" method="POST" action="Liste_Entreprises.php">
             <!-- Conteneur des boutons -->
             <div class="buttons-container">
                 <button type="submit" class="cancel-bt">Retour à la liste des entreprises</button>
             </div>
-        </form>
+        </form-modif>
         </div>
 </body>
 </html>

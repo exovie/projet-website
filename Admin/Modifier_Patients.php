@@ -26,6 +26,8 @@ if (!$patient) {
     <title>Modifier Patient</title>
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
+    <link rel="stylesheet" href='admin.css'>
+
     <style>
         /* Styles généraux pour la page */
         body {
@@ -49,35 +51,6 @@ if (!$patient) {
             max-width: 500px; /* Limite la largeur du conteneur */
             margin-top: 80px; /* Décale la liste un peu plus bas */
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre autour du conteneur */
-        }
-
-        /* Styles pour le titre */
-        h1 {
-            margin-bottom: 20px; /* Espacement en dessous du titre */
-            color: #333; /* Couleur du titre */
-            font-size: 24px; /* Taille du titre */
-        }
-
-        /* Styles pour le formulaire */
-        form {
-            display: flex;
-            flex-direction: column; /* Alignement des éléments en colonne */
-            gap: 15px; /* Espacement entre les éléments du formulaire */
-        }
-
-        label {
-            font-size: 15px; /* Taille de la police pour les labels */
-            display: inline-block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"], select {
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #ccc; /* Bordure grise pour les champs */
-            border-radius: 5px; /* Coins arrondis pour les champs */
-            width: 100%; /* Les champs prennent toute la largeur disponible */
-            box-sizing: border-box; /* Assure que padding et border ne dépassent pas la largeur */
         }
 
         /* Styles des boutons */
@@ -151,8 +124,8 @@ if (!$patient) {
         </div>
     </div>
     <div class="container">
-        <h1>Modifier les informations du patient</h1>
-        <form id="form-modification" method="POST" action="Enregistrer_modif.php">
+        <h3>Modifier les informations du patient</h3>
+        <form-modif id="form-modification" method="POST" action="Enregistrer_modif.php">
             <input type="hidden" name="role" value="Patient">
             <input type="hidden" name="id" value="<?= htmlspecialchars($patient['Id_Patient']) ?>">
             
@@ -175,13 +148,13 @@ if (!$patient) {
             <div class="buttons-container">
                 <button type="submit" class="save-btn">Enregistrer les modifications</button>
             </div>
-        </form>
-        <form id="form-modification" method="POST" action="Liste_Patients.php">
+        </form-modif>
+        <form-modif id="form-modification" method="POST" action="Liste_Patients.php">
             <!-- Conteneur des boutons -->
             <div class="buttons-container">
                 <button type="submit" class="cancel-bt">Retour à la liste des patients</button>
             </div>
-        </form>
+        </form-modif>
     </div>
 </body>
 </html>

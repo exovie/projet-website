@@ -26,6 +26,7 @@ if (!$medecin) {
     <title>Modifier Médecin</title>
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
+    <link rel="stylesheet" href='admin.css'>
     <style>
         /* Styles généraux pour la page */
         body {
@@ -52,35 +53,6 @@ if (!$medecin) {
             text-align: center; /* Centre le texte dans le conteneur */
             justify-content: flex-start;
             margin-top: 400px;
-        }
-
-        /* Styles pour le titre */
-        h1 {
-            margin-bottom: 20px; /* Espacement en dessous du titre */
-            color: #333; /* Couleur du titre */
-            font-size: 24px; /* Taille du titre */
-        }
-
-        /* Styles pour le formulaire */
-        form {
-            display: flex;
-            flex-direction: column; /* Alignement des éléments en colonne */
-            gap: 15px; /* Espacement entre les éléments du formulaire */
-        }
-
-        label {
-            font-size: 15px; /* Taille de la police pour les labels */
-            display: inline-block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"], select {
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #ccc; /* Bordure grise pour les champs */
-            border-radius: 5px; /* Coins arrondis pour les champs */
-            width: 100%; /* Les champs prennent toute la largeur disponible */
-            box-sizing: border-box; /* Assure que padding et border ne dépassent pas la largeur */
         }
 
         /* Styles des boutons */
@@ -155,7 +127,7 @@ if (!$medecin) {
     </div>
     <div class="container">
         <h1>Modifier les informations du Médecin</h1>
-        <form id="form-modification" method="POST" action="Enregistrer_modif.php">
+        <form-modif id="form-modification" method="POST" action="Enregistrer_modif.php">
             <input type="hidden" name="role" value="Medecin">
             <input type="hidden" name="id" value="<?= htmlspecialchars($medecin['Id_medecin']) ?>">
             <label>Nom <input type="text" name="Nom" value="<?= htmlspecialchars($medecin['Nom']) ?>"></label><br>
@@ -167,13 +139,13 @@ if (!$medecin) {
             <div class="buttons-container">
                 <button type="submit" class="save-btn">Enregistrer les modifications</button>
             </div>
-        </form>
-        <form id="form-modification" method="POST" action="Liste_Medecins.php">
+        </form-modif>
+        <form-modif id="form-modification" method="POST" action="Liste_Medecins.php">
             <!-- Conteneur des boutons -->
             <div class="buttons-container">
                 <button type="submit" class="cancel-bt">Retour à la liste des médecins</button>
             </div>
-        </form>
+        </form-modif>
         </div>
 </body>
 </html>

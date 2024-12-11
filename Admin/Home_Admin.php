@@ -17,6 +17,7 @@ if ($_SESSION['Role'] !== 'Admin') {
     <meta charset="UTF-8">
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
+    <link rel="stylesheet" href=admin.css>
     <style>
         body {
             margin: 0;
@@ -28,36 +29,7 @@ if ($_SESSION['Role'] !== 'Admin') {
             background-color: turquoise;
             font-family: Arial, sans-serif;
         }
-        h1 {
-            position: absolute;
-            top: 60px; /* Déplace le message un peu plus bas */
-            text-align: center;
-            color: black;
-        }
-        .button-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Deux colonnes de largeur égale */
-            gap: 20px;
-            margin-top: 50px; /* Ajoute un espace en haut si nécessaire */
-        }
-        button {
-            background-color: turquoise;
-            color: black;
-            font-size: 18px;
-            font-weight: bold;
-            border: 3px solid white;
-            border-radius: 8px;
-            padding: 15px;
-            width: 200px; /* Largeur fixe pour tous les boutons */
-            height: 70px; /* Hauteur fixe pour tous les boutons */
-            cursor: pointer;
-            text-align: center;
-        }
-        button:hover {
-            background-color: white;
-            color: turquoise;
-        }
-    </style>
+        </style>
 </head>
 <body>
 
