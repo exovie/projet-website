@@ -496,7 +496,7 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
     <i>Les notifications générées avec les Id_notif = <?php foreach ($notifCreated as $Id) {echo $Id, " , ";}?> ont été supprimés de la BdD.</i>
     
     <body>
-    <h2>Tests des Fonctions de ???</h2>
+    <h2>Tests des Fonctions ???</h2>
     <table>
         <thead>
             <tr>
@@ -508,7 +508,19 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
         </thead>
         <tbody>
             <?php
-            //include fonctions
+            include_once 'Fonctions.php';
+
+            //test de la fonction Get_id()
+            $table = 'PATIENTS';
+            $column = 'Id_patient';
+            $list_id = Get_id($table, $column);
+            addTestResult(
+                'Get_id',
+                'liste des ID des patients',
+                is_array($list_id)? 'Liste des ID': 'Erreur de Récupération',
+                is_array($list_id) == true 
+            );
+
 
             ?>
 </body>

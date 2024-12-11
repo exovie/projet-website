@@ -48,7 +48,7 @@ function Ajout_Bdd_Essai(int $Id_entreprise, string $Titre, string $Contexte, st
         Fermer_base($conn);
 
     }
-    catch (PDOException $e) {Essais
+    catch (PDOException $e) {
         echo "Erreur bdd: " . $e->getMessage(); }
     try{
         $conn = Connexion_base();
