@@ -6,12 +6,17 @@ ini_set('display_startup_errors', 1); // Affiche les erreurs au démarrage de PH
 //include 'Fonctions.php';
 include 'Fonctions_essai.php';
 include 'Fonctions.php';
-$Id_essai = $_POST['essai_indi'];
-//$Id_entreprise = 7;
+
+if (isset($_POST['essai_indi'])) {
+    $Id_essai = $_POST['essai_indi'];
+} elseif (isset($_SESSION['postdata']['medecins'])) {
+    $Id_essai =$_SESSION['postdata']['medecins'];
+}
+
 $role = 'entreprise';
 $Id_user = 5;
 $Statut_essai = 'En attente';
-$_SERVER['origin'] = 'Essai_individuel.php';
+$_SESSION['origin'] = 'Essai_individuel.php';
 
 ?>
 
@@ -172,6 +177,7 @@ $_SERVER['origin'] = 'Essai_individuel.php';
                     //modifier l'essai si le recrutement n'a pas débuté
                
        }}
+       echo '</form>';
       
        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
@@ -224,10 +230,9 @@ if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'med
         }
 }
 } else {
-    echo '<p>'.$Id_essai.'</p>';
     echo '
     <form method="POST" action="hub.php">
-        <button name="medecins" type="submit" class="search-button">Rechercher</button>
+        <button name="medecins" value=' . $Id_essai . ' type="submit" class="search-button">Voir la liste des médecins</button>
     </form>
     ';
 }
