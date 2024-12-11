@@ -4,7 +4,7 @@
 session_start();
 include("../Fonctions.php");
 $role_user=$_SESSION['role'];
-$id_user=$_SESSION['id_user'];
+$id_user=$_SESSION['Id_user'];
 
 $conn= Connexion_base();
 

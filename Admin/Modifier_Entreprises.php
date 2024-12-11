@@ -89,7 +89,7 @@ if (!$entreprise) {
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href= "<?= $_SESSION['origin'] ?>#messagerie">
+            <a href= "Liste_entreprises.php#messagerie">
                 <img src="../Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
             <!-- Affichage de la pastille -->
@@ -146,20 +146,9 @@ if (!$entreprise) {
         unset($_SESSION['ErrorCode']); // Nettoyage après affichage
     endif; 
     ?>
-    
-    <!-- Messagerie -->
-    <div id="messagerie" class="messagerie">
-        <div class="messagerie-content">
-            <!-- Lien de fermeture qui redirige vers Home_Admin.php -->
-            <a href="<?= $_SESSION['origin'] ?>" class="close-btn">&times;</a>
-            <h1>Centre de notifications</h1>
-            <!-- Contenu de la messagerie -->
-            <?php Affiche_notif($_SESSION['Id_user'])?>
-        </div>
-    </div>
 
     <!-- Contenu Principal-->
-    <div class="container">
+    <div class="content">
         <h3>Modifier les informations de l'Entreprise</h3>
         <form-modif id="form-modification" method="POST" action="Enregistrer_modif.php">
             <input type="hidden" name="role" value="Entreprise">

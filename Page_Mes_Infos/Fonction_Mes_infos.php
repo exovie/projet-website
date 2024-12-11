@@ -3,7 +3,7 @@
 
 //session_start();
 include_once("../Fonctions.php");
-include_once(":/fonctionInscription.php");
+include_once("../fonctionInscription.php");
 $conn = Connexion_base();
 
 
@@ -24,7 +24,7 @@ function getUserInfo($conn, int $id_user) {
             $query = "SELECT Nom, Prenom, Specialite, Telephone, Matricule FROM MEDECINS WHERE Id_medecin = :id_user";
             break;
         case 'Entreprise':
-            $query = "SELECT Nom_entreprise, Telephone, Siret = :Siret FROM entreprises WHERE Id_entreprise = :id_user";
+            $query = "SELECT Nom_entreprise, Telephone, Siret = :Siret FROM ENTREPRISES WHERE Id_entreprise = :id_user";
             break;
         default:
             return null;
@@ -91,10 +91,10 @@ function updateUserInfo($conn, int $id_user) {
         $stmt->execute(['id_user' => $id_user]);
         $existingProfilePicture = $stmt->fetch(PDO::FETCH_ASSOC);
     
-        // // Si une image existante est trouvée, la conserver dans $data['Profile_picture']
-        // if ($existingProfilePicture) {
-        //     $data['Profile_picture'] = $existingProfilePicture['Profile_picture'];
-        // }
+        // Si une image existante est trouvée, la conserver dans $data['Profile_picture']
+        if ($existingProfilePicture) {
+            $data['Profile_picture'] = $existingProfilePicture['Profile_picture'];
+        }
     }
         
         // Réorganiser les clés dans l'ordre souhaité
@@ -106,8 +106,8 @@ function updateUserInfo($conn, int $id_user) {
             if ($key === 'Telephone') {
                 $newArray['Telephone'] = $value;
                 if ($existingProfilePicture !== null) {
-                 $newArray['Profile_picture'] = $existingProfilePicture['Profile_picture'];
-                 $existingProfilePicture = null; // On s'assure de ne pas rajouter deux fois Profile_picture
+                    $newArray['Profile_picture'] = $existingProfilePicture['Profile_picture'];
+                    $existingProfilePicture = null; // On s'assure de ne pas rajouter deux fois Profile_picture
             }
             } else {
                 // Ajouter les autres éléments normalement
@@ -201,7 +201,6 @@ function getHistoriqueEssais($conn, int $id_user) {
                 $query = "SELECT Id_essai, Titre, Statut, Date_fin, Date_creation
                           FROM ESSAIS_CLINIQUES
                           WHERE Id_entreprise = :id_user";
-            
             break;
         default:
             return false;

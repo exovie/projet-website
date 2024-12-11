@@ -1,5 +1,7 @@
 <?php
 // Exemple : Récupérer le rôle depuis une session ou une base de données
+session_start();
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 $role = $_SESSION['role']; // Par exemple : "Patient", "Medecin", ou "Entreprise"
 include '../Fonctions.php';
 include_once '../Notifications/fonction_notif.php';
@@ -13,45 +15,11 @@ $id_user = $_SESSION['id_user'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu basé sur le rôle</title>
+    <title>Clinicou - Profil</title>
     <link rel="stylesheet" href='../website.css'>
     <link rel="stylesheet" href= '../navigationBar.css'>
     <link rel="stylesheet" href='../Notifications/Notifications_style.css'>
-    <style>
-        /* CSS pour centrer les boutons */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;  /* Utilise toute la hauteur de la fenêtre */
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #b0f5e7;
-        }
-
-        .button-container {
-            display: flex;
-            flex-direction: row;  /* Garde les boutons en ligne */
-            gap: 30px; /* Espacement entre les boutons */
-            justify-content: center; /* Centre les boutons horizontalement */
-            align-items: center; /* Centre les boutons verticalement */
-        }
-
-        .button-container a {
-            text-decoration: none;
-            color: white;
-            background-color: #007BFF;
-            padding: 20px 25px;
-            border-radius: 5px;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s ease;
-        }
-
-        .button-container a:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href='../Admin/Admin.css'>
 </head>
 <body>
 <!-- Code de la barre de navigation -->
@@ -66,15 +34,21 @@ $id_user = $_SESSION['id_user'];
 
         <!-- Accès à la page de Gestion -->
         <?php if ($_SESSION['role'] == 'Admin'): ?>
-            <a href="Home_Admin.php" class="nav-btn">Gestion</a>
+            <a href="../Admin/Home_Admin.php" class="nav-btn">Gestion</a>
         <?php endif; ?>
 
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Menu_Mes_Infos.php#messagerie">
+            <a href= "<?= $_SESSION['origin'] ?>#messagerie">
                 <img src="../Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
+            <!-- Affichage de la pastille -->
+            <?php 
+            $showBadge = Pastille_nombre($_SESSION['Id_user']);
+            if ($showBadge > 0): ?>
+                <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
@@ -96,8 +70,8 @@ $id_user = $_SESSION['id_user'];
                 } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
-                ?>
-                <a href="#">Mon Profil</a>
+                if ($_SESSION["role"]!=='Admin'&& $_SESSION['Logged_user'] === true)
+                {echo "<a href='Menu_Mes_Infos.php'>Mon Profil</a>";} ?>
                 <a href="../Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->
@@ -128,23 +102,25 @@ $id_user = $_SESSION['id_user'];
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
             <!-- Lien de fermeture qui redirige vers Home_Admin.php -->
-            <a href="Menu_Mes_Infos.php" class="close-btn">&times;</a>
+            <a href="<?= $_SESSION['origin'] ?>" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>
         </div>
     </div>
 
-    <!-- Contenu principal -->
-    <div class="button-container">
+    <!-- Contenu Principal-->
+    <div class="content">
+        <h1 class="Ad-title">Informations de <?php echo $_SESSION['Nom']?></h1>
+    <div class="Ad-btn-container">
         <!-- Boutons communs à tous les rôles -->
-        <a href="Mes_infos.php">Mes Infos</a>
-        <a href="Historique_Essais.php">Mes Essais</a>
-
+        <button class='Ad-btn' onclick="window.location.href='Mes_infos.php'">Mes Infos</button>
+        <button class='Ad-btn' onclick="window.location.href='Historique_Essais.php'">Mes Essais</button>
         <!-- Bouton spécifique pour "Entreprise" -->
         <?php if ($role === "Entreprise"): ?>
             <a href="Page_Creer_Essai.php">Créer un Essai</a>
         <?php endif; ?>
+    </div>
     </div>
 </body>
 </html>
