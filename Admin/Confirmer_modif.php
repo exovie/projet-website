@@ -1,5 +1,4 @@
 <?php
-
 //Connexion à la base
 include("../Fonctions.php");
 include ("FOnctions_admin.php");
@@ -7,6 +6,7 @@ include_once '../Notifications/fonction_notif.php';
 $conn=Connexion_base();
 
 session_start();
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 if (!isset($_SESSION['modifications'])) {
     header('Location: admin_home.php');
     exit;

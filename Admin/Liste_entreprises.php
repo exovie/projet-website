@@ -1,6 +1,7 @@
 <?php
 //Connection à la base
 session_start();
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 include("../Fonctions.php");
 include_once '../Notifications/fonction_notif.php';
 $conn=Connexion_base();

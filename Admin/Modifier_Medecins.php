@@ -10,6 +10,9 @@ if (!isset($_GET['id'])) {
     exit;
 }
 
+session_start();
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
+
 $id_medecin = intval($_GET['id']);
 $query = "SELECT Id_medecin, Nom, Prenom, Specialite, Matricule, Telephone FROM MEDECINS WHERE Id_medecin = :id_medecin";
 $stmt = $conn->prepare($query);

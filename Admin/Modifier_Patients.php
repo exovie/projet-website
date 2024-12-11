@@ -1,5 +1,4 @@
 <?php
-
 //Connexion à la base de donnée
 include("../Fonctions.php");
 include_once '../Notifications/fonction_notif.php';
@@ -9,6 +8,9 @@ if (!isset($_GET['id'])) {
     header('Location: Liste_Patients.php');
     exit;
 }
+
+session_start();
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 
 $id_patient = intval($_GET['id']);
 $query = "SELECT Id_Patient, Nom, Prenom, Sexe, Telephone FROM PATIENTS WHERE Id_Patient = :id_patient";

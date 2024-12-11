@@ -1,5 +1,4 @@
 <?php
-include("../Fonctions.php");
 // Vérification du rôle de l'utilisateur
 session_start();
 $_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
@@ -21,16 +20,7 @@ include_once '../Notifications/fonction_notif.php';
     <link rel="stylesheet" href= '../navigationBar.css'>
     <link rel="stylesheet" href='../Notifications/Notifications_style.css'>
     <link rel="stylesheet" href='Admin.css'>
-    <style>
-        body {
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;}
-    </style>
+
     </style>
 </head>
 <body>
@@ -122,6 +112,8 @@ include_once '../Notifications/fonction_notif.php';
         </div>
     </div>
 
+    <!-- Contenu Principal-->
+    <div class="content">
     <div class="Ad-btn-container">
     <button class='Ad-btn' onclick="window.location.href='Liste_patients.php'">Liste Patients</button>
     <button class='Ad-btn' onclick="window.location.href='Liste_medecins.php'">Liste Médecins</button>
@@ -134,6 +126,7 @@ include_once '../Notifications/fonction_notif.php';
             <span class="notification-badge"><?= htmlspecialchars($showBadgeA) ?></span>
         <?php endif; ?>
     </button>
+</div>
 </div>
 
 

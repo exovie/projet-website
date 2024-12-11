@@ -1,9 +1,11 @@
 <?php
-
 //Connection à la base
 include("../Fonctions.php");
 include("../Notifications/fonction_notif.php");
 $conn=Connexion_base();
+
+session_start();
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 
 //Récupération des infos
 $query = "

@@ -4,6 +4,9 @@ include("../Fonctions.php");
 include_once '../Notifications/fonction_notif.php';
 $conn = Connexion_base();
 
+session_start();
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
+
 // Vérifier l'action de validation ou de refus
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['validate'])) {

@@ -7,6 +7,8 @@ if (!isset($_GET['id'])) {
     header('Location: Liste_entreprises.php');
     exit;
 }
+session_start();
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 
 $id_entreprise = intval($_GET['id']);
 $query = "SELECT Id_entreprise, Nom_entreprise, Telephone, Siret FROM ENTREPRISES WHERE Id_entreprise = :id_entreprise";
