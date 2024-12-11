@@ -9,10 +9,11 @@ $Id_user = $_SESSION['Id_user'];
 $Id_essai = $_SESSION['Id_essai'];
 
 if (isset($_POST['essai_indi'])) {
-    $Id_essai = $_POST['essai_indi'];
+    $_SESSION['Id_essai'] = $_POST['essai_indi'];
 } elseif (isset($_SESSION['postdata']['medecins'])) {
-    $Id_essai =$_SESSION['postdata']['medecins'];
+    $_SESSION['Id_essai'] =$_SESSION['postdata']['medecins'];
 }
+$Id_essai = $_SESSION['Id_essai'];
 
 //Requete pour récupérer les informations nécessaires 
 $pdo= Connexion_base();
