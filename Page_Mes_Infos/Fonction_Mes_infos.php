@@ -4,31 +4,120 @@
 //session_start();
 include("Connexion_base.php");
 $conn = Connexion_base();
+$role='Patient';
+//==========================================
+// Fonction de vérification de l'age
+function Verif_age($age) {
+    $date = new DateTime($age);
+    $now = new DateTime();
+    $interval = $now->diff($date);
+    $age = $interval->y;
+    if ($age < 18) {
+        return false;
+        // L'utilisateur est mineur
+    } else {
+        return true;
+        // L'utilisateur est majeur
+    }
+}
 
-//$role_user=$_SESSION['role'];
-//id_user=$_SESSION['id_user'];
+//Fonction de vérification du format des réponses 
+function validateResponsesByRole($role, $responses) {
+    $errors = [];
 
-//$id_user=6;
-//$id_entreprise= $id_user;
-//$id_user = isset($_GET['id_user']) ? (int)$_GET['id_user'] : 6;
+    // Règles de validation spécifiques à chaque champ
+    $validationRules = [
+        'Nom' => function($value) {
+            return is_string($value) && preg_match('/^[a-zA-ZÀ-ÿ\s-]+$/u', trim($value));
+        },
+        'Prenom' => function($value) {
+            return is_string($value) && preg_match('/^[a-zA-ZÀ-ÿ\s-]+$/u', trim($value));
+        },
+        'Date de naissance' => function($value) {
+            $format = 'Y-m-d';
+            $d = DateTime::createFromFormat($format, trim($value));
+            return $d && $d->format($format) === $value;
+        },
+        'Sexe' => function($value) {
+            return in_array($value, ['M', 'F']);
+        },
+        'Telephone' => function($value) {
+            return preg_match('/^\d{10}$/', str_replace(' ', '', trim($value)));
+        },
+        'Taille' => function($value) {
+            return filter_var($value, FILTER_VALIDATE_INT) !== false && $value > 0;
+        },
+        'Poids' => function($value) {
+            return filter_var($value, FILTER_VALIDATE_INT) !== false && $value > 0;
+        },
+        'Spécialité' => function($value) {
+            return is_string($value) && !empty($value);
+        },
+        'Matricule' => function($value) {
+            return preg_match('/^\d{11}$/', str_replace(' ', '', trim($value)));
+        },
+        'Nom Entreprise' => function($value) {
+            return is_string($value) && !empty($value);
+        },
+        'SIRET' => function($value) {
+            return preg_match('/^\d{14}$/', str_replace(' ', '', trim($value))); // Un SIRET valide contient 14 chiffres
+        }
+    ];
+    // Définition des champs spécifiques à chaque rôle
+    $questionsByRole = [
+        'Patient' => ['Nom', 'Prenom', 'Date de naissance', 'Sexe', 'Telephone', 'Profil Picture', 'Taille', 'Poids', 'Traitements', 'Allergies', 'CNI'],
+        'Medecin' => ['Nom', 'Prenom', 'Spécialité', 'Telephone', 'Matricule', 'Profil Picture'],
+        'Entreprise' => ['Nom Entreprise', 'Telephone', 'Profil Picture', 'SIRET']
+    ];
+
+    // Obtenir les questions pour le rôle donné
+    if (!isset($questionsByRole[$role])) {
+        $errors[] = "Rôle inconnu : $role.";
+        return $errors;
+    }
+
+    $questions = $questionsByRole[$role];
+
+    // Valider les réponses
+    foreach ($questions as $index => $question) {
+        if (isset($responses[$index])) {
+            $value = $responses[$index];
+            if (isset($validationRules[$question]) && !$validationRules[$question]($value)) {
+                $errors[] = "Le champ '$question' a une valeur invalide : $value.";
+            }
+        } else {
+            if ($question === 'Profil Picture' || $question === 'CNI' || $question === 'Traitements' || $question === 'Allergies') {
+                // Ces champs sont facultatifs
+                continue;
+            }
+            $errors[] = "Le champ '$question' est manquant.";
+        }
+    }
+
+    return $errors;
+}
+//=================================================
+
 
 // Fonction pour récupérer les informations de l'utilisateur
 function getUserInfo($conn, int $id_user) {
 
     //Récupérer le role de l'Id_user
     $sql = $conn -> prepare("SELECT role FROM users WHERE Id_user=:id_user");
+    //Comprend pas pq si on met "Role" ou "USERS", cela ne marche pas 
     $sql->execute(['id_user' => $id_user]);
     $role=$sql->fetch(PDO::FETCH_ASSOC)['role'] ?? null;
-
+    
     switch ($role) {
         case 'Patient':
-            $query = "SELECT * FROM patients WHERE Id_patient = :id_user";
+            $query = "SELECT Nom, Prenom, Date_naissance, Sexe, Telephone, Profile_picture, Taille, Poids, Traitements, Allergies
+            FROM PATIENTS WHERE Id_patient = :id_user";
             break;
         case 'Medecin':
-            $query = "SELECT * FROM medecins WHERE Id_medecin = :id_user";
+            $query = "SELECT Nom, Prenom, Specialite, Telephone, Matricule FROM MEDECINS WHERE Id_medecin = :id_user";
             break;
         case 'Entreprise':
-            $query = "SELECT * FROM entreprises WHERE Id_entreprise = :id_user";
+            $query = "SELECT Nom_entreprise, Telephone, Siret = :Siret FROM entreprises WHERE Id_entreprise = :id_user";
             break;
         default:
             return null;
@@ -36,50 +125,137 @@ function getUserInfo($conn, int $id_user) {
 
     $stmt = $conn->prepare($query);
     $stmt->execute(['id_user' => $id_user]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
+    $result=$stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($result && isset($result['Profile_picture'])) {
+        $profilePictureData = base64_encode($result['Profile_picture']);
+        $result['Profile_picture'] = "data:image/png;base64,{$profilePictureData}";
+    }
+    
+    return $result;
 }
+
 
 // Fonction pour mettre à jour les informations
 function updateUserInfo($conn, int $id_user) {
-
-    //Récupérer le role de l'Id_user
-    $sql = $conn -> prepare("SELECT Role FROM users WHERE Id_user=:id_user");
-    //$query->bindParam(':id_user', $id_user, PDO::PARAM_INT);
-    $sql->execute(['id_user' => $id_user]);
-    $role=$sql->fetch(PDO::FETCH_ASSOC);
-    $roleValue=$role['Role'];
-    print_r($_POST);
-    switch ($roleValue) {
-        case 'Patient':
-            $query = "UPDATE patients SET Nom = :Nom, Prenom = :Prenom, Date_naissance = :Date_naissance,
-                      Sexe = :Sexe, Telephone = :Telephone, Taille = :Taille, Poids = :Poids, 
-                      Traitements = :Traitements, Allergies = :Allergies
-                      WHERE Id_Patients = :id_user";
-            break;
-        case 'Medecin':
-            $query = "UPDATE medecins SET Nom = :Nom, Prenom = :Prenom, Specialite = :Specialite,
-                      Telephone = :Telephone, Matricule = :Matricule WHERE Id_medecin = :id_user";
-            break;
-        case 'Entreprise':
-            echo "Rentre dans entreprise";
-            $query = "UPDATE entreprises SET Nom_entreprise = :Nom_entreprise, Telephone = :Telephone, Profil_picture = :Profil_picture,
-                      Siret = :Siret WHERE Id_entreprise = :id_user";
-            echo "Passer";
-            break;
-        default:
-            return false;
-    }
-
-    $data = $_POST;
-    $data['id_user'] = $id_user; // Ajout de l'ID utilisateur
-    // print_r($data);
-    // $stmt = $conn->prepare($query);
-    // return $stmt->execute($data);
     try {
-        echo "debut try";
-        $stmt = $conn->prepare($query);
-        $result = $stmt->execute($data);
-        print_r($result);
+        // Récupérer le rôle de l'utilisateur
+        $sql = $conn->prepare("SELECT Role FROM USERS WHERE Id_user=:id_user");
+        $sql->execute(['id_user' => $id_user]);
+        $role = $sql->fetch(PDO::FETCH_ASSOC);
+        if (!$role) {
+            echo "Utilisateur introuvable.";
+            return false;
+        }
+
+        $roleValue = $role['Role'];
+        $query = "";
+        switch ($roleValue) {
+            case 'Patient':
+                $query = "UPDATE PATIENTS SET Nom = :Nom, Prenom = :Prenom, Date_naissance = :Date_naissance,
+                          Sexe = :Sexe, Telephone = :Telephone, Profile_picture= :Profile_picture, Taille = :Taille, Poids = :Poids, Traitements = :Traitements, Allergies = :Allergies
+                          WHERE Id_patient = :id_user";
+
+                break;
+            case 'Medecin':
+                $query = "UPDATE MEDECINS SET Nom = :Nom, Prenom = :Prenom, Specialite = :Specialite,
+                          Telephone = :Telephone, Matricule = :Matricule WHERE Id_medecin = :id_user";
+                break;
+            case 'Entreprise':
+                $query = "UPDATE ENTREPRISES SET Nom_entreprise = :Nom_entreprise, Telephone = :Telephone, Profil_picture = :Profil_picture,
+                          Siret = :Siret WHERE Id_entreprise = :id_user";
+                break;
+            default:
+                echo "Rôle non pris en charge : $roleValue";
+                return false;
+        }
+
+        $data = $_POST;
+        $data['id_user']= $id_user;
+        // Vérifier si un fichier a été téléchargé
+         if (isset($_FILES['Profile_picture']) && $_FILES['Profile_picture']['error'] == UPLOAD_ERR_OK) {
+        // Si un fichier a été téléchargé, on le récupère et on le convertit en BLOB
+        $profilePicture = file_get_contents($_FILES['Profile_picture']['tmp_name']);
+        $data['Profile_picture'] = $profilePicture;  // Stocker l'image téléchargée
+        } else {
+        // Si aucune nouvelle image n'a été téléchargée, garder l'ancienne image
+        // Vous devez peut-être récupérer l'image existante depuis la base de données
+        $stmt = $conn->prepare("SELECT Profile_picture FROM PATIENTS WHERE Id_patient = :id_user");
+        $stmt->execute(['id_user' => $id_user]);
+        $existingProfilePicture = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        // // Si une image existante est trouvée, la conserver dans $data['Profile_picture']
+        // if ($existingProfilePicture) {
+        //     $data['Profile_picture'] = $existingProfilePicture['Profile_picture'];
+        // }
+    }
+        
+        // Réorganiser les clés dans l'ordre souhaité
+        $newArray = [];
+        $profilePicture = isset($data['Profile_picture']) ? $data['Profile_picture'] : null;  // Conserver la valeur de Profile_picture si elle existe
+
+        foreach ($data as $key => $value) {
+            // Si on arrive sur Telephone, on ajoute d'abord Telephone puis Profile_picture
+            if ($key === 'Telephone') {
+                $newArray['Telephone'] = $value;
+                if ($existingProfilePicture !== null) {
+                 $newArray['Profile_picture'] = $existingProfilePicture['Profile_picture'];
+                 $existingProfilePicture = null; // On s'assure de ne pas rajouter deux fois Profile_picture
+            }
+            } else {
+                // Ajouter les autres éléments normalement
+                if ($key !== 'Profile_picture') {
+                $newArray[$key] = $value;
+            }
+            }
+        }
+
+        // Si Profile_picture n'a pas été inséré et qu'il y a une image, on l'ajoute à la fin
+        if ($existingProfilePicture!== null) {
+        $newArray['Profile_picture'] = $profilePicture['Profile_picture'];
+        }
+
+        // Résultat dans $newArray : les données réorganisées avec Profile_picture juste après Telephone
+        $data = $newArray;
+
+        //Changement des clés en valeurs numériques
+        $numericArray = array_values($data);
+
+        // Vérification du format des réponses
+        $errorMessages = '';
+        $date = $_POST['Date_naissance'];
+        if ($role == 'Patient'){
+            $ageErr= Verif_age($date); 
+            if ($ageErr == false) {
+            $errorMessages= $errorMessages."Vous devez être majeur pour vous inscrire.";
+            }
+        }
+
+        $errors = validateResponsesByRole($roleValue, $numericArray);
+        
+        
+        if (!empty($errors)) {
+         // S'il y a des erreurs, on les affiche
+        $errorMessages = '';
+        if (!empty($errors)) {
+            foreach ($errors as $error) {
+                $errorMessages .= $error;
+            }
+        }
+
+        $_SESSION['FormsErr'] = $errorMessages;
+        //Fermer_base($conn);
+        //header('Location: Menu_Mes_Infos.php#modal');
+        } else {
+        // Si pas d'erreur, on passe à la page suivante
+        
+        $update = $conn->prepare($query);
+
+        //$_SESSION['reponsesInscription'] = ($_POST); 
+        //Fermer_base($pdo);
+        //header("Location: Menu_Mes_Infos.php#modal");
+        $result = $update->execute($data);
+        
         if ($result) {
             echo "Mise à jour réussie.";
             return true;
@@ -87,11 +263,11 @@ function updateUserInfo($conn, int $id_user) {
             echo "Échec de la mise à jour.";
             return false;
         }
-    } catch (PDOException $e) {
+    }} catch (PDOException $e) {
         echo "Erreur : " . $e->getMessage();
         return false;
-    
-}}
+    }
+}
 
 
 function getHistoriqueEssais($conn, int $id_user) {
@@ -105,19 +281,19 @@ function getHistoriqueEssais($conn, int $id_user) {
         $roleValue=$role['Role'];
         switch ($roleValue) {
             case 'Patient':
-                $query = "SELECT Titre, Statut, Date_creation
+                $query = "SELECT Id_essai, Titre, Statut, Date_fin, Date_creation
                           FROM patients_essais 
                           JOIN essais_cliniques  ON patients_essais.Id_essai = essais_cliniques.Id_essai
                           WHERE patients_essais.Id_patient = :id_user";
                 break;
             case 'Medecin':
-                $query = "SELECT Titre, Statut, Date_creation
+                $query = "SELECT Id_essai, Titre, Statut, Date_fin, Date_creation, 
                           FROM medecin_essais 
                           JOIN essais_cliniques  ON medecin_essais.Id_essai = essais_cliniques.Id_essai
                           WHERE medecin_essais.Id_medecin = :id_user";
                 break;
                 case 'Entreprise':
-                $query = "SELECT Titre, Statut, Date_creation
+                $query = "SELECT Id_essai, Titre, Statut, Date_fin, Date_creation
                           FROM essais_cliniques
                           WHERE Id_entreprise = :id_user";
             
@@ -129,7 +305,6 @@ function getHistoriqueEssais($conn, int $id_user) {
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':id_user', $id_user, PDO::PARAM_INT);
         $stmt->execute();
-
         // Récupérer les résultats
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result;

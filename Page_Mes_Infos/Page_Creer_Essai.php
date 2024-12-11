@@ -21,7 +21,7 @@ session_start();
     <link rel="stylesheet" href= 'navigationBar.css'>
     <style>
         body {
-            background-color: turquoise; /* Arrière-plan cyan */
+            background-color: #b0f5e7; 
             display: flex; /* Utiliser flexbox pour centrer */
             justify-content: center; /* Centre horizontalement */
             align-items: center; /* Centre verticalement */

@@ -2,7 +2,8 @@
 // Exemple : Récupérer le rôle depuis une session ou une base de données
 $role='Entreprise';
 //$role = $_SESSION['role']; // Par exemple : "Patient", "Medecin", ou "Entreprise"
-
+$id_user=6;
+//$id_user = $_SESSION['id_user'];
 ?>
 
 <!DOCTYPE html>
@@ -22,13 +23,13 @@ $role='Entreprise';
             height: 100vh;  /* Utilise toute la hauteur de la fenêtre */
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #b0f5e7;
         }
 
         .button-container {
             display: flex;
             flex-direction: row;  /* Garde les boutons en ligne */
-            gap: 20px; /* Espacement entre les boutons */
+            gap: 30px; /* Espacement entre les boutons */
             justify-content: center; /* Centre les boutons horizontalement */
             align-items: center; /* Centre les boutons verticalement */
         }
@@ -37,7 +38,7 @@ $role='Entreprise';
             text-decoration: none;
             color: white;
             background-color: #007BFF;
-            padding: 15px 25px;
+            padding: 20px 25px;
             border-radius: 5px;
             font-size: 16px;
             text-align: center;
