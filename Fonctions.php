@@ -51,6 +51,7 @@ function Get_id(string $table, string $column): array {
 
 
 function Get_entreprise_data(int $id_entreprise): array {
+
     $conn = Connexion_base();
 
     try {
@@ -58,7 +59,8 @@ function Get_entreprise_data(int $id_entreprise): array {
         $sql = "
             SELECT *
             FROM ENTREPRISES
-            WHERE Id_entreprise = :Id_entreprise;
+            WHERE Id_entreprise = :Id_entreprise AND
+            Verif_inscription = 1;
         ";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
@@ -70,7 +72,8 @@ function Get_entreprise_data(int $id_entreprise): array {
             SELECT ESSAIS_CLINIQUES.Titre
             FROM ESSAIS_CLINIQUES
             JOIN ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
-            WHERE ENTREPRISES.Id_entreprise = :Id_entreprise;
+            WHERE ENTREPRISES.Id_entreprise = :Id_entreprise AND
+            ESSAIS_CLINIQUES.Statut IN ('Termine', 'En cours', 'fini');
         ";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
@@ -91,7 +94,8 @@ function Get_entreprise_data(int $id_entreprise): array {
             JOIN 
                 MEDECINS ON MEDECIN_ESSAIS.Id_medecin = MEDECINS.Id_medecin
             WHERE 
-                ENTREPRISES.Id_entreprise = :Id_entreprise;
+                ENTREPRISES.Id_entreprise = :Id_entreprise AND
+                MEDECIN_ESSAIS.Statut_medecin IN ('Actif', 'Termine');
         ";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
@@ -120,7 +124,15 @@ function Display_entreprise_data(array $data) {
 
     foreach ($data['entreprise'] as $entreprise) {
         echo '<div class="entreprise">';
+        echo '<div class="image_nom">';
+        if ($entreprise['Profile_picture'] == null){
+            echo '<li> <img src="Pictures/defaultPicture.png" alt="pictureProfil" class="fixed_picture" style="cursor: pointer;"> </li>';
+        } else {
+            $profilePictureData = base64_encode($entreprise['Profile_picture']);
+            echo '<li><img src="data:image/png;base64,' . $profilePictureData . '" alt="Photo de profil" class="fixed_picture" style="cursor: pointer;"></li>';
+        }
         echo '<h1>' . htmlspecialchars($entreprise['Nom_entreprise']) . '</h1>';
+        echo '</div>';
         echo '<p>Téléphones : ' . htmlspecialchars($entreprise['Telephone']) . '</p>';
         echo '<p>Siret : ' . htmlspecialchars($entreprise['Siret']) . '</p>';
         echo '<p class="clinical-trials">Nombre d\'essais cliniques : ' . count($data['clinical_trials']) . '</p>';
@@ -248,12 +260,15 @@ function List_Medecin(int $id_medecin): array {
 function display_medecin($medecin) {
     $medecin = $medecin[0];
     echo '<ul class = "medecins">';
+    echo '<div class = "image_nom">';
     if ($medecin['Profile_picture'] == null){
         echo '<li> <img src="Pictures/defaultPicture.png" alt="pictureProfil" class="fixed_picture" style="cursor: pointer;"> </li>';
     } else {
-    echo '<li class="fixed_picture">' . htmlspecialchars($medecin['Profile_picture']) . '</li>';
+        $profilePictureData = base64_encode($medecin['Profile_picture']);
+        echo '<li><img src="data:image/png;base64,' . $profilePictureData . '" alt="Photo de profil" class="fixed_picture" style="cursor: pointer;"></li>';
     }
     echo '<li class = "noms_medecins">' . htmlspecialchars($medecin['Nom']) . " " .htmlspecialchars($medecin['Prenom']). '</li>';
+    echo '</div>';
     echo '<li class = "specialite">' . htmlspecialchars($medecin['Specialite']) . '</li>';
     echo '</ul>';
 }
@@ -604,4 +619,103 @@ function display_patient_medecin($patient){
     echo '</ul>';  
 }
 
-?>
+function tablename($id_user) {
+    $conn = Connexion_base();
+
+    $sql = "
+        SELECT 'PATIENTS' AS TableName FROM PATIENTS WHERE Id_patient = ?
+        UNION ALL
+        SELECT 'MEDECINS' AS TableName FROM MEDECINS WHERE Id_medecin = ?
+        UNION ALL
+        SELECT 'ENTREPRISES' AS TableName FROM ENTREPRISES WHERE Id_entreprise = ?
+    ";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(1, $id_user, PDO::PARAM_INT);
+    $stmt->bindParam(2, $id_user, PDO::PARAM_INT);
+    $stmt->bindParam(3, $id_user, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Analyse des résultats
+    if ($result) {
+        return $result['TableName'];
+    } else {
+        echo "Id_user $id_user n'existe dans aucune table liée.";
+    }
+}
+
+
+function Verif_inscription($id_user) {
+    // Définitions des correspondances
+    $tableau = [
+        'MEDECINS' => 'Statut_inscription',
+        'ENTREPRISES' => 'Verif_inscription'
+    ];
+    $id_table = [
+        'MEDECINS' => 'Id_medecin',
+        'ENTREPRISES' => 'Id_entreprise'
+    ];
+    
+    // Récupération du nom de la table
+    $tablename = tablename($id_user);
+    
+    // Vérification si la table est valide
+    if (!isset($tableau[$tablename]) || !isset($id_table[$tablename])) {
+        throw new Exception("Nom de table ou colonne invalide.");
+    }
+    
+    $id_name = $id_table[$tablename];
+    $column = $tableau[$tablename];
+
+    // Connexion à la base de données
+    $conn = Connexion_base();
+
+    // Construction sécurisée de la requête SQL
+    $sql = "SELECT $column FROM $tablename WHERE $id_name = :id_user";
+
+    // Préparation de la requête
+    $stmt = $conn->prepare($sql);
+
+    // Liage de la variable :id_user
+    $stmt->bindParam(':id_user', $id_user, PDO::PARAM_INT);
+
+    // Exécution de la requête
+    try {
+        $stmt->execute();
+    } catch (PDOException $e) {
+        // Gérer les exceptions
+        throw new Exception("Erreur lors de l'exécution de la requête : " . $e->getMessage());
+    }
+
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $result[$column];
+}
+
+//entreprise en fonction essai
+//liste des medecins actifs d'un essai
+//statut d'un patient dans un essai
+
+function company_trial ($id_essai) {
+    $conn = Connexion_base();
+
+    $sql = "
+        SELECT Id_entreprise
+        FROM ENTREPRISES
+        JOIN ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
+        WHERE ESSAIS_CLINIQUES.Id_essai = :Id_essai;
+    "; 
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_essai', $id_essai, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Analyse des résultats
+    if ($result) {
+        return $result['TableName'];
+    } else {
+        echo "Id_user $id_essai n'existe dans aucune table liée.";
+    }
+}

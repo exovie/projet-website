@@ -124,6 +124,14 @@ include_once 'Notifications/fonction_notif.php';
             <div id="boxes">
             <?php
               $id_entreprises = Get_id( 'ENTREPRISES', 'Id_entreprise');
+              $index = 0;
+              foreach ($id_entreprises as $temporary) {
+                tablename($temporary);
+                if (!Verif_inscription($temporary)) {
+                    unset($id_entreprises[$index]);
+                }
+                $index++;
+              }          
               foreach ($id_entreprises as $id_entreprise) {
                 $entreprise = Get_entreprise_data($id_entreprise);
                 Display_entreprise_data($entreprise);
@@ -137,7 +145,7 @@ include_once 'Notifications/fonction_notif.php';
               $id_medecins = Get_id( 'MEDECINS', 'Id_medecin');
               $counter = 0;
               foreach ($id_medecins as $id_medecin) {
-                if ($counter == 10) break;
+                if ($counter == 18) break;
                 $medecins = List_Medecin($id_medecin);
                 display_medecin($medecins);
                 $counter++;
