@@ -185,10 +185,7 @@ function Demander_Medecin_essai(int $Id_essai, int $Id_medecin){
     $requete -> execute(array($Id_medecin, $Id_essai));
     echo "Nouveau médecin sollicité avec succès pour cet essai!";
     Fermer_base($conn);
-    } catch (PDOException $e) {
-    echo "Erreur bdd: " . $e->getMessage(); }
-    try{
-        Generer_notif(3,$Id_essai, $Id_medecin);
+    Generer_notif(3,$Id_essai, $Id_medecin);
     }
     catch (PDOException $e) {
         $_SESSION['ErrorCode'] = 12;
@@ -223,6 +220,7 @@ function Postuler_Medecin_Essai(int $Id_essai, int $Id_medecin){
             exit;}
 
     }
+
 //vérifiée
 //méthode entreprise et médecin
 function Retirer_Medecin_Essai(int $Id_essai, int $Id_medecin){
@@ -232,11 +230,6 @@ function Retirer_Medecin_Essai(int $Id_essai, int $Id_medecin){
         $requete = $conn -> prepare("UPDATE `MEDECIN_ESSAIS` SET `Statut_medecin` = 'Retire' WHERE (`Id_essai` = ? AND `Id_medecin` = ?)");
         $requete -> execute(array($Id_essai, $Id_medecin));
         Fermer_base($conn);
-    }
- catch (PDOException $e) {
-    echo "Erreur bdd: " . $e->getMessage(); 
-}
-    try{
         Generer_notif(18, $Id_essai, $Id_medecin);
         //vérifier le statut 
         $conn = Connexion_base();
@@ -470,10 +463,7 @@ function Retirer_Patient_Essai(int $Id_essai, int $Id_patient){
             }
     
             // Notification à l'entreprise
-            $requete_entreprise = $conn -> prepare("SELECT `Id_entreprise` FROM `ESSAIS_CLINIQUES` WHERE `Id_essai` = ?");
-            $requete_entreprise->execute(array($Id_essai));
-            $tableau_entreprise = $requete_entreprise->fetch();
-            $Id_entreprise = $tableau_entreprise["Id_entreprise"];
+            $Id_entreprise = Get_Entreprise($Id_essai);
             Generer_notif(15, $Id_essai, $Id_entreprise);  // Envoi de notification à l'entreprise
     
             // Notification aux médecins
@@ -807,26 +797,27 @@ function Afficher_Medecins($Id_essai, $Statut_medecin){
                 }
 
                 echo '</tr>';
+            }
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
                 }
                 if ($_SERVER['REQUEST_METHOD']=== 'POST') {
                  if (isset($_POST['action'])) {
                      if ($_POST['action'] === 'retirer medecin') {
-                         Retirer_Medecin_Essai($Id_essai, $Id_medecin);
+                         Retirer_Medecin_Essai($Id_essai, $medecin['Id_medecin']);
                      }
                      if ($_POST['action'] === 'accepter medecin') {
-                        Traiter_Candidature_Medecin($Id_essai, $Id_medecin,1);
+                        Traiter_Candidature_Medecin($Id_essai, $medecin['Id_medecin'],1);
                     }
                     if ($_POST['action'] === 'accepter medecin') {
-                        Traiter_Candidature_Medecin($Id_essai, $Id_medecin,0);
+                        Traiter_Candidature_Medecin($Id_essai, $medecin['Id_medecin'],0);
                     }
             }}
         }
         echo '</POST>';
     
     echo '</tbody></table>';
- }}
+ }
 
 function A() {
     // Définir la logique pour la fonction

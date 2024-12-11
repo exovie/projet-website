@@ -99,6 +99,9 @@ $Statut_essai = $Infos['Statut'];
                         echo '<div class="side-buttons_candidature">';
                         echo '<button name = "action" value="se retirer medecin" class="nav-btn_essai">Se retirer de cet essai</button>';
                         echo '</div>';
+                        echo'<div class="side-buttons__statistique">
+                        <a href="Homepage.php" class="nav-btn">Afficher les Stastistiques</a>
+                        </div>';
                         //fonctionne mais nécessite surement actualisation
                         Afficher_Patients($Id_essai, 'Actif');
                         Afficher_Patients($Id_essai, 'En attente');
@@ -130,7 +133,7 @@ $Statut_essai = $Infos['Statut'];
             if ($role == 'admin'){
                 //semble appeler postuler_medecin??
                 echo'<div class="side-buttons__statistique">
-                <a href="Homepage.php"><button class="nav-btn">Afficher les Stastistiques</button> </a>
+                <a href="Homepage.php" class="nav-btn">Afficher les Stastistiques</a>
                 </div>';
                 Afficher_Patients($Id_essai,'Actif');
                 Afficher_Patients($Id_essai,'En attente'); 
@@ -153,10 +156,10 @@ $Statut_essai = $Infos['Statut'];
                 $Id_entreprise = Get_Entreprise($Id_essai);
                 if($Id_entreprise == $Id_user){ //si l'entrepise gère cet essai
                    echo'<div class="side-buttons__statistique">
-                   <a href="Homepage.php"><button class="nav-btn">Afficher les Stastistiques</button> </a>
+                   <a href="Homepage.php" class="nav-btn">Afficher les Stastistiques</a>
                    </div>';
                    echo'<div class="side-buttons__statistique">
-                   <a href="Homepage.php"><button class="nav-btn">Demander un médecin</button> </a>
+                   <a href="Homepage.php" class="nav-btn">Demander un médecin</a>
                    </div>';
                     Afficher_Medecins($Id_essai,'Actif');
                     Afficher_Medecins($Id_essai,'En attente');
