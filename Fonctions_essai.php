@@ -2,27 +2,6 @@
 
 include_once 'Notifications/fonction_notif.php';
 
-function Connexion_base(){
-    $host = 'localhost';
-    $dbname = 'website_db';
-    $user = 'root';
-    $password = '';
-
-    try {
-        $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die("Erreur : " . $e->getMessage());
-    } 
-    return $pdo;
-    }
-
-
-function Fermer_base($pdo){
-    // Fermeture de la connexion
-    $pdo = null; // Cela libère la connexion
-}
-
 //Fonctions  liées aux essais
 
 //attention aux dates, elles sont initialisées à 000/00/00 à la création, il faut donc les update et non les insert
@@ -812,11 +791,6 @@ function A() {
     // Définir la logique pour la fonction
 }
 
-
-
-function Generer_Notif($code, $Id_essai, $Id_destinataire){}
-
-
 function affichage_request_medecin($Id_essai, $praticien){
 
 echo '<h1>Choisissez un médecin parmi cette liste</h1>';
@@ -844,7 +818,11 @@ foreach($praticien as $medecin) {
         <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
         <td>';
             echo '
-                <form method="POST" action="hub.php">
+                <form 
+
+function Generer_Notif($code, $Id_essai, $Id_destinataire){}
+
+method="POST" action="hub.php">
                     <button name="demande_medecin" value="' . htmlspecialchars($Id_essai . '_' . $medecin["Id_medecin"]) . '" type="submit">Demander ce médecin</button>
                 </form>
             ';
@@ -856,34 +834,4 @@ echo '</tr>';
 echo '</tbody></table>';
 }
 
-function verif_entreprise($Id_essai, $Id_entreprise) {
-$conn = Connexion_base();
-
-try {
-    $sql = "
-        SELECT EXISTS (
-            SELECT 1
-            FROM ESSAIS_CLINIQUES
-            WHERE Id_entreprise = :Id_entreprise
-            AND Id_essai = :Id_essai
-        ) AS EssaiTrouve;
-    "; 
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':Id_entreprise', $Id_entreprise, PDO::PARAM_INT);
-    $stmt->bindParam(':Id_essai', $Id_essai, PDO::PARAM_INT);
-    $stmt->execute();
-    
-    // Récupérer le résultat de la requête
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    // Si l'essai est trouvé, retourne true, sinon false
-    return (bool)$result['EssaiTrouve'];
-} catch (PDOException $e) {
-    echo "Erreur : " . $e->getMessage();
-    return false;
-} finally {
-    // Fermer la connexion
-    Fermer_base($conn);
-}
-}
 

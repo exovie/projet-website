@@ -595,47 +595,6 @@ function get_medecin_trial(int $id_medecin, $id_essai): array {
     }
 }
 
-function affichage_request_medecin($Id_essai, $praticien){
-
-    echo '<h1>Liste des Medecins</h1>';
-    echo '
-        <table>
-            <thead>
-                <tr>
-                
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Spécialité</th>
-                    <th>Matricule</th>
-                    <th>Numéro de téléphone</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>';
-    foreach($praticien as $medecin) {
-        $medecin = $medecin[0];
-        echo '<tr>
-            <td>' . htmlspecialchars($medecin["Nom"]) . '</td>
-            <td>' . htmlspecialchars($medecin["Prenom"]) . '</td>
-            <td>' . htmlspecialchars($medecin["Specialite"]) . '</td>
-            <td>' . htmlspecialchars($medecin["Matricule"]) . '</td>
-            <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
-            <td>';
-                echo '
-                    
-                    <button (' . htmlspecialchars($Id_essai) . ', ' . htmlspecialchars($medecin["Id_medecin"]) . ')">Retirer de l\'essai</button>
-                ';
-                echo '
-                <button ('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 1 . ')">Accepter le médecin</button>
-                <button ('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 0 . ')">Refuser le médecin</button>
-            ';
-        
-    }
-    echo '</tr>';
-            
-    echo '</tbody></table>';
-}
-
 function verif_entreprise($Id_essai, $Id_entreprise) {
     $conn = Connexion_base();
 

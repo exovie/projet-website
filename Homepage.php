@@ -11,9 +11,8 @@ if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true) {
     $_SESSION['role'] = 'visiteur';
 }
 $role = $_SESSION['role'];
-include 'Fonctions.php';
-include 'Fonctions_essai.php';
-
+include_once 'Fonctions.php';
+include_once 'Fonctions_essai.php';
 include_once 'Notifications/fonction_notif.php';
 ?>
 
