@@ -26,7 +26,7 @@ function Generer_notif($CodeNotif, $Id_essai, $Id_destinataire){
         $stmt->closeCursor();
         $id_Notif = $pdo->lastInsertId(); // Get the ID of the notification
         
-        if ($Id_essai == 'NULL'){
+        if (!is_integer($Id_essai)){
         $users = $pdo->prepare("SELECT Id_user  FROM `USERS` WHERE Role ='Admin';");
         $users->execute();
         $admins = $users->fetchAll(PDO::FETCH_ASSOC); // Récupère tous les résultats
