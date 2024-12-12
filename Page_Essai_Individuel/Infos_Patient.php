@@ -8,7 +8,7 @@ include_once ("../Fonctions.php");
 
 if (isset($_POST['Id_patient'])) {
     $Id_patient = $_POST['Id_patient']; }
-    else {$Id_patient = $_SESSION['Id_patient'];}
+    else {$Id_patient = $_SESSION['Id_patient_redirect'];}
 $conn= Connexion_base();
 
 function Info_Patient_Essais($conn, int $Id_patient){
@@ -198,7 +198,7 @@ $datasPatient = Info_Patient_Essais($conn, $Id_patient);
             <p>Aucune information disponible pour ce patient.</p>
         <?php endif; ?>
         </div>
-        <button class="back-btn" onclick="window.location.href='<?php echo $_SESSION['origin']; ?>'">Retour</button>
+        <button class="back-btn" onclick="window.location.href='../<?php echo $_SESSION['origin']; ?>'">Retour</button>
 
 </body>
 </html>

@@ -4,6 +4,7 @@ $_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 $role = $_SESSION['role'];
 $db_name = $_SESSION['db_name'];
 include 'Fonctions.php';
+include 'Notifications/fonction_notif.php';
 $list_essai = Get_essais($role);
 ?>
 

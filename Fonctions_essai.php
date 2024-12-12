@@ -658,7 +658,7 @@ function Afficher_Patients($Id_essai, $Statut_participation){
     if (empty($tableau_patients)) {
         echo '<tr>
                 <td colspan="4">Aucun patient trouvé.</td>
-              </tr>';
+            </tr>';
     } else {
         foreach ($tableau_patients as $patient) {
             echo '<tr>
@@ -667,14 +667,14 @@ function Afficher_Patients($Id_essai, $Statut_participation){
                 <td>';
                 if ($Statut_participation == 'Actif'){
                     echo ' 
-                        <a href="patient.php" class="nav-btn" >Consulter la fiche</a>
+                        <a href="Page_Essai_Individuel/Liste_Patients_Essai.php" class="nav-btn" >Consulter la fiche</a>
                         <button class="btn" name="recuperer_id_patient" value="'.$patient["Id_patient"].'" type="submit">Recupérer l`ID du patient</button>   
                         <button class="btn delete" name="retirer_patient" value="'.$patient["Id_patient"].'" type="submit">Retirer de l\'essai</button>
                     ';
                 }
                 if ($Statut_participation == 'En attente'){ 
                     echo '
-                        <a href="patient.php" class="nav-btn" >Consulter la fiche</a>
+                        <a href="Page_Essai_Individuel/Infos_Patient.php" class="nav-btn" >Consulter la fiche</a>
                         <button class="btn" name="recuperer_id_patient" value="'.$patient["Id_patient"].'" type="submit">Recupérer l`ID du patient</button>
                         <button class="btn delete" name="accepter_patient" value="'.$patient['Id_patient'].'" type="submit">Accepter le patient</button>
                         <button class="btn delete" name="refuser_patient" value="'.$patient['Id_patient'].'" type="submit">Refuser le patient</button>

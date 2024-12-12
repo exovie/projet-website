@@ -30,7 +30,6 @@ $_SESSION['origin'] = 'Essai_individuel.php';
     <link rel="stylesheet" href='essai_indiv.css'>
     <link rel="stylesheet" href= 'navigationBar.css'>
     <link rel="stylesheet" href='Notifications/Notifications_style.css'>
-    afficha
 
 </head>
 <body>
@@ -345,10 +344,15 @@ if (isset($postdata['liste_medecins'])) {
         <button name="liste_medecins" value=' . $Id_essai . ' type="submit" class="search-button">Voir la liste des médecins</button>
     </form>
     ';
+
+    if($Statut_essai == 'En attente'){
+        echo'<div class="side-buttons__statistique">
+        <a href="Page_Essai_Individuel/Modifier_Essais.php" type="submit" class="nav-btn">Modifier Essai</a>
+        </div>';
+    }
 }
 ?>
-
-   </div>
+</div>
 </main>
 <?php 
 ?>

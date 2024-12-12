@@ -7,9 +7,9 @@ include_once '../Notifications/fonction_notif.php';
 include_once ("../Fonctions.php");
 
 if (isset($_POST['id_essai'])) {
-    $id_essai = $_POST['id_essai']; // Récupère la valeur si elle existe
+    $id_essai = $_POST['Id_essai']; // Récupère la valeur si elle existe
 }else {
-    $id_essai = $_SESSION['id_essai']; // Sinon, récupère la valeur de la session
+    $id_essai = $_SESSION['Id_essai']; // Sinon, récupère la valeur de la session
 }
 $conn= Connexion_base();
 
@@ -204,7 +204,7 @@ $patients = Liste_Patients_Essais($conn, $id_essai);
             <?php endif; ?>
         </tbody>
     </table>
-    <button class="back-btn" onclick="window.location.href='<?php echo $_SESSION['origin']; ?>'">Retour</button>
+    <button class="back-btn" onclick="window.location.href='../<?php echo $_SESSION['origin']; ?>'">Retour</button>
 </div>
 </div>
 </body>

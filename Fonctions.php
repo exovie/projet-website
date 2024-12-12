@@ -193,7 +193,7 @@ function Get_essais($role) {
         ";
     
         // Si le statut n'est pas "tous", on ajoute une clause WHERE
-        if ($statuses[$role] !=='Tout') {
+        if ($statuses[$role] !== ['Tout']) {
             $placeholders = implode(',', array_fill(0, count($statuses[$role]), '?'));
             $sql .= "WHERE EC.Statut IN ($placeholders) ";
         }
@@ -204,7 +204,7 @@ function Get_essais($role) {
         $stmt = $conn->prepare($sql);
     
         // Lier les variables seulement si le statut est défini
-        if ($statuses[$role] !== 'Tout') {
+        if ($statuses[$role] !== ['Tout']) {
             foreach ($statuses[$role] as $index => $status) {
                 $stmt->bindValue($index + 1, $status, PDO::PARAM_STR);
             }

@@ -284,7 +284,7 @@ $sexe_stats = Stat_Sexe($data, $conn, $id_essai);
         }
     });
 </script>
-<button class="back-btn" onclick="window.location.href='<?php echo $_SESSION['origin']; ?>'">Retour</button>
+<button class="back-btn" onclick="window.location.href='../<?php echo $_SESSION['origin']; ?>'">Retour</button>
 
 </body>
 </html>

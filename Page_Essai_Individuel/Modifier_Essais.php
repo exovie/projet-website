@@ -4,16 +4,14 @@ include_once("Fonction_Modif_Essais.php");
 include_once '../Notifications/fonction_notif.php';
 include_once ("../Fonctions.php");
 
-if (isset($_POST['id_essai'])) {
-    $Id_essai = $_POST['id_essai']; // Récupère la valeur si elle existe
-}else {
-    $Id_essai = $_SESSION['id_essai']; // Sinon, récupère la valeur de la session
-}
+
+$id_essai = $_SESSION['Id_essai']; // Sinon, récupère la valeur de la session
+
 // Récupération des informations de l'utilisateur
-$EssaiInfo = getEssaiInfo($conn, $Id_essai);
+$EssaiInfo = getEssaiInfo($conn, $id_essai);
 
 // Initialisation du message
-$message = '';
+$message = null;
 
 // Vérification si une redirection a eu lieu
 if (isset($_SESSION['message'])) {
@@ -228,7 +226,7 @@ if ($Id_essai !== null) {
         <?php endforeach; ?>
     <?php endif; ?>
     <input type="submit" value="Enregistrer">
-    <button class="back-btn" onclick="window.location.href='<?php echo $_SESSION['origin']; ?>'">Retour</button>
+    <button class="back-btn" onclick="window.location.href='../Essai_individuel.php'">Retour</button>
     </form>
 </div>
 </body>
