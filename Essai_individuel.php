@@ -1,12 +1,11 @@
 <?php
 session_start();
 $_SESSION['origin'] = 'Essai_individuel';
-include 'Fonctions_essai.php';
-include 'Notifications/fonction_notif.php';
-include 'Fonctions.php';
+include_once 'Fonctions_essai.php';
+include_once 'Notifications/fonction_notif.php';
+include_once 'Fonctions.php';
 $role = $_SESSION['role'];
 $Id_user = $_SESSION['Id_user'];
-$Id_essai = $_SESSION['Id_essai'];
 
 if (isset($_POST['essai_indi'])) {
     $_SESSION['Id_essai'] = $_POST['essai_indi'];
@@ -89,7 +88,7 @@ $_SESSION['origin'] = 'Essai_individuel.php';
         <div class="frame">
         <?php   
         echo '<form method="POST" action="hub.php">';
-        if($role == 'patient'){
+        if($role == 'Patient'){
                     if (Verif_Patient_Cet_Essai($Id_essai, $Id_user)){ //si ce patient est dans cet essai
                         echo '<button name = "action" value="se retirer patient" class="nav-btn_essai">Se retirer de cet essai</button>';
                    }
@@ -107,7 +106,7 @@ $_SESSION['origin'] = 'Essai_individuel.php';
                 }
                 }
 
-                if($role == 'medecin'){
+                if($role == 'Medecin'){
                     if(Verif_Participation_Medecin($Id_user, $Id_essai)){ // Si ce médecin s'occupe ou s'est occupé de cet essai
                         echo '<div class="side-buttons_candidature">';
                         echo '<button name = "action" value="se retirer medecin" class="nav-btn_essai">Se retirer de cet essai</button>';
@@ -143,7 +142,7 @@ $_SESSION['origin'] = 'Essai_individuel.php';
 
                 }
 
-            if ($role == 'admin'){
+            if ($role == 'Admin'){
                 //semble appeler postuler_medecin??
                 echo'<div class="side-buttons__statistique">
                 <a href="Homepage.php" class="nav-btn">Afficher les Stastistiques</a>
@@ -165,7 +164,7 @@ $_SESSION['origin'] = 'Essai_individuel.php';
             
             
 
-            if ($role == 'entreprise'){
+            if ($role == 'Entreprise'){
                 $Id_entreprise = Get_Entreprise($Id_essai);
                 if($Id_entreprise == $Id_user){ //si l'entrepise gère cet essai
                    echo'<div class="side-buttons__statistique">
