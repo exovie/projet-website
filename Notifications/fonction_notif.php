@@ -202,16 +202,18 @@ function Affiche_notif($Id_D) {
         // Statut de la notification
         if ($Notif['Statut_notification'] == 'Non ouvert') {
             echo "
-            <form method='POST' style='display: inline;'>
-                <input type='hidden' name='Id_Notif' value='" . htmlspecialchars($Id_Notif, ENT_QUOTES, 'UTF-8') . "'>
+            <form method='POST' action='/projet-website/Notifications/Redirect_notif.php' style='display: inline;'>
+                <input type='hidden' name='Ne_plus[Id_Notif]' value='" . htmlspecialchars($Id_Notif, ENT_QUOTES, 'UTF-8') . "'>
+                <input type='hidden' name='Ne_plus[Id_D]' value='" . htmlspecialchars($Id_D, ENT_QUOTES, 'UTF-8') . "'>
                 <button type='submit' style='border: none; background: none; padding: 0;'>
                     <img src='/projet-website/Pictures/eyes_close.png' alt='Marquer comme lu' title='Marquer comme lu' style='width: 24px; height: 24px;'>
                 </button>
             </form>";
-        } else {
+        }else {
             echo "
-            <form method='POST' style='display: inline;'>
-                <input type='hidden' name='Id_Notif' value='" . htmlspecialchars($Id_Notif, ENT_QUOTES, 'UTF-8') . "'>
+            <form method='POST' action='/projet-website/Notifications/Redirect_notif.php' style='display: inline;'>
+                <input type='hidden' name='Lire[Id_Notif]' value='" . htmlspecialchars($Id_Notif, ENT_QUOTES, 'UTF-8') . "'>
+                <input type='hidden' name='Lire[Id_D]' value='" . htmlspecialchars($Id_D, ENT_QUOTES, 'UTF-8') . "'>
                 <button type='submit' style='border: none; background: none; padding: 0;'>
                     <img src='/projet-website/Pictures/open_eye.png' alt='Marquer comme non lu' title='Marquer comme non lu' style='width: 24px; height: 24px;'>
                 </button>
@@ -242,15 +244,7 @@ function Affiche_notif($Id_D) {
 }
 }
 
-if (isset($_POST["Ne_plus"])) {
-    Ne_plus_lire_notif($_POST['Id_Notif'], $Id_D);
-    header("Location: " . $_SESSION['origin']."#messagerie");
-    exit();
-}
-if (isset($_POST['Lire'])) {
-    Lire_notif($_POST['Id_Notif'], $Id_D);
-    header("Location: " . $_SESSION['origin']."#messagerie");
-    exit();
-}
+
+
 
 ?>
