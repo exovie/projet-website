@@ -689,7 +689,6 @@ function Afficher_Patients($Id_essai, $Statut_participation){
 }
 
 function Afficher_Medecins($Id_essai, $Statut_medecin, $Id_user, $role){
-function Afficher_Medecins($Id_essai, $Statut_medecin, $Id_user, $role){
     if($Statut_medecin=='Actif'){
          $tableau_medecins = Recup_Medecins($Id_essai)[0];
          $tableau_medecins = Recup_Medecins($Id_essai)[0];
@@ -747,7 +746,6 @@ function Afficher_Medecins($Id_essai, $Statut_medecin, $Id_user, $role){
     
     echo '</tbody></table>';
  }
- }
 
 function A() {
     // Définir la logique pour la fonction
@@ -792,37 +790,6 @@ function affichage_request_medecin($Id_essai, $praticien){
     echo '</tbody></table>';
     }
     
-    function verif_entreprise($Id_essai, $Id_entreprise) {
-    $conn = Connexion_base();
-    
-    try {
-        $sql = "
-            SELECT EXISTS (
-                SELECT 1
-                FROM ESSAIS_CLINIQUES
-                WHERE Id_entreprise = :Id_entreprise
-                AND Id_essai = :Id_essai
-            ) AS EssaiTrouve;
-        "; 
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':Id_entreprise', $Id_entreprise, PDO::PARAM_INT);
-        $stmt->bindParam(':Id_essai', $Id_essai, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        // Récupérer le résultat de la requête
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        // Si l'essai est trouvé, retourne true, sinon false
-        return (bool)$result['EssaiTrouve'];
-    } catch (PDOException $e) {
-        echo "Erreur : " . $e->getMessage();
-        return false;
-    } finally {
-        // Fermer la connexion
-        Fermer_base($conn);
-    }
-    }
-
     function Relancer_Essai(int $Id_essai){
 
         try{
