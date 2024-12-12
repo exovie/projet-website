@@ -496,7 +496,7 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
     <i>Les notifications générées avec les Id_notif = <?php foreach ($notifCreated as $Id) {echo $Id, " , ";}?> ont été supprimés de la BdD.</i>
     
     <body>
-    <h2>Tests des Fonctions ???</h2>
+    <h2>Tests des Fonctions Générales</h2>
     <table>
         <thead>
             <tr>
