@@ -4,6 +4,13 @@ include("../Fonctions.php");
 include_once '../Notifications/fonction_notif.php';
 $conn = Connexion_base();
 
+// Vérification du rôle de l'utilisateur
+session_start();
+if ($_SESSION['role'] !== 'Admin') {
+    header('Location: ../Connexion/Form1_connexion.php#modal'); // Redirection si non Admin
+    exit;
+}
+
 // Vérifier l'action de validation ou de refus
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['validate'])) {
