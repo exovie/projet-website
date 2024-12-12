@@ -212,7 +212,7 @@ $Id_entreprise_verif = Get_Entreprise($Id_essai);
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 }
-if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'medecins' est réellement présent dans $_POST
+if (isset($_SESSION['postdata'])) {  
     $postdata = $_SESSION['postdata']; 
     unset($_SESSION['postdata']);
     if (isset($postdata['action'])) {
@@ -237,15 +237,8 @@ if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'med
     }
 }
 
-if (isset($postdata['aller_vers_patient'])) {
-    //$_SESSION['id_patient_consult'] = $postdata['aller_vers_patient'];
-    header("Location: Essais.php");
-}
-
-if (isset($postdata['aller_vers_patient_sans_modif'])) {
-    $_SESSION['id_patient_consult'] = $postdata['aller_vers_patient'];
-    header("Location: patient_consult.php");
-    exit;
+if(isset($postdata['recuperer_id_patient'])) {
+    $_SESSION['Id_patient_redirect'] = $postdata['recuperer_id_patient'];
 }
 
 if (isset($postdata['retirer_medecin'])){
