@@ -13,10 +13,9 @@ if (isset($_POST['essai_indi'])) {
     $_SESSION['Id_essai'] =$_SESSION['postdata']['medecins'];
 }
 $Id_essai = $_SESSION['Id_essai'];
-
-$role = 'entreprise';
-$Id_user = 5;
-$Statut_essai = 'En attente';
+$role = $_SESSION['role'];
+$Id_user = $_SESSION['Id_user'];
+$Statut_essai = Get_Statut_Essai($Id_essai);
 $_SESSION['origin'] = 'Essai_individuel.php';
 
 ?>

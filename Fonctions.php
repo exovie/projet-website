@@ -167,7 +167,11 @@ function Get_essais($role) {
         'Entreprise' => ['Tout'] // Utilisation de null pour indiquer "tous les statuts"
     ];
     
+    // Convert $role to match the case of the keys in $statuses
+    $role = ucfirst(strtolower($role));
+    
     if (!isset($statuses[$role])) {
+        echo '<p>' . htmlspecialchars($role) . '</p>';
         return [];
     }
 
