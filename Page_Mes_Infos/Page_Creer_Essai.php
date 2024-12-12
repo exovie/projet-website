@@ -4,7 +4,7 @@ session_start();
 //Vérifiez si l'utilisateur est autorisé
 if ($_SESSION['role'] !== "Entreprise") {
     // Redirigez l'utilisateur s'il n'est pas "Entreprise"
-    header("Location: unauthorized.php");
+    header("Location: Menu_Mes_Infos.php");
     exit;
 }
 
