@@ -7,10 +7,10 @@ $conn = Connexion_base();
 
 include_once("Aff_Statistiques.php");
 
-if (isset($_POST['id_essai'])) {
-    $id_essai = $_POST['id_essai']; // Récupère la valeur si elle existe
+if (isset($_POST['Id_essai'])) {
+    $id_essai = $_POST['Id_essai']; // Récupère la valeur si elle existe
 }else {
-    $id_essai = $_SESSION['id_essai']; // Sinon, récupère la valeur de la session
+    $id_essai = $_SESSION['Id_essai']; // Sinon, récupère la valeur de la session
 }
 
 $data = Stat_data($conn, $id_essai);

@@ -609,7 +609,6 @@ function get_medecin_trial(int $id_medecin, $id_essai): array {
 }
 
 
-
 function verif_entreprise($Id_essai, $Id_entreprise) {
     $conn = Connexion_base();
 

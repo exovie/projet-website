@@ -22,12 +22,6 @@ $Infos= $stmt->fetch(PDO::FETCH_ASSOC);
 $Id_entreprise = $Infos['Id_entreprise'];
 $Statut_essai = $Infos['Statut'];
 
-
-$role = 'entreprise';
-$Id_user = 5;
-$Statut_essai = 'En attente';
-$_SESSION['origin'] = 'Essai_individuel.php';
-
 ?>
 
 <!DOCTYPE html>
@@ -158,13 +152,12 @@ $_SESSION['origin'] = 'Essai_individuel.php';
             }
 
         if($role == 'Medecin'){
-            echo $role;
             if(Verif_Participation_Medecin($Id_user, $Id_essai)){ // Si ce médecin s'occupe ou s'est occupé de cet essai
                 echo '<div class="side-buttons_candidature">';
                 echo '<button name = "action" value="se retirer medecin" type="submit" class="nav-btn_essai">Se retirer de cet essai</button>';
                 echo '</div>';
                 echo'<div class="side-buttons__statistique">
-                <a href="Homepage.php" type="submit" class="nav-btn">Afficher les Stastistiques</a>
+                <a href="Page_Essai_Individuel/Page_aff_stat.php" type="submit" class="nav-btn">Afficher les Stastistiques</a>
                 </div>';
                 //fonctionne mais nécessite surement actualisation
                 $Statut_medecin = Get_Statut_Medecin($Id_essai, $Id_user);
@@ -198,9 +191,8 @@ $_SESSION['origin'] = 'Essai_individuel.php';
         }
 
             if ($role == 'Admin'){
-                //semble appeler postuler_medecin??
                 echo'<div class="side-buttons__statistique">
-                <a href="Homepage.php" class="nav-btn">Afficher les Stastistiques</a>
+                <a href="Page_Essai_Individuel/Page_aff_stat.php" class="nav-btn">Afficher les Stastistiques</a>
                 </div>';
                 Afficher_Patients($Id_essai,'Actif');
                 Afficher_Patients($Id_essai,'En attente'); 
@@ -223,7 +215,7 @@ $_SESSION['origin'] = 'Essai_individuel.php';
                 $Id_entreprise = Get_Entreprise($Id_essai);
                 if($Id_entreprise == $Id_user){ //si l'entrepise gère cet essai
                    echo'<div class="side-buttons__statistique">
-                   <a href="Homepage.php" class="nav-btn">Afficher les Stastistiques</a>
+                   <a href="Page_Essai_Individuel/Page_aff_stat.php" class="nav-btn">Afficher les Stastistiques</a>
                    </div>';
                     Afficher_Medecins($Id_essai,'Actif', $Id_user, $role);
                     Afficher_Medecins($Id_essai,'En attente', $Id_user, $role);
@@ -300,13 +292,13 @@ if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'med
 }
 
 if (isset($postdata['aller_vers_patient'])) {
-    //$_SESSION['id_patient_consult'] = $postdata['aller_vers_patient'];
-    header("Location: Essais.php");
+    $_SESSION['Id_patient'] = $postdata['aller_vers_patient'];
+    header("Location: Page_Essai_individuel/Liste_Patients_Essai.php");
 }
 
 if (isset($postdata['aller_vers_patient_sans_modif'])) {
-    $_SESSION['id_patient_consult'] = $postdata['aller_vers_patient'];
-    header("Location: patient_consult.php");
+    $_SESSION['Id_patient'] = $postdata['aller_vers_patient'];
+    header("Location: Page_Essai_individuel/Infos_Patient.php");
     exit;
 }
 
