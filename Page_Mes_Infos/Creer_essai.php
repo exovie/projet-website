@@ -38,7 +38,7 @@ $conn= Connexion_base();
 
         // Insertion des données dans la base de données
         $query = "
-            INSERT INTO essais_cliniques (
+            INSERT INTO ESSAIS_CLINIQUES (
                 Id_essai, Titre, Contexte, Objectif_essai, Design_etude,
                 Critere_evaluation, Resultats_attendus, Date_lancement, Date_fin, Date_creation, Statut,
                 Id_entreprise, Nb_medecins, Nb_patients 

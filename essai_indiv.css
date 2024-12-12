@@ -5,10 +5,6 @@ header {
     z-index: 10;
 }
 
-main {
-    padding-top: 120px; /* Remplacez 60px par la hauteur exacte de votre bandeau */
-}
-
 .indiv_trials{
     width: 60%; /* Largeur fixe pour uniformiser */
     padding: 10px;

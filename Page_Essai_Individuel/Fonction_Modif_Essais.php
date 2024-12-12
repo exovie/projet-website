@@ -1,8 +1,7 @@
 <?php
 /*Fichier php qui regroupe les fonctions utiliser pour modifier un essai déjà créer*/
 
-
-include("Connexion_base.php");
+include_once("../Fonctions.php");
 $conn = Connexion_base();
 
 // Fonction pour récupérer les informations de l'essai

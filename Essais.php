@@ -1,6 +1,6 @@
 <?php
 session_start();
-$_SESSION['origin'] = 'Essais_cliniques';
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 $role = $_SESSION['role'];
 $db_name = $_SESSION['db_name'];
 include 'Fonctions.php';
@@ -17,8 +17,6 @@ $list_essai = Get_essais($role);
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href='navigationBar.css'>
     <link rel="stylesheet" href='Notifications/Notifications_style.css'>
-
-
 </head>
 <body>
     <!-- Code de la barre de navigation -->
@@ -29,7 +27,6 @@ $list_essai = Get_essais($role);
             </a>
         </div>
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
-        <a href="Entreprises.php" class="nav-btn">Entreprise</a>
 
         <!-- Accès à la page de Gestion -->
         <?php if ($_SESSION['role'] == 'Admin'): ?>
@@ -39,9 +36,15 @@ $list_essai = Get_essais($role);
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Homepage.php#messagerie">
+            <a href= "<?= $_SESSION['origin'] ?>#messagerie">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
+            <!-- Affichage de la pastille -->
+            <?php 
+            $showBadge = Pastille_nombre($_SESSION['Id_user']);
+            if ($showBadge > 0): ?>
+                <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
@@ -63,8 +66,8 @@ $list_essai = Get_essais($role);
                 } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
-                ?>
-                <a href="#">Mon Profil</a>
+                if ($_SESSION["role"]!=='Admin'&& $_SESSION['Logged_user'] === true)
+                {echo "<a href='Page_Mes_Infos/Menu_Mes_Infos.php'>Mon Profil</a>";} ?>
                 <a href="Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->
@@ -95,13 +98,14 @@ $list_essai = Get_essais($role);
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
             <!-- Lien de fermeture qui redirige vers Homepage.php -->
-            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
+            <a href="<?= $_SESSION['origin'] ?>" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>
         </div>
     </div>
-    
+
+    <!-- Contenu principal -->
     <div class="content">
     <!-- Barre de recherche -->
     <form method="POST">

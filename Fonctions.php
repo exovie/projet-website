@@ -3,6 +3,7 @@ session_start();
 $db_name = "mysql:host=localhost;dbname=website_db"; 
 $_SESSION['db_name'] = $db_name;
 
+
 function Connexion_base(): PDO {
     $host = 'localhost';
     $user = 'root';
@@ -18,6 +19,7 @@ try {
 }
 return $pdo;
 }
+
 
 function Fermer_base($conn): void {
     $conn = null;
@@ -315,7 +317,7 @@ function recherche_EC($liste_EC, $recherche, $filtres) {
         // Affichage des résultats
         if (!empty($results)) {
             foreach ($results as $essai) {
-                echo '<button name="essai_indi" value="' . htmlspecialchars($essai['Id_essai']) . '" type="submit" class="search-button">';
+                echo '<button name="essai_indi" value="' . htmlspecialchars($essai['Id_essai']) . '" type="submit" class="button">';
                 echo '<ul class="trials">';
                 echo '<li class="trial_title">' . htmlspecialchars($essai['Titre']) . '</li>';
                 echo '<li class="trial_company">' . htmlspecialchars($essai['Nom_Entreprise']) . '</li>';

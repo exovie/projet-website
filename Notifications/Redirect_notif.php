@@ -1,35 +1,33 @@
 <?php 
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Inclure le module ou fichier PHP
+include 'module.php';
+
 session_start();
 include("../Notifications/fonction_notif.php");
 include("../Fonctions.php");
 
 
 // // Récupérer les données
-$Id_Essai = $_SESSION['Id_Essai'];
-$Id_Notif = $_SESSION['Id_Notif']; 
-$CodeNotif = $_SESSION['CodeNotif'] ;
+$Id_Essai = $_POST['Id_Essai'];
+$Id_Notif = $_POST['Id_Notif']; 
+$CodeNotif = $_POST['CodeNotif'] ;
 
-unset($_SESSION['Id_Notif']);
-unset($_SESSION['CodeNotif']);
-unset($_SESSION['Id_Essai']);
 // Rediriger l'utilisateur vers la page appropriée
-if ($id_notif == 1){
-    header('projet-website/Admin/Home_Admin.php');
+if ($Id_Notif == 1){
+    header('Location: ../Admin/Home_Admin.php');
     exit();
-}elseif ($id_notif == 4){
-    header('projet-website//Essais.php');
+}elseif ($Id_Notif == 4){
+    header('Location: ../Essais.php');
     exit();
 }
 
 else {
-    echo 'dans le else de fin ';
-    echo 'Id_Essai : '.$Id_Essai;
-    echo $_SERVER['REQUEST_URI'];
-    echo '<br>';
-    echo 'USER '.$_SESSION['Id_user'];
-    echo '<br>';
-    $_SESSION['Essai'] = $Id_Essai;
-    header('projet-website/Essai_individuel.php');
-    exit();
+$_SESSION['Id_essai'] = $Id_Essai;
+header('Location:../Essai_individuel.php');
+exit();
 }
 ?>

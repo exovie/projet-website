@@ -151,16 +151,16 @@ function updateUserInfo($conn, int $id_user) {
         }
 
         $_SESSION['FormsErr'] = $errorMessages;
-        //Fermer_base($conn);
-        //header('Location: Menu_Mes_Infos.php#modal');
+        Fermer_base($conn);
+        header('Location: Menu_Mes_Infos.php#modal');
         } else {
         // Si pas d'erreur, on passe à la page suivante
         
         $update = $conn->prepare($query);
 
-        //$_SESSION['reponsesInscription'] = ($_POST); 
-        //Fermer_base($pdo);
-        //header("Location: Menu_Mes_Infos.php#modal");
+        $_SESSION['reponsesInscription'] = ($_POST); 
+        Fermer_base($conn);
+        header("Location: Menu_Mes_Infos.php#modal");
         $result = $update->execute($data);
         
         if ($result) {
@@ -199,8 +199,8 @@ function getHistoriqueEssais($conn, int $id_user) {
                 break;
                 case 'Entreprise':
                 $query = "SELECT Id_essai, Titre, Statut, Date_fin, Date_creation
-                          FROM ESSAIS_CLINIQUES
-                          WHERE Id_entreprise = :id_user";
+                        FROM ESSAIS_CLINIQUES
+                        WHERE Id_entreprise = :id_user";
             break;
         default:
             return false;
