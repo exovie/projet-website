@@ -1,6 +1,6 @@
 <?php
 session_start();
-$_SESSION['origin'] = 'Essais_cliniques';
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 $role = $_SESSION['role'];
 $db_name = $_SESSION['db_name'];
 include 'Fonctions.php';
@@ -17,10 +17,9 @@ $list_essai = Get_essais($role);
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href='navigationBar.css'>
     <link rel="stylesheet" href='Notifications/Notifications_style.css'>
-
 </head>
 <body>
-    <!-- Code de la barre de navigation -->
+    <!-- Conteneur fixe en haut de la page -->
     <div class="navbar">
         <div id="logo">
             <a href="Homepage.php">
@@ -28,15 +27,24 @@ $list_essai = Get_essais($role);
             </a>
         </div>
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
-        <a href="Entreprises.php" class="nav-btn">Entreprise</a>
-        <a href="Contact.php" class="nav-btn">Contact</a>
+
+        <!-- Accès à la page de Gestion -->
+        <?php if ($_SESSION['role'] == 'Admin'): ?>
+            <a href="Admin/Home_Admin.php" class="nav-btn">Gestion</a>
+        <?php endif; ?>
 
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Essais.php#messagerie">
+            <a href= "<?= $_SESSION['origin'] ?>#messagerie">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
+            <!-- Affichage de la pastille -->
+            <?php 
+            $showBadge = Pastille_nombre($_SESSION['Id_user']);
+            if ($showBadge > 0): ?>
+                <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
@@ -53,11 +61,13 @@ $list_essai = Get_essais($role);
                     echo "<h1 style='font-size: 18px; text-align: center;'>Dr " . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 } elseif ($_SESSION['role'] == 'Entreprise') {
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "®</h1>";
-                } else {
+                } elseif(($_SESSION['role']=='Admin')){
+                    echo "<h1 style='font-size: 18px; text-align: center;'>Admin</h1>";
+                } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
-                ?>
-                <a href="#">Mon Profil</a>
+                if ($_SESSION["role"]!=='Admin'&& $_SESSION['Logged_user'] === true)
+                {echo "<a href='Page_Mes_Infos/Menu_Mes_Infos.php'>Mon Profil</a>";} ?>
                 <a href="Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->
@@ -88,13 +98,13 @@ $list_essai = Get_essais($role);
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
             <!-- Lien de fermeture qui redirige vers Homepage.php -->
-            <a href="/projet-website/Essais.php" class="close-btn">&times;</a>
+            <a href="<?= $_SESSION['origin'] ?>" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>
         </div>
     </div>
-    
+
     <!-- Contenu principal -->
     <div class="content">
     <!-- Barre de recherche -->
@@ -126,6 +136,7 @@ $list_essai = Get_essais($role);
 
       <div>
           <div id="trial_boxes">
+            <form method="POST" action="Essai_individuel.php">
           <?php
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 Display_essais($list_essai);
@@ -137,37 +148,14 @@ $list_essai = Get_essais($role);
                 $filtres = [$_POST['phaseFilter'], $_POST['companyFilter']]; 
                 recherche_EC($list_essai, $recherche, $filtres);
             }
-
-            // Fonction PHP appelée
             
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['essai_indi'])) {
+                header("Location: Essai_individuel.php");
+            }
             ?>
+            </form>
           </div>
       </div>
     </div>
 </body>
 </html>
-
-<!--
-<form action="TD2_exo3.php" method="post">
-  <label for="nom">Entrez le produit voulu et la quantité au format suivant :</label>
-  <input type="text" id="nom" placeholder="produit, quantité" name="nom" required>
-  
-  <br><br>
-  <input type="submit" value="Envoyer">
-</form> 
-
-    foreach ($clinical_trials as $essai_clinique) {
-        echo '<ul>';
-        echo '<li>Titre : ' . $essai_clinique['Titre'] . '</li>';
-        echo '<li>Contexte : ' . $essai_clinique['Contexte'] . '</li>';
-        echo '<li>Objectif de l\'essai : ' . $essai_clinique['Objectif_essai'] . '</li>';
-        echo '<li>Design de l\'étude : ' . $essai_clinique['Design_etude'] . '</li>';
-        echo '<li>Critère d\'évaluation : ' . $essai_clinique['Critere_evaluation'] . '</li>';
-        echo '<li>Résultats attendus : ' . $essai_clinique['Resultats_attendus'] . '</li>';
-        echo '<li>Date de lancement : ' . $essai_clinique['Date_lancement'] . '</li>';
-        echo '<li>Date de fin : ' . $essai_clinique['Date_fin'] . '</li>';
-        echo '<li>Date de création : ' . $essai_clinique['Date_creation'] . '</li>';
-        echo '<li>Statut : ' . $essai_clinique['Statut'] . '</li>';
-        echo '</ul>';
-    }
--->

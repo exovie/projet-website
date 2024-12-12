@@ -1,6 +1,7 @@
 <?php
 include("fonctionInscription.php");
 include("../Fonctions.php");
+include ("../Notifications/fonction_notif.php");
 
 session_start();
 
@@ -30,6 +31,9 @@ if (!$addRoleError) {
     exit();
 }
 else {
+    //Générer une notification pour les bons rôles
+    if ($_SESSION["role"]= 'Entreprise' || $_SESSION["role"] = 'Medecin'){
+    Generer_notif(1, NULL, 1) ;}
     $pdo = null; // Fermer la connexion à la base de données
     session_destroy(); // Réinitialiser la session pour ne pas sauvegarder les données du formulaire 
 

@@ -16,7 +16,7 @@ include("../Fonctions.php");
 </head>
 <body>
 <div class="content">
-        <h1>Ravi de vous revoir parmis nous ! </h1>
+        <h1>Ravi de vous revoir parmi nous ! </h1>
         <img src="/projet-website/Pictures/logo.png" alt="logo" id="grologo">
     </div>
 

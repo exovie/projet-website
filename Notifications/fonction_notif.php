@@ -1,5 +1,4 @@
 <?php
-
 function Verif_notif($CodeNotif, $Id_essai, $Id_destinataire){
     //Function that verify is a notifications already exist 
     $pdo = Connexion_base();
@@ -24,13 +23,24 @@ function Generer_notif($CodeNotif, $Id_essai, $Id_destinataire){
         // Code to generate the notification if it doesn't exist
         $stmt = $pdo->prepare("INSERT INTO NOTIFICATION (CodeNotif, Id_Essai, Date_Notif) VALUES (:code, :id_essai, :date)");
         $stmt->execute(['code' => $CodeNotif, 'id_essai' => $Id_essai, 'date' => date('Y-m-d H:i:s')]);
-
+        $stmt->closeCursor();
         $id_Notif = $pdo->lastInsertId(); // Get the ID of the notification
-
+        
+        if (!is_integer($Id_essai)){
+        $users = $pdo->prepare("SELECT Id_user  FROM `USERS` WHERE Role ='Admin';");
+        $users->execute();
+        $admins = $users->fetchAll(PDO::FETCH_ASSOC); // Récupère tous les résultats
+        $users->closeCursor();
+        
+        foreach ($admins as $ad) {
+            $stmt = $pdo->prepare("INSERT INTO DESTINATAIRE (Id_notif, Id_destinataire, Statut_notification) VALUES (:id_notif, :id_dest, 'Non ouvert')");
+            $stmt->execute(['id_notif'=> $id_Notif, 'id_dest' => $ad['Id_user']]);
+        }
+        } else{
         // Add the recipient to the Destinataire table
         $stmt = $pdo->prepare("INSERT INTO DESTINATAIRE (Id_notif, Id_destinataire, Statut_notification) VALUES (:id_notif, :id_dest, 'Non ouvert')");
         $stmt->execute(['id_notif'=> $id_Notif, 'id_dest' => $Id_destinataire]);
-
+        }
         Fermer_base($pdo);
         return $id_Notif;
     }else {
@@ -38,10 +48,19 @@ function Generer_notif($CodeNotif, $Id_essai, $Id_destinataire){
         return false; };
 };
 
-function Pastille_nombre($id_D) {
+function Pastille_nombre($id_D, $Admin = false) {
     $pdo = Connexion_base();
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM DESTINATAIRE WHERE Id_destinataire = :id_D AND Statut_notification = 'Non Ouvert'");
-    $stmt->execute(['id_D' => $id_D]);
+    if ($Admin == true) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) AS total_count FROM (SELECT USERS.Id_user, USERS.Role, 
+        CASE WHEN USERS.Role = 'Medecin' THEN MEDECINS.Statut_inscription WHEN USERS.Role = 'Entreprise' THEN ENTREPRISES.Verif_inscription
+        END AS Verification, MEDECINS.Id_medecin, MEDECINS.Nom AS Nom_medecin, MEDECINS.Prenom, MEDECINS.Specialite, MEDECINS.Telephone, MEDECINS.Matricule,
+        ENTREPRISES.Id_entreprise, ENTREPRISES.Nom_entreprise, ENTREPRISES.Telephone AS Tel_entreprise, ENTREPRISES.Siret
+        FROM USERS LEFT JOIN MEDECINS ON USERS.Id_user = MEDECINS.Id_medecin AND USERS.Role = 'Medecin' LEFT JOIN ENTREPRISES ON USERS.Id_user = ENTREPRISES.Id_entreprise AND USERS.Role = 'Entreprise'
+        WHERE (MEDECINS.Statut_inscription = 0 AND USERS.Role = 'Medecin') OR (ENTREPRISES.Verif_inscription = 0 AND USERS.Role = 'Entreprise') ) AS subquery;");
+        $stmt->execute();}
+    else {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM DESTINATAIRE WHERE Id_destinataire = :id_D AND Statut_notification = 'Non Ouvert'") ;
+    $stmt->execute(['id_D' => $id_D]);}
     $count = $stmt->fetchColumn();
 
     // Display the count of unread notifications
@@ -49,25 +68,53 @@ function Pastille_nombre($id_D) {
     return $count;
 };
 
-function List_Notif($Id_D) {
+function List_Notif($Id_D, $role) {
     $pdo = Connexion_base();
-    $stmt = $pdo->prepare('SELECT N.*, D.*, ES.Titre, EN.Nom_entreprise FROM DESTINATAIRE D NATURAL JOIN NOTIFICATION N JOIN 
-    ESSAIS_CLINIQUES ES ON N.Id_Essai = ES.Id_essai JOIN ENTREPRISES EN ON ES.Id_entreprise = EN.Id_entreprise WHERE D.Id_destinataire = :id_D
-    ORDER BY N.Date_Notif DESC');
-    $stmt->execute(['id_D'=> $Id_D]);
-    if ($stmt->rowCount() > 0) {
-        $reponse = $stmt->fetchAll();
+    
+    if ($role !== 'Admin'){
+        $stmt1 = $pdo->prepare("SELECT N.*, D.Id_destinataire, D.Statut_notification FROM DESTINATAIRE D JOIN NOTIFICATION N ON D.Id_notif = N.Id_notif
+                                WHERE Id_destinataire = :id_D AND N.CodeNotif IN (4, 20) ORDER BY Date_Notif DESC;");
+        $stmt1->execute(['id_D' => $Id_D]);
+
+        $stmt2 = $pdo->prepare("SELECT N.*, D.Id_destinataire, D.Statut_notification , ES.Titre, EN.Nom_entreprise FROM DESTINATAIRE D JOIN NOTIFICATION N ON N.Id_notif = D.Id_notif 
+                                JOIN ESSAIS_CLINIQUES ES ON N.Id_Essai = ES.Id_essai JOIN ENTREPRISES EN ON ES.Id_entreprise = EN.Id_entreprise 
+                                WHERE D.Id_destinataire = :id_D AND N.CodeNotif NOT IN (4, 20) ORDER BY N.Date_Notif DESC;");
+        $stmt2->execute(["id_D" => $Id_D]);    
+    } else {
+        $stmt1 = $pdo->prepare("SELECT N.*, D.Id_destinataire, D.Statut_notification FROM DESTINATAIRE D JOIN NOTIFICATION N ON D.Id_notif = N.Id_notif
+                                WHERE Id_destinataire = :id_D AND N.CodeNotif = 1 ORDER BY Date_Notif DESC;");
+        $stmt1->execute(['id_D' => $Id_D]);
+
+        $stmt2 = $pdo->prepare("SELECT N.*, D.Id_destinataire, D.Statut_notification , ES.Titre, EN.Nom_entreprise FROM DESTINATAIRE D JOIN NOTIFICATION N ON N.Id_notif = D.Id_notif 
+                                JOIN ESSAIS_CLINIQUES ES ON N.Id_Essai = ES.Id_essai JOIN ENTREPRISES EN ON ES.Id_entreprise = EN.Id_entreprise 
+                                WHERE D.Id_destinataire = :id_D AND N.CodeNotif != 1 ORDER BY N.Date_Notif DESC;");
+        $stmt2->execute(["id_D" => $Id_D]);        
+    }
+
+    if ($stmt1->rowCount() > 0 || $stmt2->rowCount() > 0) {
+        // Récupération des résultats des deux requêtes
+        $reponse1 = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+        $stmt1->closeCursor();
+        $reponse2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+        $stmt2->closeCursor();
+
+        // Fusionner les résultats des deux requêtes
+        $combinedResults = array_merge($reponse1, $reponse2);
+        foreach ($stmt1 as $key ) {
+            echo $key ."<br>";
+        }
         Fermer_base($pdo);
-        return $reponse;
+        return $combinedResults;
     } else {
         Fermer_base($pdo);
         return null;
     }
 };
 
+
 function Lire_notif($Id_notif, $Id_user) {
     $pdo = Connexion_base();
-    if ($_SESSION['role'] == 'Medecin') {
+    if ($_SESSION['role'] == 'Medecin'|| $_SESSION['role'] == 'Admin') {
         // Mark the notification as read for all doctors
         $stmt = $pdo->prepare("UPDATE DESTINATAIRE SET Statut_notification = 'Ouvert' WHERE Id_notif = :id_notif");
         $stmt->execute(['id_notif' => $Id_notif]);
@@ -81,13 +128,13 @@ function Lire_notif($Id_notif, $Id_user) {
 
 function Ne_plus_lire_notif($Id_notif, $Id_user) {
         $pdo = Connexion_base();
-        if ($_SESSION['role'] == 'Medecin') {
+        if ($_SESSION['role'] == 'Medecin'|| $_SESSION['role'] == 'Admin') {
             // Mark the notification as read for all doctors
-            $stmt = $pdo->prepare("UPDATE DESTINATAIRE SET Statut_notification = 'Non Ouvert' WHERE Id_notif = :id_notif");
+            $stmt = $pdo->prepare("UPDATE DESTINATAIRE SET Statut_notification = 'Non ouvert' WHERE Id_notif = :id_notif");
             $stmt->execute(['id_notif' => $Id_notif]);
         } else {
             // Mark the notification as read for the user
-            $stmt = $pdo->prepare("UPDATE DESTINATAIRE SET Statut_notification = 'Non Ouvert' WHERE Id_notif = :id_notif AND Id_destinataire = :id_user");
+            $stmt = $pdo->prepare("UPDATE DESTINATAIRE SET Statut_notification = 'Non ouvert' WHERE Id_notif = :id_notif AND Id_destinataire = :id_user");
             $stmt->execute(['id_notif' => $Id_notif, 'id_user' => $Id_user]);
         }
         Fermer_base($pdo);
@@ -106,16 +153,17 @@ function Obtenir_statut_notification($id_notif, $id_destinataire) {
 };
 
 function Affiche_notif($Id_D) {
-    $All = List_Notif($Id_D);
-    
+    session_start();
+    $All = List_Notif($Id_D, $_SESSION['role']);
+    if (!empty($All)) {
     foreach ($All as $Notif) {
-        //Définition des variables
+        //Définition des variables 
         $CodeNotif = $Notif['CodeNotif'];
         $Date = $Notif['Date_Notif'];
+        $Id_Notif = $Notif['Id_notif'];
         $Entreprise = $Notif['Nom_entreprise'];
         $titre_Essai = $Notif['Titre'];
         $Id_Essai = $Notif['Id_Essai']; 
-        $Id_Notif = $Notif['Id_notif'];
 
         $IndexNotif = [
             1 => "Vous avez une nouvelle demande d’inscription à consulter.",
@@ -140,63 +188,63 @@ function Affiche_notif($Id_D) {
             20=> "Votre phase de traitement est terminée. Merci d’avoir participé",
             21=> "Vous avez été refusé de l’essai ".$titre_Essai,
             22=> "Vous avez été accepté dans l’essai ".$titre_Essai." en tant que médecin",
-            23=> "Vous avez été refusé de l’essai $titre_Essai en tant que médecin"
+            23=> "Vous avez été refusé de l’essai $titre_Essai en tant que médecin",
+            24=> "L'essai". $titre_Essai." vient d'être relancé."
         ];
 
         // Détermine la classe du tableau en fonction du statut
         $tableClass = ($Notif['Statut_notification'] == 'Non Ouvert') ? 'opened-notifications' : 'non-notifications';
-        
         echo "<table class='$tableClass'>";
 
         echo "<tr>";
+
         echo "<td class='notif-column'>";
-
-        
         // Statut de la notification
-        if ($Notif['Statut_notification'] == 'Non Ouvert') {
+        if ($Notif['Statut_notification'] == 'Non ouvert') {
             echo "
-            <form method='post' action='votre_script.php' style='display: inline;'>
-                <input type='hidden' name='action' value='Lire_notif'>
-                <input type='hidden' name='id_notification' value='" . htmlspecialchars($Notif['Id_notif']) . "'>
+            <form method='POST' action='/projet-website/Notifications/Redirect_notif.php' style='display: inline;'>
+                <input type='hidden' name='Ne_plus[Id_Notif]' value='" . htmlspecialchars($Id_Notif, ENT_QUOTES, 'UTF-8') . "'>
+                <input type='hidden' name='Ne_plus[Id_D]' value='" . htmlspecialchars($Id_D, ENT_QUOTES, 'UTF-8') . "'>
                 <button type='submit' style='border: none; background: none; padding: 0;'>
-                    <img src='../Pictures/open_eyes.png' alt='Marquer comme lu' title='Marquer comme lu' style='width: 24px; height: 24px;'>
+                    <img src='/projet-website/Pictures/eyes_close.png' alt='Marquer comme lu' title='Marquer comme lu' style='width: 24px; height: 24px;'>
                 </button>
             </form>";
-        } else {
+        }else {
             echo "
-            <form method='post' action='votre_script.php' style='display: inline;'>
-                <input type='hidden' name='action' value='Ne_plus_lire_notif'>
-                <input type='hidden' name='id_notification' value='" . htmlspecialchars($Notif['Id_notif']) . "'>
+            <form method='POST' action='/projet-website/Notifications/Redirect_notif.php' style='display: inline;'>
+                <input type='hidden' name='Lire[Id_Notif]' value='" . htmlspecialchars($Id_Notif, ENT_QUOTES, 'UTF-8') . "'>
+                <input type='hidden' name='Lire[Id_D]' value='" . htmlspecialchars($Id_D, ENT_QUOTES, 'UTF-8') . "'>
                 <button type='submit' style='border: none; background: none; padding: 0;'>
-                    <img src='../Pictures/eyes_close.png' alt='Marquer comme non lu' title='Marquer comme non lu' style='width: 24px; height: 24px;'>
+                    <img src='/projet-website/Pictures/open_eye.png' alt='Marquer comme non lu' title='Marquer comme non lu' style='width: 24px; height: 24px;'>
                 </button>
             </form>";
-        }
-
-        
-
+        }       
         echo "</td>";
 
         // Contenu de la notification
         echo "
         <td>
-            <form method='post' action='Redirect_notif.php' style='margin: 0;'>
-                <input type='hidden' name='id_essai' value='" . htmlspecialchars($Id_Essai) . "'>
-                <input type='hidden' name='code_notif' value='" . htmlspecialchars($CodeNotif) . "'>
-                <input type='hidden' name='id_notif' value='" . htmlspecialchars($Id_Notif) . "'>
+            <form method='POST' action='/projet-website/Notifications/Redirect_notif.php' style='margin: 0;'>
+                <input type='hidden' name='Id_Notif' value='" . htmlspecialchars($Id_Notif, ENT_QUOTES, 'UTF-8') . "'>
+                <input type='hidden' name='Id_Essai' value='" . htmlspecialchars($Id_Essai, ENT_QUOTES, 'UTF-8') . "'>
+                <input type='hidden' name='CodeNotif' value='" . htmlspecialchars($CodeNotif, ENT_QUOTES, 'UTF-8') . "'>
                 <button type='submit' style='background: none; border: none; color: inherit; font: inherit; cursor: pointer; text-align: left;'>
                     " . htmlspecialchars($IndexNotif[$CodeNotif]) . "
                 </button>
             </form>
         </td>";
-        
         // Date de la notification
         echo "<td class='date-column'>". htmlspecialchars($Date) ."</td>";
         echo "</tr>";
 
         echo "</table>";
     }
+} else {
+    echo "<p>Vous n'avez aucune notification.</p>";
 }
+}
+
+
 
 
 ?>

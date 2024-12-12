@@ -25,7 +25,7 @@ h1 {
     align-items: center;
     padding: 10px 0;
     z-index: 1000; /* Assure que la barre reste au-dessus des autres éléments */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre légère */
     border-bottom: 2px solid #2a9d8f; /* Bordure basse */
     text-decoration: none;
 }
@@ -93,4 +93,21 @@ h1 {
 
 .dropdown:hover .dropdown-content {  /* Affiche le menu lorsque l'image est survolée */
     display: block;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -10px; /* Ajustez pour placer la pastille juste au-dessus */
+    right: -10px; /* Ajustez pour aligner la pastille sur le bord droit */
+    background-color: red;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 5px;
+    min-width: 15px; /* Taille minimale de la pastille */
+    min-height: 15px; /* Taille minimale de la pastille */
+    text-align: center;
+    line-height: 15px; /* Centrer le texte verticalement */
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3); /* Optionnel : effet d'ombre */
 }
