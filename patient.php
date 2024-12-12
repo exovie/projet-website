@@ -1,8 +1,10 @@
 <?php
 session_start();
-$_SESSION['origin'] = 'admin_page';
+$_SESSION['origin'] = 'Essais_cliniques';
 $role = $_SESSION['role'];
+$db_name = $_SESSION['db_name'];
 include 'Fonctions.php';
+$list_essai = Get_essais($role);
 ?>
 
 <!DOCTYPE html>
@@ -12,12 +14,10 @@ include 'Fonctions.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="'utf-8">
     <link rel="stylesheet" href='website.css'>
-    <link rel="stylesheet" href= 'navigationBar.css'>
-    <link rel="stylesheet" href= 'gestion.css'>
+    <link rel="stylesheet" href='navigationBar.css'>
 
 </head>
 <body>
-
     <!-- Conteneur fixe en haut de la page -->
     <div class="navbar">
         <div id="logo">
@@ -28,7 +28,6 @@ include 'Fonctions.php';
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
         <a href="Entreprises.php" class="nav-btn">Entreprise</a>
         <a href="Contact.php" class="nav-btn">Contact</a>
-        <a href="admin_page.php" class="nav-btn">Gestion</a>
         <div class="dropdown">
             <a href="Homepage.php">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
@@ -51,41 +50,57 @@ include 'Fonctions.php';
             </div>
         </div>
     </div>
-
     <!-- Contenu principal -->
     <div class="content">
-        <div id="boxes">
-            <?php
-              if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_patient'])) {
-                // Appeler une fonction PHP
-                $id_patient = $_POST['id_patient'];
-                $patient = get_patient($id_patient);
-                display_patient_unique($patient);
-                switch ($role){
-                    case 'admin':
-                        echo '<form method="POST">';
-                        echo '<input type="hidden" name="id_patient" value="'.$id_patient.'">';
-                        echo '<button type="submit" name="accepter" class="btn">Accepter</button>';
-                        echo '<button type="submit" name="refuser" class="btn">Refuser</button>';
-                        echo '</form>';
-                        break;
-                    case 'entreprise':
-                        echo '<form method="POST">';
-                        echo '<input type="hidden" name="id_patient" value="'.$id_patient.'">';
-                        echo '<button type="submit" name="accepter" class="btn">Accepter</button>';
-                        echo '</form>';
-                        break;
-                    case 'medecin':
-                        echo '<form method="POST">';
-                        echo '<input type="hidden" name="id_patient" value="'.$id_patient.'">';
-                        echo '<button type="submit" name="accepter" class="btn">Accepter</button>';
-                        echo '</form>';
-                        break;
-                }
-            }
-
-            ?>
+    <!-- Barre de recherche -->
+    <form method="POST">
+        <div class="search-container">
+            <input type="text" name="navbar" class="search-box" placeholder="Rechercher..." id="searchInput">
+            <button type="submit" class="search-button">Rechercher</button>
         </div>
+
+        <!-- Sélection de filtres -->
+        <div class="filter-container">
+            <!-- Filtre de statut -->
+            <select name="phaseFilter" class="filter-box">
+                <option value="Tous">Toutes les phases</option>
+                <option value="Phase I">PHASE I</option>
+                <option value="Phase II">PHASE II</option>
+                <option value="Phase III">PHASE III</option>
+            </select>
+
+            <!-- Filtre de l'entreprise-->
+            <select name="companyFilter" class="filter-box">
+                <?php
+                enterprise_filter($list_essai);  // Liste des entreprises
+                ?>
+            </select>
+        </div>
+    </form>
+</div>
+
+      <div>
+          <div id="trial_boxes">
+            <form method="POST" action="Essai_individuel.php">
+          <?php
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                Display_essais($list_essai);
+            }
+            // Vérifier si le bouton a été cliqué
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['navbar'])) {
+                // Appeler une fonction PHP
+                $recherche = $_POST['navbar'];
+                $filtres = [$_POST['phaseFilter'], $_POST['companyFilter']]; 
+                recherche_EC($list_essai, $recherche, $filtres);
+            }
+            
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['essai_indi'])) {
+                header("Location: Essai_individuel.php");
+            }
+            ?>
+            </form>
+          </div>
+      </div>
     </div>
 </body>
 </html>

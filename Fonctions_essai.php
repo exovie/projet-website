@@ -49,6 +49,27 @@ function Get_Statut_Patient($Id_essai, $Id_patient) {
     }
 }
 
+function Get_Statut_Essai($Id_essai) {
+    try {
+        $conn = Connexion_base();
+        $stmt = $conn->prepare("SELECT Statut FROM ESSAIS_CLINIQUES WHERE Id_essai = ?");
+        $stmt->execute(array($Id_essai));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Vérification si un résultat est trouvé
+        if ($result) {
+            return $result['Statut'];
+        } else {
+            // Si aucun résultat trouvé, renvoyer une valeur par défaut ou null
+            return null;
+        }
+    } catch (PDOException $e) {
+        // Gérer l'erreur proprement
+        error_log("Erreur BDD dans Get_Statut_Patient: " . $e->getMessage());
+        return null; // Renvoyer null en cas d'erreur
+    }
+}
+
 function Get_Statut_Medecin($Id_essai, $Id_medecin) {
     try {
         $conn = Connexion_base();
@@ -702,15 +723,16 @@ function Afficher_Patients($Id_essai, $Statut_participation){
                 <td>' . htmlspecialchars($patient["Prenom"]) . '</td>
                 <td>';
                 if ($Statut_participation == 'Actif'){
-                    echo '
-                        <button class="btn" onclick="A(' . htmlspecialchars($patient["Id_patient"]) . ')">Consulter la fiche</button>   
-                        <button class="btn delete" onclick="Retirer_Patient_Essai(' . htmlspecialchars($Id_essai) . ', ' . htmlspecialchars($patient["Id_patient"]) . ')">Retirer de l\'essai</button>
+                    echo ' 
+                        <button class="btn" name="aller_vers_patient" value="'.$patient["Id_patient"].'" type="submit">Consulter la fiche</button>   
+                        <button class="btn delete" name="retirer_patient" value="'.$patient["Id_patient"].'" type="submit">Retirer de l\'essai</button>
                     ';
                 }
-                if ($Statut_participation == 'En attente'){
+                if ($Statut_participation == 'En attente'){ 
                     echo '
-                        <button class="btn delete" onclick="Traiter_Candidature_Patient('. htmlspecialchars($Id_essai).',' . htmlspecialchars($patient["Id_patient"]) . ', ' . 1 . ')">Accepter le patient</button>
-                        <button class="btn delete" onclick="Traiter_Candidature_Patient('. htmlspecialchars($Id_essai).',' . htmlspecialchars($patient["Id_patient"]) . ', ' . 0 . ')">Refuser le patient</button>
+                        <button class="btn" name="aller_vers_patient_sans_modif" value="'.$patient["Id_patient"].'" type="submit">Consulter la fiche</button>
+                        <button class="btn delete" name="accepter_patient" value="'.$patient['Id_patient'].'" type="submit">Accepter le patient</button>
+                        <button class="btn delete" name="refuser_patient" value="'.$patient['Id_patient'].'" type="submit">Refuser le patient</button>
                     ';
                 }
 
@@ -748,7 +770,7 @@ function Afficher_Medecins($Id_essai, $Statut_medecin, $Id_user, $role){
                 <td colspan="4">Aucun médecin trouvé.</td>
               </tr>';
     } else {
-        echo '<form method="POST">';
+        echo '<form method="POST" action="hub.php">';
         foreach ($tableau_medecins as $medecin) {
             echo '<tr>
                 <td>' . htmlspecialchars($medecin["Nom"]) . '</td>
@@ -758,38 +780,23 @@ function Afficher_Medecins($Id_essai, $Statut_medecin, $Id_user, $role){
                 <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
                 <td>';
                
-                if ($Statut_medecin == 'Actif' && (verif_entreprise($Id_essai, $Id_user) || $role === 'admin')){
+                if ($Statut_medecin == 'Actif'){
                     echo '
-                        <button name="action" value="retirer medecin" type="submit" class="btn delete">Retirer de l\'essai</button>
+                        <button name="retirer_medecin" value="'.$medecin['Id_medecin'].'" type="submit" class="btn delete">Retirer de l\'essai</button>
                     ';
                 }
                 if ($Statut_medecin == 'En attente'){
                     echo '
-                    <button name="action" value="accepter medecin" type="submit" class="btn delete">Accepter le médecin</button>
-                    <button name="action" value="refuser medecin" type="submit" class="btn delete">Refuser le médecin</button>
+                    <button name="accepter_medecin" value="'.$medecin['Id_medecin'].'" type="submit" class="btn delete">Accepter le médecin</button>
+                    <button name="refuser_medecin" value="'.$medecin['Id_medecin'].'" type="submit" class="btn delete">Refuser le médecin</button>
                 ';
                 
                 }
 
                 echo '</tr>';
             }
-                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-
-                }
-                if ($_SERVER['REQUEST_METHOD']=== 'POST') {
-                 if (isset($_POST['action'])) {
-                     if ($_POST['action'] === 'retirer medecin') {
-                         Retirer_Medecin_Essai($Id_essai, $medecin['Id_medecin']);
-                     }
-                     if ($_POST['action'] === 'accepter medecin') {
-                        Traiter_Candidature_Medecin($Id_essai, $medecin['Id_medecin'],1);
-                    }
-                    if ($_POST['action'] === 'accepter medecin') {
-                        Traiter_Candidature_Medecin($Id_essai, $medecin['Id_medecin'],0);
-                    }
-            }}
         }
-        echo '</POST>';
+        echo '</form>';
     
     echo '</tbody></table>';
  }

@@ -8,8 +8,10 @@ if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true) {
     $role= $_SESSION['role'];
 
 } else {
-    $_SESSION['role'] = 'visiteur';
+    $_SESSION['role'] = 'Visiteur';
 }
+$_SESSION['role'] = 'Medecin';
+$_SESSION['Id_user'] = 13;
 include 'Fonctions.php';
 include_once 'Notifications/fonction_notif.php';
 ?>
