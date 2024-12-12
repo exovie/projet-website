@@ -264,34 +264,6 @@ function Suspendre_Essai(int $Id_essai){
    
 }
 
-function Relancer_Essai(int $Id_essai){
-
-    try{
-        $conn = Connexion_base();
-        $requete = $conn -> prepare("UPDATE `ESSAIS_CLINIQUES` SET `Statut` = 'En cours' WHERE `Id_essai` = ?");
-        $requete -> execute(array($Id_essai));
-        echo "Essai relancé avec succès!";
-        Fermer_base($conn);
-        //Envoi à l'entreprise
-        $Id_entreprise = Get_Entreprise($Id_essai);
-         Generer_notif(17, $Id_essai, $Id_entreprise);
-        // Envoi aux médecins
-        $conn = Connexion_base();
-        $requete_ter = $conn -> prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
-        $requete_ter->execute(array($Id_essai));
-        $tableau_medecin = $requete_ter->fetchAll();
-        foreach ($tableau_medecin as $medecin) {
-            $Id_medecin = $medecin['Id_medecin'];
-            //Generer_notif(17, $Id_essai, $Id_medecin);
-        }
-        Fermer_base($conn);
-    }
-    catch (PDOException $e) {
-        echo "Erreur notif: " . $e->getMessage(); 
-    }
-   
-}
-
 
 //Méthode patient
 function Postuler_Patient_Essai(int $Id_essai, int $Id_patient){
