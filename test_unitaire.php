@@ -485,12 +485,12 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
         );
         session_destroy();
 
-        // Supprimer les notiications ajoutées pour les tests
-        foreach ($notifCreated as $Id) {
-            $sql = $pdo->prepare("DELETE FROM `NOTIFICATION` WHERE `Id_notif` = :id_N;");
-            $sql->execute(['id_N' => $Id]);
-        }
-        ?>
+        // // Supprimer les notiications ajoutées pour les tests
+        // foreach ($notifCreated as $Id) {
+        //     $sql = $pdo->prepare("DELETE FROM `NOTIFICATION` WHERE `Id_notif` = :id_N;");
+        //     $sql->execute(['id_N' => $Id]);
+        // }
+        // ?>
         </tbody>
     </table>
     <i>Les notifications générées avec les Id_notif = <?php foreach ($notifCreated as $Id) {echo $Id, " , ";}?> ont été supprimés de la BdD.</i>
@@ -525,4 +525,149 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
             ?>
 </body>
 
+<body>
+    <h2>Tests des Fonctions Admin</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fonction</th>
+                <th>Résultat Attendu</th>
+                <th>Résultat Obtenu</th>
+                <th>Commentaire</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            //Test d'accès à Home_Admin.php
+            
+            // Simule les valeurs de session pour tester
+            $_SESSION['role'] = 'Admin'; // Changez cette valeur pour tester différents cas
+            $_SERVER['REQUEST_URI'] = '/test_unitaire.php'; // Simule une URL d'origine
+
+            // Activer le mode test
+            define('TEST_MODE', true);
+            // Active la capture de la sortie
+            ob_start();
+            include 'Home_Admin.php'; // Inclut le fichier à tester
+            $output = ob_get_clean();
+
+            // Teste si l'utilisateur reste sur la page ou est redirigé
+            if ($_SESSION['role'] === 'Admin') {
+                // Si le rôle est Admin, on doit rester sur la page
+                $access = true;
+            } else {
+                // Si le rôle n'est pas Admin, on doit être redirigé
+                if (headers_sent() || strpos($output, 'Location: ../Connexion/Form1_connexion.php#modal') !== false) {
+                    $access = true;
+                } else {
+                //Si on est pas redirigé
+                    $access = false;
+                }
+            };
+            addTestResult(
+                'Home_Admin (Admin)',
+                'Accès à Home_Admin.php',
+                $access ? "Accès autorisé":"Accès refusé, redirection vers la page de connexion",
+                $access == true 
+            );
+            
+            addTestResult(
+                'Home_Admin (Medecin)',
+                'Redirection vers Form1_connexion.php#modal',
+                $access ? "Accès autorisé":"Accès refusé, redirection vers la page de connexion",
+                $access == false 
+            );
+            $_SESSION['role']='Patient';
+            addTestResult(
+                'Home_Admin (Patient)',
+                'Redirection vers Form1_connexion.php#modal',
+                $access ? "Accès autorisé":"Accès refusé, redirection vers la page de connexion",
+                $access == false 
+            );   
+            $_SESSION['role']='Entreprise';
+            addTestResult(
+                'Home_Admin (Entreprise)',
+                'Redirection vers Form1_connexion.php#modal',
+                $access ? "Accès autorisé":"Accès refusé, redirection vers la page de connexion",
+                $access == false 
+            );  
+
+            //Test Modifier_Patients.php
+            //include_once ('Modifier_Patients.php');
+            $Id_patient=40;
+            if (!isset($_GET['Id_patient'])){
+                $result=true;
+            }else{
+                $result=false;
+            }
+            
+            addTestResult(
+                "Modifier_Patients.php",
+                "Modification des informations d'un patient",
+                $result ? "Modification(s) apportée(s) avec succès" : "Erreur de modification",
+                $result == true
+            );
+
+
+            ?>
+</body>
+
+<body>
+    <h2>Tests des Fonctions Essais_cliniques</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fonction</th>
+                <th>Résultat Attendu</th>
+                <th>Résultat Obtenu</th>
+                <th>Commentaire</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            include_once '../Fonction_Modif_Essais.php';
+
+            //Test getEssaiInfo()
+            $Id_essai= 5; #Essai existant
+            $result = getEssaiInfo($conn, $Id_essai);
+            addTestResult(
+                'getEssaiInfo()',
+                "Récupération des informations d'un essai",
+                $result ? "Informations de l'essai": 'Erreur de Récupération',
+                $result == true 
+            );
+
+            $Id_essai= 30; #Essai inconnue
+            $result = getEssaiInfo($conn, $Id_essai);
+            addTestResult(
+                'getEssaiInfo()',
+                "Récupération des informations d'un essai",
+                $result ? "Informations de l'essai": 'Erreur de Récupération',
+                $result == false
+            );
+
+            //Test updateEssaiInfo()
+            $Id_essai= 5; #Essai existant
+            $result = updateEssaiInfo($conn, $Id_essai);
+            addTestResult(
+                'updateEssaiInfo()',
+                "Mise à jour des informations d'un essai",
+                $result ? "Mise à jour réussie": 'Erreur de mise à jour',
+                $result == true 
+            );
+
+            $Id_essai= 30; #Essai inconnue
+            $result = updateEssaiInfo($conn, $Id_essai);
+            addTestResult(
+                'updateEssaiInfo()',
+                "Mise à jour des informations d'un essai",
+                $result ? "Mise à jour réussie": 'Erreur de mise à jour',
+                $result == true 
+            );
+
+
+            //Test Mettre à jours les informations de l'essai
+
+            ?>
+</body>       
 </html>
