@@ -116,11 +116,9 @@ include_once 'Notifications/fonction_notif.php';
 
     <!-- Contenu principal -->
     <div class="content">
-    <h1>Clinicou, le site des essais cliniques !</h1>
-    <p>Description à faire </p>
         <div>
             <img src="Pictures/logo.png" alt="logo" id="grologo">
-            <h1 id="main_page">Bienvenue sur notre site</h1>
+            <h1>Clinicou, le site des essais cliniques !</h1>
             <p class = "presentation"> Les entreprises membres :</p>
             <div id="boxes">
             <?php

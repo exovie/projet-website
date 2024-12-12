@@ -117,7 +117,7 @@ $id_user = $_SESSION['Id_user'];
         <button class='Ad-btn' onclick="window.location.href='Historique_Essais.php'">Mes Essais</button>
         <!-- Bouton spécifique pour "Entreprise" -->
         <?php if ($role === "Entreprise"): ?>
-            <a href="Page_Creer_Essai.php">Créer un Essai</a>
+            <button class='Ad-btn' onclick="window.location.href='Page_Creer_Essai.php'">Créer un Essai</button>
         <?php endif; ?>
     </div>
     </div>

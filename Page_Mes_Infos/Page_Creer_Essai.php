@@ -1,6 +1,9 @@
 <?php
+
 session_start();
-$_SESSION['origin'] = $_SERVER['REQUEST_URI'];
+include_once('../Notifications/fonction_notif.php');
+include_once('../Fonctions.php');
+
 //Vérifiez si l'utilisateur est autorisé
 if ($_SESSION['role'] !== "Entreprise") {
     // Redirigez l'utilisateur s'il n'est pas "Entreprise"
@@ -18,6 +21,7 @@ if ($_SESSION['role'] !== "Entreprise") {
     <link rel="stylesheet" href='../website.css'>
     <link rel="stylesheet" href= '../navigationBar.css'>
     <link rel="stylesheet" href='../Notifications/Notifications_style.css'>
+    <link rel="stylesheet" href='../Admin/Admin.css'>
     <style>
         form {
             background-color: white; /* Fond blanc pour le formulaire */
