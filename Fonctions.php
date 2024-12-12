@@ -5,6 +5,7 @@ session_start();
 $db_name = "mysql:host=localhost;dbname=website_db"; 
 $_SESSION['db_name'] = $db_name;
 
+
 function Connexion_base(): PDO {
     $host = 'localhost';
     $user = 'root';
@@ -20,6 +21,7 @@ try {
 }
 return $pdo;
 }
+
 
 function Fermer_base($conn): void {
     $conn = null;
@@ -161,13 +163,21 @@ function Display_entreprise_data(array $data) {
 function Get_essais($role) {
     $conn = Connexion_base();
     $statuses = [
-        'visiteur' => 'Recrutement',
-        'patient' => 'Recrutement',
-        'medecin' => 'En attente',
-        'admin' => null,
-        'entreprise' => null // Utilisation de null pour indiquer "tous les statuts"
+        'Visiteur' => ['Recrutement'],
+        'Patient' => ['Recrutement'],
+        'Medecin' => ['En attente', 'En cours'],
+        'Admin' => ['Tout'],
+        'Entreprise' => ['Tout'] // Utilisation de null pour indiquer "tous les statuts"
     ];
     
+    // Convert $role to match the case of the keys in $statuses
+    $role = ucfirst(strtolower($role));
+    
+    if (!isset($statuses[$role])) {
+        echo '<p>' . htmlspecialchars($role) . '</p>';
+        return [];
+    }
+
     try {
         // Construction dynamique de la requête
         $sql = "
@@ -183,8 +193,9 @@ function Get_essais($role) {
         ";
     
         // Si le statut n'est pas "tous", on ajoute une clause WHERE
-        if ($statuses[$role] !== null) {
-            $sql .= "WHERE EC.Statut = :Statut ";
+        if ($statuses[$role] !=='Tout') {
+            $placeholders = implode(',', array_fill(0, count($statuses[$role]), '?'));
+            $sql .= "WHERE EC.Statut IN ($placeholders) ";
         }
     
         $sql .= "GROUP BY EC.Id_essai
@@ -192,9 +203,11 @@ function Get_essais($role) {
     
         $stmt = $conn->prepare($sql);
     
-        // Lier la variable seulement si le statut est défini
-        if ($statuses[$role] !== null) {
-            $stmt->bindParam(':Statut', $statuses[$role], PDO::PARAM_STR);
+        // Lier les variables seulement si le statut est défini
+        if ($statuses[$role] !== 'Tout') {
+            foreach ($statuses[$role] as $index => $status) {
+                $stmt->bindValue($index + 1, $status, PDO::PARAM_STR);
+            }
         }
         
         $stmt->execute();
@@ -210,7 +223,6 @@ function Get_essais($role) {
         // Fermer la connexion
         Fermer_base($conn);
     }
-
 }
 
 function Display_essais($resultats) {
@@ -231,7 +243,10 @@ function Display_essais($resultats) {
     }
 }
 
-function List_Medecin(int $id_medecin): array {
+function List_Medecin($id_medecin): array {
+    if (!is_int($id_medecin)) {
+        return [];
+    }
     $conn = Connexion_base();
 
     try { 
@@ -275,7 +290,6 @@ function display_medecin($medecin) {
     echo '<li class = "specialite">' . htmlspecialchars($medecin['Specialite']) . '</li>';
     echo '</ul>';
 }
-
 
 function recherche_EC($liste_EC, $recherche, $filtres) { 
     // Remove comments from the input
@@ -341,7 +355,6 @@ function recherche_EC($liste_EC, $recherche, $filtres) {
 
     return $results;
 }
-
 
 function convertirAccent($texte) {
     // Remplacer les caractères accentués par leur équivalent sans accent
@@ -471,6 +484,12 @@ function display_patient_medecin($patient){
     echo '</ul>';  
 }
 
+
+//entreprise en fonction essai
+//liste des medecins actifs d'un essai
+//statut d'un patient dans un essai
+
+
 function tablename($id_user) {
     $conn = Connexion_base();
 
@@ -597,6 +616,7 @@ function get_medecin_trial(int $id_medecin, $id_essai): array {
     }
 }
 
+
 function verif_entreprise($Id_essai, $Id_entreprise) {
     $conn = Connexion_base();
 
@@ -692,4 +712,4 @@ function SuccesEditor($SuccessCode){
             <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
         </div>
     </div>';}
-
+?>

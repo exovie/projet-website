@@ -1,5 +1,4 @@
 <?php
-include("../Fonctions.php");
 // Vérification du rôle de l'utilisateur
 session_start();
 $_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
@@ -7,13 +6,8 @@ if ($_SESSION['role'] !== 'Admin') {
     header('Location: ../Connexion/Form1_connexion.php#modal'); // Redirection si non Admin
     exit;
 }
-
-// Ajout pour éviter le rendu HTML lors des tests
-if (defined('TEST_MODE') && TEST_MODE === true) {
-    return;
-}
-
 include_once '../Notifications/fonction_notif.php';
+include_once ("../Fonctions.php");
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +32,6 @@ include_once '../Notifications/fonction_notif.php';
             </a>
         </div>
         <a href="../Essais.php" class="nav-btn">Essais Cliniques</a>
-        <a href="../Entreprises.php" class="nav-btn">Entreprise</a>
 
         <!-- Accès à la page de Gestion -->
         <?php if ($_SESSION['role'] == 'Admin'): ?>

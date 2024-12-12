@@ -86,7 +86,6 @@ if (!$entreprise) {
             </a>
         </div>
         <a href="../Essais.php" class="nav-btn">Essais Cliniques</a>
-        <a href="../Entreprises.php" class="nav-btn">Entreprise</a>
 
         <!-- Accès à la page de Gestion -->
         <?php if ($_SESSION['role'] == 'Admin'): ?>

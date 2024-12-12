@@ -188,7 +188,8 @@ function Affiche_notif($Id_D) {
             20=> "Votre phase de traitement est terminée. Merci d’avoir participé",
             21=> "Vous avez été refusé de l’essai ".$titre_Essai,
             22=> "Vous avez été accepté dans l’essai ".$titre_Essai." en tant que médecin",
-            23=> "Vous avez été refusé de l’essai $titre_Essai en tant que médecin"
+            23=> "Vous avez été refusé de l’essai $titre_Essai en tant que médecin",
+            24=> "L'essai". $titre_Essai." vient d'être relancé."
         ];
 
         // Détermine la classe du tableau en fonction du statut
@@ -201,41 +202,37 @@ function Affiche_notif($Id_D) {
         // Statut de la notification
         if ($Notif['Statut_notification'] == 'Non ouvert') {
             echo "
-            <form method='post' style='display: inline;'>
-                <input type ='hidden' name='Id_Notif' value =". htmlspecialchars($IndexNotif[$CodeNotif]) . ";'>
-                <input type='hidden' name='Lire' value='Lire'>
+            <form method='POST' action='/projet-website/Notifications/Redirect_notif.php' style='display: inline;'>
+                <input type='hidden' name='Ne_plus[Id_Notif]' value='" . htmlspecialchars($Id_Notif, ENT_QUOTES, 'UTF-8') . "'>
+                <input type='hidden' name='Ne_plus[Id_D]' value='" . htmlspecialchars($Id_D, ENT_QUOTES, 'UTF-8') . "'>
                 <button type='submit' style='border: none; background: none; padding: 0;'>
                     <img src='/projet-website/Pictures/eyes_close.png' alt='Marquer comme lu' title='Marquer comme lu' style='width: 24px; height: 24px;'>
                 </button>
             </form>";
-        } else {
+        }else {
             echo "
-            <form method='post' style='display: inline;'>
-                <input type ='hidden' name='Id_Notif' value =". htmlspecialchars($IndexNotif[$CodeNotif]) . ";'>            
-                <input type='hidden' name='Ne_plus', value='Ne_plus'>
+            <form method='POST' action='/projet-website/Notifications/Redirect_notif.php' style='display: inline;'>
+                <input type='hidden' name='Lire[Id_Notif]' value='" . htmlspecialchars($Id_Notif, ENT_QUOTES, 'UTF-8') . "'>
+                <input type='hidden' name='Lire[Id_D]' value='" . htmlspecialchars($Id_D, ENT_QUOTES, 'UTF-8') . "'>
                 <button type='submit' style='border: none; background: none; padding: 0;'>
                     <img src='/projet-website/Pictures/open_eye.png' alt='Marquer comme non lu' title='Marquer comme non lu' style='width: 24px; height: 24px;'>
                 </button>
             </form>";
-        }
-
-        
-
+        }       
         echo "</td>";
 
         // Contenu de la notification
         echo "
         <td>
-            <form method='post' action='/projet-website/Notifications/Redirect_notif.php' style='margin: 0;'>
+            <form method='POST' action='/projet-website/Notifications/Redirect_notif.php' style='margin: 0;'>
+                <input type='hidden' name='Id_Notif' value='" . htmlspecialchars($Id_Notif, ENT_QUOTES, 'UTF-8') . "'>
+                <input type='hidden' name='Id_Essai' value='" . htmlspecialchars($Id_Essai, ENT_QUOTES, 'UTF-8') . "'>
+                <input type='hidden' name='CodeNotif' value='" . htmlspecialchars($CodeNotif, ENT_QUOTES, 'UTF-8') . "'>
                 <button type='submit' style='background: none; border: none; color: inherit; font: inherit; cursor: pointer; text-align: left;'>
                     " . htmlspecialchars($IndexNotif[$CodeNotif]) . "
                 </button>
             </form>
         </td>";
-        $_SESSION['Id_Essai'] = $Id_Essai ;
-        $_SESSION['Id_Notif'] = $Id_Notif;
-        $_SESSION['CodeNotif'] = $CodeNotif;
-
         // Date de la notification
         echo "<td class='date-column'>". htmlspecialchars($Date) ."</td>";
         echo "</tr>";
@@ -247,15 +244,7 @@ function Affiche_notif($Id_D) {
 }
 }
 
-if (isset($_POST["Ne_plus"])) {
-    Ne_plus_lire_notif($Id_Notif, $Id_D);
-    header("Location: " . $_SESSION['origin']."#messagerie");
-    exit();
-}
-if (isset($_POST['Lire'])) {
-    Lire_notif($Id_Notif, $Id_D);
-    header("Location: " . $_SESSION['origin']."#messagerie");
-    exit();
-}
+
+
 
 ?>

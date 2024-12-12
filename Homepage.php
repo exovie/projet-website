@@ -8,7 +8,7 @@ if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true) {
     $role= $_SESSION['role'];
 
 } else {
-    $_SESSION['role'] = 'visiteur';
+    $_SESSION['role'] = 'Visiteur';
 }
 $role = $_SESSION['role'];
 include_once 'Fonctions.php';
@@ -36,7 +36,6 @@ include_once 'Notifications/fonction_notif.php';
             </a>
         </div>
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
-        <a href="Entreprises.php" class="nav-btn">Entreprise</a>
 
         <!-- Accès à la page de Gestion -->
         <?php if ($_SESSION['role'] == 'Admin'): ?>
@@ -46,7 +45,7 @@ include_once 'Notifications/fonction_notif.php';
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Homepage.php#messagerie">
+            <a href= "<?= $_SESSION['origin'] ?>#messagerie">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
             <!-- Affichage de la pastille -->
@@ -108,7 +107,7 @@ include_once 'Notifications/fonction_notif.php';
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
             <!-- Lien de fermeture qui redirige vers Homepage.php -->
-            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
+            <a href="<?= $_SESSION['origin'] ?>" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>

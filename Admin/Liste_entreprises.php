@@ -21,7 +21,6 @@ $query = "
 ";
 $stmt = $conn->query($query);
 $entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
 
 <!DOCTYPE html>
@@ -44,7 +43,6 @@ $entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </a>
         </div>
         <a href="../Essais.php" class="nav-btn">Essais Cliniques</a>
-        <a href="../Entreprises.php" class="nav-btn">Entreprise</a>
 
         <!-- Accès à la page de Gestion -->
         <?php if ($_SESSION['role'] == 'Admin'): ?>
