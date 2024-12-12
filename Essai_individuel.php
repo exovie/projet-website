@@ -14,13 +14,10 @@ if (isset($_POST['essai_indi'])) {
 }
 $Id_essai = $_SESSION['Id_essai'];
 
-//Requete pour récupérer les informations nécessaires 
-$pdo= Connexion_base();
-$stmt = $pdo ->prepare('SELECT `Statut`, `Id_entreprise` FROM `ESSAIS_CLINIQUES` WHERE `Id_essai` = :Id_essai');
-$stmt -> execute(['Id_essai' => $Id_essai]);
-$Infos= $stmt->fetch(PDO::FETCH_ASSOC);
-$Id_entreprise = $Infos['Id_entreprise'];
-$Statut_essai = $Infos['Statut'];
+$role = 'entreprise';
+$Id_user = 5;
+$Statut_essai = 'En attente';
+$_SESSION['origin'] = 'Essai_individuel.php';
 
 ?>
 

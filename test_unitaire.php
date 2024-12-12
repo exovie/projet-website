@@ -512,7 +512,7 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
 
             //test de la fonction Get_id()
             $table = 'PATIENTS';
-            $column = 'Id_patient   ';
+            $column = 'Id_patient';
             $list_id = Get_id($table, $column);
             addTestResult(
                 'Get_id()',

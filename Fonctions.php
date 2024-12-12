@@ -167,11 +167,7 @@ function Get_essais($role) {
         'Entreprise' => ['Tout'] // Utilisation de null pour indiquer "tous les statuts"
     ];
     
-    // Convert $role to match the case of the keys in $statuses
-    $role = ucfirst(strtolower($role));
-    
     if (!isset($statuses[$role])) {
-        echo '<p>' . htmlspecialchars($role) . '</p>';
         return [];
     }
 
@@ -244,6 +240,10 @@ function List_Medecin($id_medecin): array {
     if (!is_int($id_medecin)) {
         return [];
     }
+function List_Medecin($id_medecin): array {
+    if (!is_int($id_medecin)) {
+        return [];
+    }
     $conn = Connexion_base();
 
     try { 
@@ -287,7 +287,6 @@ function display_medecin($medecin) {
     echo '<li class = "specialite">' . htmlspecialchars($medecin['Specialite']) . '</li>';
     echo '</ul>';
 }
-
 
 function recherche_EC($liste_EC, $recherche, $filtres) { 
     // Remove comments from the input
@@ -480,6 +479,132 @@ function display_patient_medecin($patient){
     echo '<li>' . htmlspecialchars($patient['Allergies']) . '</li>';
     echo '<li>' . htmlspecialchars($patient['Cni']) . '</li>';
     echo '</ul>';  
+}
+
+function tablename($id_user) {
+    $conn = Connexion_base();
+
+    $sql = "
+        SELECT 'PATIENTS' AS TableName FROM PATIENTS WHERE Id_patient = ?
+        UNION ALL
+        SELECT 'MEDECINS' AS TableName FROM MEDECINS WHERE Id_medecin = ?
+        UNION ALL
+        SELECT 'ENTREPRISES' AS TableName FROM ENTREPRISES WHERE Id_entreprise = ?
+    ";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(1, $id_user, PDO::PARAM_INT);
+    $stmt->bindParam(2, $id_user, PDO::PARAM_INT);
+    $stmt->bindParam(3, $id_user, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Analyse des résultats
+    if ($result) {
+        return $result['TableName'];
+    } else {
+        echo "Id_user $id_user n'existe dans aucune table liée.";
+    }
+}
+
+
+function Verif_inscription($id_user) {
+    // Définitions des correspondances
+    $tableau = [
+        'MEDECINS' => 'Statut_inscription',
+        'ENTREPRISES' => 'Verif_inscription'
+    ];
+    $id_table = [
+        'MEDECINS' => 'Id_medecin',
+        'ENTREPRISES' => 'Id_entreprise'
+    ];
+    
+    // Récupération du nom de la table
+    $tablename = tablename($id_user);
+    
+    // Vérification si la table est valide
+    if (!isset($tableau[$tablename]) || !isset($id_table[$tablename])) {
+        throw new Exception("Nom de table ou colonne invalide.");
+    }
+    
+    $id_name = $id_table[$tablename];
+    $column = $tableau[$tablename];
+
+    // Connexion à la base de données
+    $conn = Connexion_base();
+
+    // Construction sécurisée de la requête SQL
+    $sql = "SELECT $column FROM $tablename WHERE $id_name = :id_user";
+
+    // Préparation de la requête
+    $stmt = $conn->prepare($sql);
+
+    // Liage de la variable :id_user
+    $stmt->bindParam(':id_user', $id_user, PDO::PARAM_INT);
+
+    // Exécution de la requête
+    try {
+        $stmt->execute();
+    } catch (PDOException $e) {
+        // Gérer les exceptions
+        throw new Exception("Erreur lors de l'exécution de la requête : " . $e->getMessage());
+    }
+
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $result[$column];
+}
+
+//entreprise en fonction essai
+//liste des medecins actifs d'un essai
+//statut d'un patient dans un essai
+
+function company_trial ($id_essai) {
+    $conn = Connexion_base();
+
+    $sql = "
+        SELECT Id_entreprise
+        FROM ESSAIS_CLINIQUES
+        WHERE ESSAIS_CLINIQUES.Id_essai = :Id_essai;
+    "; 
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_essai', $id_essai, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Analyse des résultats
+    if ($result) {
+        return $result['TableName'];
+    } else {
+        echo "Id_user $id_essai n'existe dans aucune table liée.";
+    }
+}
+
+
+function get_medecin_trial(int $id_medecin, $id_essai): array {
+    $conn = Connexion_base();
+
+    try {
+        $sql = "
+            SELECT Id_medecin
+            FROM MEDECINS_ESSAIS
+            WHERE MEDECINS_ESSAIS.Id_essai = :Id_essai;
+        "; 
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_essai', $id_essai, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    // Récupérer les résultats
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return [];
+    
+    } finally {
+    // Fermer la connexion 
+    Fermer_base($conn);
+    }
 }
 
 function tablename($id_user) {
