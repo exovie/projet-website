@@ -339,7 +339,6 @@ button:hover {
 }
 
 .search-box {
-    width: 100%;
     padding: 10px;
     font-size: 16px;
     border: 2px solid #ccc;
@@ -419,3 +418,12 @@ button:hover {
     color: rgb(91, 24, 104);
 }
 
+.image_nom {
+    display: flex;
+    align-items: center; /* Aligner verticalement les éléments */
+    list-style: none;
+}
+
+.image_nom li {
+    margin-right: 10px;
+}

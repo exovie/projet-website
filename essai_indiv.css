@@ -90,9 +90,9 @@ th {
     position: fixed;
     top: 20%; /* Ajustez la position verticale */
     right: 10px; /* Positionne la boîte à droite */
-    background-color: #f0f0f0; /* Couleur de fond de la boîte */
+    background-color: rgba(132, 219, 210, 0.475); /* Couleur de fond de la boîte */
     padding: 15px; /* Ajoute un peu d'espace autour du contenu */
-    width: 200px; /* Réduit la largeur du cadre */
+    width: 15%; /* Réduit la largeur du cadre */
     border-radius: 10px; /* Coins arrondis */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère autour de la boîte */
 }
@@ -103,7 +103,7 @@ th {
     font-size: 16px; /* Agrandit la taille du texte */
     padding: 10px; /* Agrandit les boutons */
     margin-bottom: 10px; /* Ajoute de l'espace entre les boutons */
-    background-color: #4CAF50; /* Couleur du bouton (vert ici) */
+    background-color: rgb(24, 98, 104); /* Couleur du bouton (vert ici) */
     color: white; /* Couleur du texte */
     border: none;
     border-radius: 5px; /* Coins arrondis pour les boutons */
@@ -114,4 +114,15 @@ th {
 /* Effet au survol */
 .nav-btn_essai_candidature:hover {
     background-color: #0056b3;
+}
+
+.side-buttons_statistique {
+    position: fixed;
+    top: 40%; /* Ajustez la position verticale */
+    right: 10px; /* Positionne la boîte à droite */
+    background-color: rgba(132, 219, 210, 0.475); /* Couleur de fond de la boîte */
+    padding: 15px; /* Ajoute un peu d'espace autour du contenu */
+    width: 15%; /* Réduit la largeur du cadre */
+    border-radius: 10px; /* Coins arrondis */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère autour de la boîte */
 }

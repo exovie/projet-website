@@ -1,40 +1,65 @@
 <?php
 
-
-error_reporting(E_ALL); // Active le rapport de toutes les erreurs
-ini_set('display_errors', 1); // Affiche les erreurs à l'écran
-ini_set('display_startup_errors', 1); // Affiche les erreurs au démarrage de PHP
-
-
-// Inclure le module ou fichier PHP
-//include 'module.php';
-//include 'Notifications/fonction_notif.php';
-
-function Connexion_base(){
-    $host = 'localhost';
-    $dbname = 'website_db';
-    $user = 'root';
-    $password = '';
-
-    try {
-        $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die("Erreur : " . $e->getMessage());
-    } 
-    return $pdo;
-    }
-
-
-function Fermer_base($pdo){
-    // Fermeture de la connexion
-    $pdo = null; // Cela libère la connexion
-}
+include_once 'Notifications/fonction_notif.php';
 
 //Fonctions  liées aux essais
 
 //attention aux dates, elles sont initialisées à 000/00/00 à la création, il faut donc les update et non les insert
 //verif_nombremedecin, manque le cas où le nombre re passe en dessous de 2, changer le 2 d'ailleurs
+
+function Get_Entreprise($Id_essai) {
+    try{
+    $conn = Connexion_base();
+    $stmt = $conn->prepare("SELECT Id_entreprise FROM ESSAIS_CLINIQUES WHERE Id_essai = ?");
+    $stmt->execute(array($Id_essai));
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['Id_entreprise'];}
+    catch (PDOException $e) {
+        echo "Erreur bdd: " . $e->getMessage(); 
+    }}
+    
+function Get_Statut_Patient($Id_essai, $Id_patient) {
+    try {
+        $conn = Connexion_base();
+        $stmt = $conn->prepare("SELECT Statut_participation FROM PATIENTS_ESSAIS WHERE Id_essai = ? AND Id_patient = ?");
+        $stmt->execute(array($Id_essai, $Id_patient));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Vérification si un résultat est trouvé
+        if ($result) {
+            return $result['Statut_participation'];
+        } else {
+            // Si aucun résultat trouvé, renvoyer une valeur par défaut ou null
+            return null;
+        }
+    } catch (PDOException $e) {
+        // Gérer l'erreur proprement
+        error_log("Erreur BDD dans Get_Statut_Patient: " . $e->getMessage());
+        return null; // Renvoyer null en cas d'erreur
+    }
+}
+ 
+function Get_Statut_Medecin($Id_essai, $Id_medecin) {
+    try {
+        $conn = Connexion_base();
+        $stmt = $conn->prepare("SELECT Statut_medecin FROM MEDECIN_ESSAIS WHERE Id_essai = ? AND Id_medecin = ?");
+        $stmt->execute(array($Id_essai, $Id_medecin));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Vérification si un résultat est trouvé
+        if ($result) {
+            return $result['Statut_medecin'];
+        } else {
+            // Si aucun résultat trouvé, renvoyer une valeur par défaut ou null
+            return null;
+        }
+    } catch (PDOException $e) {
+        // Gérer l'erreur proprement
+        error_log("Erreur BDD dans Get_Statut_Medecin: " . $e->getMessage());
+        return null; // Renvoyer null en cas d'erreur
+    }
+}
+
 
 
 function Ajout_Bdd_Essai(int $Id_entreprise, string $Titre, string $Contexte, string $Objectif_essai, string $Design_etude, string $Criteres_evaluation, string $Resultats_attendus, int $Id_essai_precedent, int $Nb_medecins, int $Nb_patients) {
@@ -100,7 +125,9 @@ function Modif_Description_Essai(int $Id_essai,string $Titre, string $Contexte, 
         echo "Notifs envoyées avec succès";
     }
     catch (PDOException $e) {
-        echo "Erreur bdd/notifs: " . $e->getMessage();
+        $_SESSION['ErrorCode'] = 11;
+        header("Location: " . $_SESSION['origin']);
+        exit;
 }
 
 }
@@ -117,7 +144,9 @@ function Modif_Infos_Patient(int $Id_patient, int $Id_essai, int $Poids, string 
         echo "Info patients modifiées avec succès";
     }
     catch (PDOException $e) {
-        echo "Erreur bdd: " . $e->getMessage();
+        $_SESSION['ErrorCode'] = 9;
+        header("Location: " . $_SESSION['origin']);
+        exit;
 }
 }
 
@@ -132,41 +161,30 @@ function Demander_Medecin_essai(int $Id_essai, int $Id_medecin){
     $requete -> execute(array($Id_medecin, $Id_essai));
     echo "Nouveau médecin sollicité avec succès pour cet essai!";
     Fermer_base($conn);
-    } catch (PDOException $e) {
-    echo "Erreur bdd: " . $e->getMessage(); }
-    try{
-        Generer_notif(3,$Id_essai, $Id_medecin);
+    Generer_notif(3,$Id_essai, $Id_medecin);
     }
-     catch (PDOException $e) {
-    echo "Erreur notification: " . $e->getMessage(); }
+    catch (PDOException $e) {
+        $_SESSION['ErrorCode'] = 12;
+        header("Location: " . $_SESSION['origin']);
+        exit; }
 
 }
 
 //vérifiée
 //méthode médecin: médecin qui demande à participer à un essai
 function Postuler_Medecin_Essai(int $Id_essai, int $Id_medecin){
-  
     try{
         $conn = Connexion_base();
         $requete = $conn -> prepare("INSERT INTO MEDECIN_ESSAIS(`Id_medecin`, `Id_essai`, `Statut_medecin`) VALUES (?,?,'En attente')");
         $requete -> execute(array($Id_medecin, $Id_essai));
         echo "Demande de participation enregistrée avec succès pour cet essai!";
         Fermer_base($conn);
-        } catch (PDOException $e) {
-        echo "Erreur bdd: " . $e->getMessage(); }
-        try{
-            $conn = Connexion_base();
-            $requete_bis = $conn -> prepare("SELECT `Id_entreprise` FROM `ESSAIS_CLINIQUES` WHERE `Id_essai`=?");
-            $requete_bis->execute(array($Id_essai));
-            $tableau = $requete_bis->fetch();
-            $Id_entreprise = $tableau["Id_entreprise"];
-            Generer_notif(5,$Id_essai, $Id_entreprise);
-            Fermer_base($conn);
-        }
+        $Id_enterprise = Get_Entreprise($Id_essai);
+        Generer_notif(5,$Id_essai, $Id_medecin);}
          catch (PDOException $e) {
         echo "Erreur notification: " . $e->getMessage(); }
-
     }
+
 //vérifiée
 //méthode entreprise et médecin
 function Retirer_Medecin_Essai(int $Id_essai, int $Id_medecin){
@@ -175,22 +193,17 @@ function Retirer_Medecin_Essai(int $Id_essai, int $Id_medecin){
         $conn = Connexion_base();
         $requete = $conn -> prepare("UPDATE `MEDECIN_ESSAIS` SET `Statut_medecin` = 'Retire' WHERE (`Id_essai` = ? AND `Id_medecin` = ?)");
         $requete -> execute(array($Id_essai, $Id_medecin));
-        echo "Medecin retiré de l'essai avec succès!";
         Fermer_base($conn);
-    }
- catch (PDOException $e) {
-    echo "Erreur bdd: " . $e->getMessage(); 
-}
-    try{
-        Generer_notif(18, $Id_essai, $$Id_medecin);
+        Generer_notif(18, $Id_essai, $Id_medecin);
         //vérifier le statut 
         $conn = Connexion_base();
         $requete_statut = $conn -> prepare("SELECT `Statut` FROM `ESSAIS_CLINIQUES` WHERE `Id_essai` = ?");
-         $requete_statut -> execute(array($Id_essai));
+        $requete_statut -> execute(array($Id_essai));
         $tableau = $requete_statut->fetch();
-        $statut_essai = $tableau["Statut"];
-        if($statut_essai == 'Recrutement' || $statut_essai == 'En cours');{
-            Verif_nbMedecin_Essai($Id_essai, 'ok');}
+        $statut_essai = $tableau['Statut'];
+        if($statut_essai == 'Recrutement' || $statut_essai == 'En cours'){
+            Verif_nbMedecin_Essai($Id_essai, 'ok');
+            }
         Fermer_base($conn);
 
     }
@@ -211,19 +224,9 @@ function Suspendre_Essai(int $Id_essai){
         $requete -> execute(array($Id_essai));
         echo "Essai suspendu avec succès!";
         Fermer_base($conn);
-    }
-    catch (PDOException $e) {
-        echo "Erreur bdd: " . $e->getMessage(); 
-    }
-    try{
         //Envoi à l'entreprise
-        $conn = Connexion_base();
-        $requete_bis = $conn -> prepare("SELECT `Id_entreprise` FROM `ESSAIS_CLINIQUES` WHERE `Id_essai`=?");
-        $requete_bis->execute(array($Id_essai));
-        $tableau = $requete_bis->fetch();
-        $Id_entreprise = $tableau["Id_entreprise"];
+        $Id_entreprise = Get_Entreprise($Id_essai);
          Generer_notif(17, $Id_essai, $Id_entreprise);
-         Fermer_base($conn);
         // Envoi aux médecins
         $conn = Connexion_base();
         $requete_ter = $conn -> prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
@@ -234,12 +237,38 @@ function Suspendre_Essai(int $Id_essai){
             Generer_notif(17, $Id_essai, $Id_medecin);
         }
         Fermer_base($conn);
-        echo "Notifs envoyées avec succès";
     }
     catch (PDOException $e) {
         echo "Erreur notif: " . $e->getMessage(); 
     }
+   
+}
 
+function Relancer_Essai(int $Id_essai){
+
+    try{
+        $conn = Connexion_base();
+        $requete = $conn -> prepare("UPDATE `ESSAIS_CLINIQUES` SET `Statut` = 'En cours' WHERE `Id_essai` = ?");
+        $requete -> execute(array($Id_essai));
+        echo "Essai relancé avec succès!";
+        Fermer_base($conn);
+        //Envoi à l'entreprise
+        $Id_entreprise = Get_Entreprise($Id_essai);
+         Generer_notif(17, $Id_essai, $Id_entreprise);
+        // Envoi aux médecins
+        $conn = Connexion_base();
+        $requete_ter = $conn -> prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
+        $requete_ter->execute(array($Id_essai));
+        $tableau_medecin = $requete_ter->fetchAll();
+        foreach ($tableau_medecin as $medecin) {
+            $Id_medecin = $medecin['Id_medecin'];
+            //Generer_notif(17, $Id_essai, $Id_medecin);
+        }
+        Fermer_base($conn);
+    }
+    catch (PDOException $e) {
+        echo "Erreur notif: " . $e->getMessage(); 
+    }
    
 }
 
@@ -259,15 +288,22 @@ function Postuler_Patient_Essai(int $Id_essai, int $Id_patient){
     
     try{
         $conn = Connexion_base();
-        $requete_bis = $conn -> prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
+        $requete_bis = $conn->prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
         $requete_bis->execute(array($Id_essai));
+        // Récupérer tous les résultats de la requête
         $tableau = $requete_bis->fetchAll();
-        $Liste_medecin = $tableau["Id_medecin"];
-        foreach ($Liste_medecin as $medecin) {
-            $Id_medecin = $medecin['Id_medecin'];
-             Generer_notif(10, $Id_essai,$Id_medecin);}
-        Fermer_base($conn);
-    }
+        // Vérifier si le tableau contient des résultats
+        if ($tableau) {
+            foreach ($tableau as $medecin) {
+                // Accéder à chaque 'Id_medecin' dans les résultats
+                $Id_medecin = $medecin['Id_medecin'];
+                // Appeler la fonction Generer_notif pour chaque médecin
+                Generer_notif(10, $Id_essai, $Id_medecin);
+                Fermer_base($conn);
+            }
+        } else {
+            echo "Aucun médecin trouvé pour cet essai.";
+        }}
     catch (PDOException $e) {
         echo "Erreur notif: " . $e->getMessage(); }
     }
@@ -281,21 +317,22 @@ function Retirer_Patient_Essai(int $Id_essai, int $Id_patient){
         $requete = $conn -> prepare("UPDATE `PATIENTS_ESSAIS` SET `Statut_participation` = 'Abandon' WHERE (`Id_essai` = ? AND `Id_patient` = ?)");
         $requete -> execute(array($Id_essai, $Id_patient));
         Fermer_base($conn);
-        echo "Patient retiré avec succès de l'essai";
     }
     catch (PDOException $e) {
         echo "Erreur bdd: " . $e->getMessage(); }
     try{
         $conn = Connexion_base();
         //Generer_notif(12,$Id_essai, $Id_patient); //on ne sait pas qui a pris la décision donc notif pas ultra adaptée (on prévient le patient qu'il s'est bien retiré en gros)
-        $requete_bis = $conn -> prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
+        $requete_bis = $conn->prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
         $requete_bis->execute(array($Id_essai));
-        $tableau = $requete_bis->fetchAll();
-        $Liste_medecin = $tableau["Id_medecin"];
-        foreach ($Liste_medecin as $medecin) {
-        $Id_medecin = $medecin['Id_medecin'];
-        Generer_notif(12, $Id_essai,$Id_medecin);
-        } //on prévient tous les médecins de l'essai
+        $tableau = $requete_bis->fetchAll();  // Récupère toutes les lignes
+        
+        // Si vous voulez accéder à la liste des Id_medecin, vous devez boucler sur chaque ligne
+        foreach ($tableau as $medecin) {
+            $Id_medecin = $medecin['Id_medecin'];  // Accède à la colonne 'Id_medecin'
+            Generer_notif(12, $Id_essai, $Id_medecin);  // Appel de la fonction pour chaque Id_medecin
+        }
+        //on prévient tous les médecins de l'essai
         Fermer_base($conn);
     }
     catch (PDOException $e) {
@@ -390,10 +427,7 @@ function Retirer_Patient_Essai(int $Id_essai, int $Id_patient){
             }
     
             // Notification à l'entreprise
-            $requete_entreprise = $conn -> prepare("SELECT `Id_entreprise` FROM `ESSAIS_CLINIQUES` WHERE `Id_essai` = ?");
-            $requete_entreprise->execute(array($Id_essai));
-            $tableau_entreprise = $requete_entreprise->fetch();
-            $Id_entreprise = $tableau_entreprise["Id_entreprise"];
+            $Id_entreprise = Get_Entreprise($Id_essai);
             Generer_notif(15, $Id_essai, $Id_entreprise);  // Envoi de notification à l'entreprise
     
             // Notification aux médecins
@@ -438,6 +472,7 @@ function Traiter_Candidature_Medecin(int $Id_essai, int $Id_medecin, int $Repons
         
     }
     if($Reponse == 0){
+        $conn = Connexion_base();
         $requete_non = $conn -> prepare("DELETE FROM `MEDECIN_ESSAIS` WHERE `Id_medecin` = ?");
         $requete_non -> execute(array($Id_medecin));
         //on prévient le médecin du refus
@@ -522,7 +557,7 @@ function Verif_Patient_Cet_Essai($Id_essai, $Id_patient){
 function Verif_Participation_Medecin($Id_medecin, $Id_essai){
     try{
         $conn = Connexion_base();
-        $requete = $conn -> prepare("SELECT COUNT(*) AS is_active FROM `MEDECIN_ESSAIS` WHERE (`Id_essai` = ? AND `Id_medecin` = ? AND `Statut_medecin` = 'Actif')");
+        $requete = $conn -> prepare("SELECT COUNT(*) AS is_active FROM `MEDECIN_ESSAIS` WHERE (`Id_essai` = ? AND `Id_medecin` = ? AND (`Statut_medecin` = 'Actif' OR `Statut_medecin` = 'Termine'))");
         $requete -> execute(array($Id_essai, $Id_medecin));
         $est_actif = $requete->fetch(PDO::FETCH_ASSOC);
         // Retourner TRUE si actif, sinon FALSE
@@ -532,36 +567,6 @@ function Verif_Participation_Medecin($Id_medecin, $Id_essai){
     catch (PDOException $e){
         echo "Erreur bdd/notifs: " . $e->getMessage(); }
 }     
-
-//fonction qui vérifie si l'enterprise est l'organisatrice d'un essai donné
-function Verif_Organisation_Entreprise($Id_essai, $Id_entreprise){
-    try{
-        $conn = Connexion_base();
-        $requete = $conn -> prepare("SELECT COUNT(*) AS est_proprio FROM `ESSAIS_CLINIQUES` WHERE (`Id_essai` = ? AND `Id_entreprise` = ?)");
-        $requete -> execute(array($Id_essai, $Id_entreprise));
-        $est_proprio = $requete->fetch(PDO::FETCH_ASSOC);
-        // Retourner TRUE si actif, sinon FALSE
-        Fermer_base($conn);
-        return $est_proprio['est_proprio'] > 0;
-        }
-    catch (PDOException $e){
-        echo "Erreur bdd/notifs: " . $e->getMessage(); }
-}    
-
-
-function Verif_Medecin_Sollicite($Id_essai, $Id_medecin){
-    try{
-        $conn = Connexion_base();
-        $requete = $conn -> prepare("SELECT COUNT(*) AS est_sollicite FROM `MEDECIN_ESSAIS` WHERE (`Id_essai` = ? AND `Id_medecin` = ? AND `Statut_medecin` = 'Sollicite')");
-        $requete -> execute(array($Id_essai, $Id_medecin));
-        $est_sollicite = $requete->fetch(PDO::FETCH_ASSOC);
-        Fermer_base($conn);
-        // Retourner TRUE si actif, sinon FALSE
-        return $est_sollicite['est_sollicite'] > 0;}
-    catch (PDOException $e){
-        echo "Erreur bdd/notifs: " . $e->getMessage(); }
-}   
-
 
 
 function Afficher_Essai($Id_essai){
@@ -582,7 +587,7 @@ function Afficher_Essai($Id_essai){
     echo '<ul class="indiv_trials">';
     echo '<li class="indiv_trial_title"> ' . htmlspecialchars($resultats['Titre']) . '</li><br>'; 
     echo '<li><strong> Mené par l\'entreprise '. htmlspecialchars($resultats['Nom_entreprise']) .'</strong></li>';
-    echo '<li><strong> Encadrée par: </strong>';
+    echo '<li><strong> Encadré par: </strong>';
     $medecins_list = []; // Crée un tableau pour stocker les médecins
 foreach ($medecins as $medecin) {
     $medecins_list[] = htmlspecialchars($medecin['Medecin']); // Ajoute chaque médecin au tableau
@@ -663,34 +668,52 @@ function Afficher_Patients($Id_essai, $Statut_participation){
                 <td colspan="4">Aucun patient trouvé.</td>
               </tr>';
     } else {
+        echo '<form method="POST">';
         foreach ($tableau_patients as $patient) {
             echo '<tr>
                 <td>' . htmlspecialchars($patient["Nom"]) . '</td>
                 <td>' . htmlspecialchars($patient["Prenom"]) . '</td>
                 <td>';
-                if ($Statut_participation == 'Actif'){
+                
+                if ($Statut_participation == 'Actif'){ #TODO corriger le premier bouton et qu'il soit fonctionnel pour rediriger vers la page de céline
                     echo '
                         <button class="btn" onclick="A(' . htmlspecialchars($patient["Id_patient"]) . ')">Consulter la fiche</button>   
-                        <button class="btn delete" onclick="Retirer_Patient_Essai(' . htmlspecialchars($Id_essai) . ', ' . htmlspecialchars($patient["Id_patient"]) . ')">Retirer de l\'essai</button>
+                        <button name = "action" value="retirer patient" class="btn delete">Retirer de l\'essai</button>
                     ';
                 }
                 if ($Statut_participation == 'En attente'){
                     echo '
-                        <button class="btn delete" onclick="Traiter_Candidature_Patient('. htmlspecialchars($Id_essai).',' . htmlspecialchars($patient["Id_patient"]) . ', ' . 1 . ')">Accepter le patient</button>
-                        <button class="btn delete" onclick="Traiter_Candidature_Patient('. htmlspecialchars($Id_essai).',' . htmlspecialchars($patient["Id_patient"]) . ', ' . 0 . ')">Refuser le patient</button>
+                        <button name = "action" value="accepter patient" class="btn delete">Accepter le patient</button>
+                        <button name = "action" value="refuser patient" class="btn delete">Refuser le patient</button>
                     ';
                 }
 
                 echo '</tr>';
                 
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+
+                }
+                if ($_SERVER['REQUEST_METHOD']=== 'POST') {
+                 if (isset($_POST['action'])) {
+                     if ($_POST['action'] === 'retirer patient') {
+                         Retirer_Patient_Essai($Id_essai, $patient["Id_patient"]);
+                     }
+                     if ($_POST['action'] === 'accepter patient') {
+                        Traiter_Candidature_Patient($Id_essai, $patient["Id_patient"],1);
+                    }
+                    if ($_POST['action'] === 'refuser patient') {
+                        Traiter_Candidature_Patient($Id_essai, $patient["Id_patient"],0);
+                    }
+            }}
         }
-    }
+        echo '</POST>';
+    }    
     echo '</tbody></table>';
 }
 
-function Afficher_Medecins($Id_essai, $Statut_medecin){
+function Afficher_Medecins($Id_essai, $Statut_medecin, $Id_user, $role){
     if($Statut_medecin=='Actif'){
-    $tableau_medecins = Recup_Medecins($Id_essai)[0];
+         $tableau_medecins = Recup_Medecins($Id_essai)[0];
     echo '<h1>Liste des Medecins</h1>';}
     if($Statut_medecin=='En attente'){
         $tableau_medecins = Recup_Medecins($Id_essai)[1];
@@ -715,6 +738,7 @@ function Afficher_Medecins($Id_essai, $Statut_medecin){
                 <td colspan="4">Aucun médecin trouvé.</td>
               </tr>';
     } else {
+        echo '<form method="POST">';
         foreach ($tableau_medecins as $medecin) {
             echo '<tr>
                 <td>' . htmlspecialchars($medecin["Nom"]) . '</td>
@@ -723,32 +747,88 @@ function Afficher_Medecins($Id_essai, $Statut_medecin){
                 <td>' . htmlspecialchars($medecin["Matricule"]) . '</td>
                 <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
                 <td>';
-                if ($Statut_medecin == 'Actif'){
+               
+                if ($Statut_medecin == 'Actif' && (verif_entreprise($Id_essai, $Id_user) || $role === 'admin')){
                     echo '
-                      
-                        <button class="btn delete" onclick="Retirer_Medecin_Essai(' . htmlspecialchars($Id_essai) . ', ' . htmlspecialchars($medecin["Id_medecin"]) . ')">Retirer de l\'essai</button>
+                        <button name="action" value="retirer medecin" type="submit" class="btn delete">Retirer de l\'essai</button>
                     ';
                 }
                 if ($Statut_medecin == 'En attente'){
                     echo '
-                    <button class="btn delete" onclick="Traiter_Candidature_Medecin('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 1 . ')">Accepter le médecin</button>
-                    <button class="btn delete" onclick="Traiter_Candidature_Medecin('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 0 . ')">Refuser le médecin</button>
+                    <button name="action" value="accepter medecin" type="submit" class="btn delete">Accepter le médecin</button>
+                    <button name="action" value="refuser medecin" type="submit" class="btn delete">Refuser le médecin</button>
                 ';
                 
                 }
 
                 echo '</tr>';
-                
+            }
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+
+                }
+                if ($_SERVER['REQUEST_METHOD']=== 'POST') {
+                 if (isset($_POST['action'])) {
+                     if ($_POST['action'] === 'retirer medecin') {
+                         Retirer_Medecin_Essai($Id_essai, $medecin['Id_medecin']);
+                     }
+                     if ($_POST['action'] === 'accepter medecin') {
+                        Traiter_Candidature_Medecin($Id_essai, $medecin['Id_medecin'],1);
+                    }
+                    if ($_POST['action'] === 'accepter medecin') {
+                        Traiter_Candidature_Medecin($Id_essai, $medecin['Id_medecin'],0);
+                    }
+            }}
         }
-    }
+        echo '</POST>';
+    
     echo '</tbody></table>';
-}
+ }
 
 function A() {
     // Définir la logique pour la fonction
 }
 
+function affichage_request_medecin($Id_essai, $praticien){
 
+echo '<h1>Choisissez un médecin parmi cette liste</h1>';
+echo '
+    <table>
+        <thead>
+            <tr>
+            
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Spécialité</th>
+                <th>Matricule</th>
+                <th>Numéro de téléphone</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>';
+foreach($praticien as $medecin) {
+    $medecin = $medecin[0];
+    echo '<tr>
+        <td>' . htmlspecialchars($medecin["Nom"]) . '</td>
+        <td>' . htmlspecialchars($medecin["Prenom"]) . '</td>
+        <td>' . htmlspecialchars($medecin["Specialite"]) . '</td>
+        <td>' . htmlspecialchars($medecin["Matricule"]) . '</td>
+        <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
+        <td>';
+            echo '
+                <form 
 
+function Generer_Notif($code, $Id_essai, $Id_destinataire){}
+
+method="POST" action="hub.php">
+                    <button name="demande_medecin" value="' . htmlspecialchars($Id_essai . '_' . $medecin["Id_medecin"]) . '" type="submit">Demander ce médecin</button>
+                </form>
+            ';
+
+    
+}
+echo '</tr>';
+        
+echo '</tbody></table>';
+}
 
 

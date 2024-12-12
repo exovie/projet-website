@@ -51,6 +51,7 @@ function Get_id(string $table, string $column): array {
 
 
 function Get_entreprise_data(int $id_entreprise): array {
+
     $conn = Connexion_base();
 
     try {
@@ -58,7 +59,8 @@ function Get_entreprise_data(int $id_entreprise): array {
         $sql = "
             SELECT *
             FROM ENTREPRISES
-            WHERE Id_entreprise = :Id_entreprise;
+            WHERE Id_entreprise = :Id_entreprise AND
+            Verif_inscription = 1;
         ";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
@@ -70,7 +72,8 @@ function Get_entreprise_data(int $id_entreprise): array {
             SELECT ESSAIS_CLINIQUES.Titre
             FROM ESSAIS_CLINIQUES
             JOIN ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
-            WHERE ENTREPRISES.Id_entreprise = :Id_entreprise;
+            WHERE ENTREPRISES.Id_entreprise = :Id_entreprise AND
+            ESSAIS_CLINIQUES.Statut IN ('Termine', 'En cours', 'fini');
         ";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
@@ -91,7 +94,8 @@ function Get_entreprise_data(int $id_entreprise): array {
             JOIN 
                 MEDECINS ON MEDECIN_ESSAIS.Id_medecin = MEDECINS.Id_medecin
             WHERE 
-                ENTREPRISES.Id_entreprise = :Id_entreprise;
+                ENTREPRISES.Id_entreprise = :Id_entreprise AND
+                MEDECIN_ESSAIS.Statut_medecin IN ('Actif', 'Termine');
         ";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
@@ -120,7 +124,15 @@ function Display_entreprise_data(array $data) {
 
     foreach ($data['entreprise'] as $entreprise) {
         echo '<div class="entreprise">';
+        echo '<div class="image_nom">';
+        if ($entreprise['Profile_picture'] == null){
+            echo '<li> <img src="Pictures/defaultPicture.png" alt="pictureProfil" class="fixed_picture" style="cursor: pointer;"> </li>';
+        } else {
+            $profilePictureData = base64_encode($entreprise['Profile_picture']);
+            echo '<li><img src="data:image/png;base64,' . $profilePictureData . '" alt="Photo de profil" class="fixed_picture" style="cursor: pointer;"></li>';
+        }
         echo '<h1>' . htmlspecialchars($entreprise['Nom_entreprise']) . '</h1>';
+        echo '</div>';
         echo '<p>Téléphones : ' . htmlspecialchars($entreprise['Telephone']) . '</p>';
         echo '<p>Siret : ' . htmlspecialchars($entreprise['Siret']) . '</p>';
         echo '<p class="clinical-trials">Nombre d\'essais cliniques : ' . count($data['clinical_trials']) . '</p>';
@@ -201,6 +213,7 @@ function Get_essais($role) {
 
 function Display_essais($resultats) {
     foreach ($resultats as $essai) {
+        echo '<button name="essai_indi" value="' . htmlspecialchars($essai['Id_essai']) . '" type="submit" class="search-button">';
         echo '<ul class = "trials">';
         echo '<li class = "trial_title">' . htmlspecialchars($essai['Titre']) . '</li>';
         echo '<li class = "trial_company">' . htmlspecialchars($essai['Nom_Entreprise']) . '</li>';
@@ -212,14 +225,14 @@ function Display_essais($resultats) {
         } else {
             echo '<li><strong>Médecin associé :</strong> Aucun médecin assigné</li>';
         }
-        echo '</ul>';
+        echo '</ul> </button>';
     }
 }
 
 function List_Medecin(int $id_medecin): array {
     $conn = Connexion_base();
 
-    try {
+    try { 
         $sql = "
     SELECT *
     FROM MEDECINS
@@ -235,7 +248,6 @@ function List_Medecin(int $id_medecin): array {
     
     // Récupérer les résultats
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         echo "Erreur : " . $e->getMessage();
         return [];
@@ -249,95 +261,18 @@ function List_Medecin(int $id_medecin): array {
 function display_medecin($medecin) {
     $medecin = $medecin[0];
     echo '<ul class = "medecins">';
+    echo '<div class = "image_nom">';
     if ($medecin['Profile_picture'] == null){
         echo '<li> <img src="Pictures/defaultPicture.png" alt="pictureProfil" class="fixed_picture" style="cursor: pointer;"> </li>';
     } else {
-    echo '<li class="fixed_picture">' . htmlspecialchars($medecin['Profile_picture']) . '</li>';
+        $profilePictureData = base64_encode($medecin['Profile_picture']);
+        echo '<li><img src="data:image/png;base64,' . $profilePictureData . '" alt="Photo de profil" class="fixed_picture" style="cursor: pointer;"></li>';
     }
     echo '<li class = "noms_medecins">' . htmlspecialchars($medecin['Nom']) . " " .htmlspecialchars($medecin['Prenom']). '</li>';
+    echo '</div>';
     echo '<li class = "specialite">' . htmlspecialchars($medecin['Specialite']) . '</li>';
     echo '</ul>';
 }
-
-function Valider_inscription($id_user) {
-    $conn = Connexion_base();
-        try {
-            // Vérifier si l'utilisateur est dans la table MEDECINS
-            $queryMedecin = "SELECT Id_medecin FROM MEDECINS WHERE Id_medecin = ?";
-            $stmtMedecin = $conn->prepare($queryMedecin);
-            $stmtMedecin->execute([$id_user]);
-    
-            if ($stmtMedecin->rowCount() > 0) {
-                // Si l'utilisateur est un médecin, mettre à jour le statut
-                $updateQuery = "UPDATE MEDECINS SET Verif_inscription = 1 WHERE Id_medecin = ?";
-                $stmtUpdate = $conn->prepare($updateQuery);
-                $stmtUpdate->execute([$id_user]);
-                return "Statut_inscription mis à jour pour le médecin avec l'ID $id_user.";
-            }
-    
-            // Vérifier si l'utilisateur est dans la table ENTREPRISES
-            $queryEntreprise = "SELECT Id_entreprise FROM ENTREPRISES WHERE Id_entreprise = ?";
-            $stmtEntreprise = $conn->prepare($queryEntreprise);
-            $stmtEntreprise->execute([$id_user]);
-    
-            if ($stmtEntreprise->rowCount() > 0) {
-                // Si l'utilisateur est une entreprise, mettre à jour le statut
-                $updateQuery = "UPDATE ENTREPRISES SET Verif_inscription = 'True' WHERE Id_entreprise = ?";
-                $stmtUpdate = $conn->prepare($updateQuery);
-                $stmtUpdate->execute([$id_user]);
-                return "Statut_inscription mis à jour pour l'entreprise avec l'ID $id_user.";
-            }
-    
-            // Si l'utilisateur n'est trouvé dans aucune des deux tables
-            return "L'utilisateur avec l'ID $id_user n'est ni un médecin ni une entreprise.";
-        } catch (PDOException $e) {
-            return "Erreur : " . $e->getMessage();
-        }
-     finally {
-    // Fermer la connexion
-    Fermer_base($conn);
-    }
-}
-
-function refus_inscription($id_user) {
-    $conn = Connexion_base();
-    try {
-        // Vérifier si l'utilisateur est dans la table MEDECINS
-        $queryMedecin = "SELECT Id_medecin FROM MEDECINS WHERE Id_medecin = ?";
-        $stmtMedecin = $conn->prepare($queryMedecin);
-        $stmtMedecin->execute([$id_user]);
-
-        if ($stmtMedecin->rowCount() > 0) {
-            // Si l'utilisateur est un médecin, supprimer l'enregistrement
-            $deleteQuery = "DELETE FROM MEDECINS WHERE Id_medecin = ?";
-            $stmtDelete = $conn->prepare($deleteQuery);
-            $stmtDelete->execute([$id_user]);
-            return "L'utilisateur médecin avec l'ID $id_user a été supprimé.";
-        }
-
-        // Vérifier si l'utilisateur est dans la table ENTREPRISES
-        $queryEntreprise = "SELECT Id_entreprise FROM ENTREPRISES WHERE Id_entreprise = ?";
-        $stmtEntreprise = $conn->prepare($queryEntreprise);
-        $stmtEntreprise->execute([$id_user]);
-
-        if ($stmtEntreprise->rowCount() > 0) {
-            // Si l'utilisateur est une entreprise, supprimer l'enregistrement
-            $deleteQuery = "DELETE FROM ENTREPRISES WHERE Id_entreprise = ?";
-            $stmtDelete = $conn->prepare($deleteQuery);
-            $stmtDelete->execute([$id_user]);
-            return "L'utilisateur entreprise avec l'ID $id_user a été supprimé.";
-        }
-
-        // Si l'utilisateur n'est trouvé dans aucune des deux tables
-        return "L'utilisateur avec l'ID $id_user n'est ni un médecin ni une entreprise.";
-    } catch (PDOException $e) {
-        return "Erreur : " . $e->getMessage();
-    } finally {
-        // Fermer la connexion
-        Fermer_base($conn);
-    }
-}
-
 
 
 function recherche_EC($liste_EC, $recherche, $filtres) { 
@@ -380,6 +315,7 @@ function recherche_EC($liste_EC, $recherche, $filtres) {
         // Affichage des résultats
         if (!empty($results)) {
             foreach ($results as $essai) {
+                echo '<button name="essai_indi" value="' . htmlspecialchars($essai['Id_essai']) . '" type="submit" class="search-button">';
                 echo '<ul class="trials">';
                 echo '<li class="trial_title">' . htmlspecialchars($essai['Titre']) . '</li>';
                 echo '<li class="trial_company">' . htmlspecialchars($essai['Nom_Entreprise']) . '</li>';
@@ -391,7 +327,7 @@ function recherche_EC($liste_EC, $recherche, $filtres) {
                 } else {
                     echo '<li><strong>Médecin associé :</strong> Aucun médecin assigné</li>';
                 }
-                echo '</ul>';
+                echo '</ul> </button>';
             }
         } else {
             echo '<p>Aucun essai ne correspond à votre recherche.</p>';
@@ -424,73 +360,6 @@ function enterprise_filter($liste_EC) {
         echo '<option value="' . $enterpriseName . '">' . $enterpriseName . '</option>';
     }
 }
-
-//-------------------------------------- Notifications --------------------------------------//
-// Fonction pour afficher un message d'erreur
-function ErrorEditor($errorCode, $modal='false'){
-    //if $_SESSION['ErrorCode'] is set, it will display the corresponding error message
-    $ScriptError= [
-        1 => "qsjk", 
-        2=> "Erreur lors de la récupération des informations",
-        3=> "L'email saisi ne correspond à aucun compte. Veuillez le vérifier et réessayer.",
-        4=> "Votre compte n'a pas encore été validé par un administrateur. Veuillez réessayer ultérieurement.",
-        5=> "Le mot de passe saisi est incorrect. Veuillez réessayer.",
-        6=> "Cet email est déjà utilisé. Veuillez en choisir un autre ou vous connecter.",
-        7=> "Erreur lors de la protection du mot de passe.",
-        8=> "Erreur lors de l'ajout de l'utilisateur.",
-    ];
-
-    // Check if the error code exists in the array
-    $errorMessage = isset($ScriptError[$errorCode]) ? $ScriptError[$errorCode] : "Erreur inconnue.";
-
-
-    //If the error code is display on another modal 
-    if ($modal == 'true') {
-        echo'<p class="error-message">' . htmlspecialchars($errorMessage). '</p>'; 
-    }
-    else {
-    //Display the modal with the message
-    echo '
-    <div id="modal" class="modal" style="display: flex; text-align: center;">
-        <div class="modal-content">
-        <p class="error-message">' . htmlspecialchars($errorMessage) . '</p>
-            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
-        </div>
-    </div>';
-    }
-}
-
-// Fonction pour afficher un message de succès
-function SuccesEditor($SuccessCode){
-    $ScriptSucces= [
-        1=> 'Votre inscription a bien été enregistrée.',
-        2=> 'Bienvenue ' . $_SESSION['Nom'] .'. Ravi de vous revoir !',
-        3=> 'Votre déconnexion a bien été prise en compte.',
-        4=> 'Votre candidature a bien été enregistrée. Vous recevrez une notification dès qu\'elle sera traitée.',
-        5=> 'Les modifications ont bien été enregistrées.'
-    ];
-
-
-    $CommSucces = [
-        1 => 'Si votre inscription concerne un compte Médecin ou Entreprise,votre demande est soumise à la validation d\' administateur. </p>' . 
-        '<p> Si vous vous êtes inscrit en tant que Patient,vous pouvez déjà vous connecter pour candidater à l\'un de nos essais cliniques !', 
-
-        3=> 'Au plaisir de vous revoir.'
-    ];
-
-    $SuccesMessage = isset($ScriptSucces[$SuccessCode]) ? $ScriptSucces[$SuccessCode] :'Succès inconnu.';
-    $Commentaire = isset($CommSucces[$SuccessCode]) ? $CommSucces[$SuccessCode] : '';
-
-    // Affiche le modal avec le message
-    echo '
-    <div id="modal" class="modal" style="display: flex; text-align: center;">
-        <div class="modal-content">
-            <p class="validation-message">' . htmlspecialchars($SuccesMessage) . '</p>
-            <p> '. ($Commentaire). '</p>
-            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
-        </div>
-    </div>';}
-
 
 function get_company(int $id_company): array {
     $conn = Connexion_base();
@@ -600,4 +469,225 @@ function display_patient_medecin($patient){
     echo '</ul>';  
 }
 
-?>
+function tablename($id_user) {
+    $conn = Connexion_base();
+
+    $sql = "
+        SELECT 'PATIENTS' AS TableName FROM PATIENTS WHERE Id_patient = ?
+        UNION ALL
+        SELECT 'MEDECINS' AS TableName FROM MEDECINS WHERE Id_medecin = ?
+        UNION ALL
+        SELECT 'ENTREPRISES' AS TableName FROM ENTREPRISES WHERE Id_entreprise = ?
+    ";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(1, $id_user, PDO::PARAM_INT);
+    $stmt->bindParam(2, $id_user, PDO::PARAM_INT);
+    $stmt->bindParam(3, $id_user, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Analyse des résultats
+    if ($result) {
+        return $result['TableName'];
+    } else {
+        echo "Id_user $id_user n'existe dans aucune table liée.";
+    }
+}
+
+
+function Verif_inscription($id_user) {
+    // Définitions des correspondances
+    $tableau = [
+        'MEDECINS' => 'Statut_inscription',
+        'ENTREPRISES' => 'Verif_inscription'
+    ];
+    $id_table = [
+        'MEDECINS' => 'Id_medecin',
+        'ENTREPRISES' => 'Id_entreprise'
+    ];
+    
+    // Récupération du nom de la table
+    $tablename = tablename($id_user);
+    
+    // Vérification si la table est valide
+    if (!isset($tableau[$tablename]) || !isset($id_table[$tablename])) {
+        throw new Exception("Nom de table ou colonne invalide.");
+    }
+    
+    $id_name = $id_table[$tablename];
+    $column = $tableau[$tablename];
+
+    // Connexion à la base de données
+    $conn = Connexion_base();
+
+    // Construction sécurisée de la requête SQL
+    $sql = "SELECT $column FROM $tablename WHERE $id_name = :id_user";
+
+    // Préparation de la requête
+    $stmt = $conn->prepare($sql);
+
+    // Liage de la variable :id_user
+    $stmt->bindParam(':id_user', $id_user, PDO::PARAM_INT);
+
+    // Exécution de la requête
+    try {
+        $stmt->execute();
+    } catch (PDOException $e) {
+        // Gérer les exceptions
+        throw new Exception("Erreur lors de l'exécution de la requête : " . $e->getMessage());
+    }
+
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $result[$column];
+}
+
+//entreprise en fonction essai
+//liste des medecins actifs d'un essai
+//statut d'un patient dans un essai
+
+function company_trial ($id_essai) {
+    $conn = Connexion_base();
+
+    $sql = "
+        SELECT Id_entreprise
+        FROM ESSAIS_CLINIQUES
+        WHERE ESSAIS_CLINIQUES.Id_essai = :Id_essai;
+    "; 
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_essai', $id_essai, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Analyse des résultats
+    if ($result) {
+        return $result['TableName'];
+    } else {
+        echo "Id_user $id_essai n'existe dans aucune table liée.";
+    }
+}
+
+
+function get_medecin_trial(int $id_medecin, $id_essai): array {
+    $conn = Connexion_base();
+
+    try {
+        $sql = "
+            SELECT Id_medecin
+            FROM MEDECINS_ESSAIS
+            WHERE MEDECINS_ESSAIS.Id_essai = :Id_essai;
+        "; 
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_essai', $id_essai, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    // Récupérer les résultats
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return [];
+    
+    } finally {
+    // Fermer la connexion
+    Fermer_base($conn);
+    }
+}
+
+function verif_entreprise($Id_essai, $Id_entreprise) {
+    $conn = Connexion_base();
+
+    try {
+        $sql = "
+            SELECT EXISTS (
+                SELECT 1
+                FROM ESSAIS_CLINIQUES
+                WHERE Id_entreprise = :Id_entreprise
+                AND Id_essai = :Id_essai
+            ) AS EssaiTrouve;
+        "; 
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':Id_entreprise', $Id_entreprise, PDO::PARAM_INT);
+        $stmt->bindParam(':Id_essai', $Id_essai, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        // Récupérer le résultat de la requête
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Si l'essai est trouvé, retourne true, sinon false
+        return (bool)$result['EssaiTrouve'];
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return false;
+    } finally {
+        // Fermer la connexion
+        Fermer_base($conn);
+    }
+}
+
+//-------------------------------------- Notifications --------------------------------------//
+// Fonction pour afficher un message d'erreur
+function ErrorEditor($errorCode, $modal='false'){
+    //if $_SESSION['ErrorCode'] is set, it will display the corresponding error message
+    $ScriptError= [
+        1 => "qsjk", 
+        2=> "Erreur lors de la récupération des informations",
+        3=> "L'email saisi ne correspond à aucun compte. Veuillez le vérifier et réessayer.",
+        4=> "Votre compte n'a pas encore été validé par un administrateur. Veuillez réessayer ultérieurement.",
+        5=> "Le mot de passe saisi est incorrect. Veuillez réessayer.",
+        6=> "Cet email est déjà utilisé. Veuillez en choisir un autre ou vous connecter.",
+        7=> "Erreur lors de la protection du mot de passe.",
+        8=> "Erreur lors de l'ajout de l'utilisateur.",
+    ];
+
+    // Check if the error code exists in the array
+    $errorMessage = isset($ScriptError[$errorCode]) ? $ScriptError[$errorCode] : "Erreur inconnue.";
+
+
+    //If the error code is display on another modal 
+    if ($modal == 'true') {
+        echo'<p class="error-message">' . htmlspecialchars($errorMessage). '</p>'; 
+    }
+    else {
+    //Display the modal with the message
+    echo '
+    <div id="modal" class="modal" style="display: flex; text-align: center;">
+        <div class="modal-content">
+        <p class="error-message">' . htmlspecialchars($errorMessage) . '</p>
+            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
+        </div>
+    </div>';
+    }
+}
+
+// Fonction pour afficher un message de succès
+function SuccesEditor($SuccessCode){
+    $ScriptSucces= [
+        1=> 'Votre inscription a bien été enregistrée.',
+        2=> 'Bienvenue ' . $_SESSION['Nom'] .'. Ravi de vous revoir !',
+        3=> 'Votre déconnexion a bien été prise en compte.',
+        4=> 'Votre candidature a bien été enregistrée. Vous recevrez une notification dès qu\'elle sera traitée.'
+    ];
+
+
+    $CommSucces = [
+        1 => 'Si votre inscription concerne un compte Médecin ou Entreprise,votre demande est soumise à la validation d\' administateur. </p>' . 
+        '<p> Si vous vous êtes inscrit en tant que Patient,vous pouvez déjà vous connecter pour candidater à l\'un de nos essais cliniques !', 
+
+        3=> 'Au plaisir de vous revoir.'
+    ];
+
+    $SuccesMessage = isset($ScriptSucces[$SuccessCode]) ? $ScriptSucces[$SuccessCode] :'Succès inconnu.';
+    $Commentaire = isset($CommSucces[$SuccessCode]) ? $CommSucces[$SuccessCode] : '';
+
+    // Affiche le modal avec le message
+    echo '
+    <div id="modal" class="modal" style="display: flex; text-align: center;">
+        <div class="modal-content">
+            <p class="validation-message">' . htmlspecialchars($SuccesMessage) . '</p>
+            <p> '. ($Commentaire). '</p>
+            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
+        </div>
+    </div>';}
+

@@ -4,8 +4,8 @@ include("../Fonctions.php");
 include_once '../Notifications/fonction_notif.php';
 $conn = Connexion_base();
 
-// Vérification du rôle de l'utilisateur
 session_start();
+$_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 if ($_SESSION['role'] !== 'Admin') {
     header('Location: ../Connexion/Form1_connexion.php#modal'); // Redirection si non Admin
     exit;
@@ -77,7 +77,7 @@ $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href='Admin.css'>
 </head>
 <body>
-        <!-- Code de la barre de navigation -->
+    <!-- Code de la barre de navigation -->
     <div class="navbar">
         <div id="logo">
             <a href="../Homepage.php">
@@ -95,9 +95,15 @@ $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Liste_medecins.php#messagerie">
+            <a href= "<?= $_SESSION['origin'] ?>#messagerie">
                 <img src="../Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
+            <!-- Affichage de la pastille -->
+            <?php 
+            $showBadge = Pastille_nombre($_SESSION['Id_user']);
+            if ($showBadge > 0): ?>
+                <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
@@ -119,8 +125,8 @@ $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
-                ?>
-                <a href="#">Mon Profil</a>
+                if ($_SESSION["role"]!=='Admin'&& $_SESSION['Logged_user'] === true)
+                {echo "<a href='../Page_Mes_Infos/Menu_Mes_Infos.php'>Mon Profil</a>";} ?>
                 <a href="../Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->
@@ -151,81 +157,80 @@ $validations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
             <!-- Lien de fermeture qui redirige vers Home_Admin.php -->
-            <a href="Liste_medecins.php" class="close-btn">&times;</a>
+            <a href="<?= $_SESSION['origin'] ?>" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>
         </div>
     </div>
 
-    <!-- Contenu de la page -->
-<div class="content">
-<div class="table-list">
-    <h1>Utilisateurs en attente de validation</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nom</th>
-                <th>Détails</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($validations as $validation): ?>
+    <!-- Contenu Principal-->
+    <div class="content">
+    <div class="table-list">
+        <h1>Utilisateurs en attente de validation</h1>
+        <table>
+            <thead>
                 <tr>
-                    <td>
-                        <?php
-                            // Affichage de l'ID utilisateur selon le rôle
-                            if ($validation['Role'] == 'Medecin') {
-                                echo htmlspecialchars($validation['Id_medecin']);
-                            } elseif ($validation['Role'] == 'Entreprise') {
-                                echo htmlspecialchars($validation['Id_entreprise']);
-                            }
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                            // Affichage du nom et prénom ou de l'entreprise selon le rôle
-                            if ($validation['Role'] == 'Medecin') {
-                                echo htmlspecialchars($validation['Nom_medecin']) . ' ' . htmlspecialchars($validation['Prenom']);
-                            } elseif ($validation['Role'] == 'Entreprise') {
-                                echo htmlspecialchars($validation['Nom_entreprise']);
-                            }
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                            // Affichage des détails en fonction du rôle
-                            if ($validation['Role'] == 'Medecin') {
-                                echo "Spécialité: " . htmlspecialchars($validation['Specialite']) . "<br>Matricule: " . htmlspecialchars($validation['Matricule']);
-                            } elseif ($validation['Role'] == 'Entreprise') {
-                                echo "Siret: " . htmlspecialchars($validation['Siret']);
-                            }
-                            echo "<br>Téléphone: " . htmlspecialchars($validation['Telephone']);
-                        ?>
-                    </td>
-                    <td>
-                        <?php if ($validation['Verification'] == 0): ?>
-                            <form action="Validation_en_attente.php" method="POST" style="display:inline;">
-                                <input type="hidden" name="userId" value="<?php echo $validation['Id_user']; ?>">
-                                <input type="hidden" name="role" value="<?php echo $validation['Role']; ?>">
-                                <button type="submit" name="validate" class="validate-btn">Valider</button>
-                            </form>
-                            <form action="Validation_en_attente.php" method="POST" style="display:inline;">
-                                <input type="hidden" name="userId" value="<?php echo $validation['Id_user']; ?>">
-                                <input type="hidden" name="role" value="<?php echo $validation['Role']; ?>">
-                                <button type="submit" name="reject" class="reject-btn">Refuser</button>
-                            </form>
-                        <?php else: ?>
-                            <span>Déjà validé</span>
-                        <?php endif; ?>
-                    </td>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Détails</th>
+                    <th>Action</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-
+            </thead>
+            <tbody>
+                <?php foreach ($validations as $validation): ?>
+                    <tr>
+                        <td>
+                            <?php
+                                // Affichage de l'ID utilisateur selon le rôle
+                                if ($validation['Role'] == 'Medecin') {
+                                    echo htmlspecialchars($validation['Id_medecin']);
+                                } elseif ($validation['Role'] == 'Entreprise') {
+                                    echo htmlspecialchars($validation['Id_entreprise']);
+                                }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                                // Affichage du nom et prénom ou de l'entreprise selon le rôle
+                                if ($validation['Role'] == 'Medecin') {
+                                    echo htmlspecialchars($validation['Nom_medecin']) . ' ' . htmlspecialchars($validation['Prenom']);
+                                } elseif ($validation['Role'] == 'Entreprise') {
+                                    echo htmlspecialchars($validation['Nom_entreprise']);
+                                }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                                // Affichage des détails en fonction du rôle
+                                if ($validation['Role'] == 'Medecin') {
+                                    echo "Spécialité: " . htmlspecialchars($validation['Specialite']) . "<br>Matricule: " . htmlspecialchars($validation['Matricule']);
+                                } elseif ($validation['Role'] == 'Entreprise') {
+                                    echo "Siret: " . htmlspecialchars($validation['Siret']);
+                                }
+                                echo "<br>Téléphone: " . htmlspecialchars($validation['Telephone']);
+                            ?>
+                        </td>
+                        <td>
+                            <?php if ($validation['Verification'] == 0): ?>
+                                <form action="Validation_en_attente.php" method="POST" style="display:inline;">
+                                    <input type="hidden" name="userId" value="<?php echo $validation['Id_user']; ?>">
+                                    <input type="hidden" name="role" value="<?php echo $validation['Role']; ?>">
+                                    <button type="submit" name="validate" class="validate-btn">Valider</button>
+                                </form>
+                                <form action="Validation_en_attente.php" method="POST" style="display:inline;">
+                                    <input type="hidden" name="userId" value="<?php echo $validation['Id_user']; ?>">
+                                    <input type="hidden" name="role" value="<?php echo $validation['Role']; ?>">
+                                    <button type="submit" name="reject" class="reject-btn">Refuser</button>
+                                </form>
+                            <?php else: ?>
+                                <span>Déjà validé</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     <!-- Bouton revenir à la page d'accueil -->
     <a href="Home_Admin.php" class="back-btn">Revenir à la page d'accueil</a>
 </div>

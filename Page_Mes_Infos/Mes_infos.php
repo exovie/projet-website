@@ -1,16 +1,16 @@
 <?php
 session_start();
+$_SESSION['origin'] = $_SERVER['REQUEST_URI'];
 include '../Fonctions.php';
 include_once '../Notifications/fonction_notif.php';
 include 'Fonction_Mes_infos.php';
 
-$id_user =$_SESSION['Id_user'];
+$Id_user =$_SESSION['Id_user'];
 $role= $_SESSION['role'];
+$conn = Connexion_base();
 
 // Récupération des informations de l'utilisateur
-$userInfo = getUserInfo($conn, $id_user);
-
-
+$userInfo = getUserInfo($conn, $Id_user);
 ?>
 
 
@@ -56,7 +56,7 @@ $userInfo = getUserInfo($conn, $id_user);
 </head>
 <body>
     <!-- Code de la barre de navigation -->
-    <div class="navbar">
+<div class="navbar">
         <div id="logo">
             <a href="../Homepage.php">
                 <img src="../Pictures/logo.png" alt="minilogo" class="minilogo">
@@ -67,15 +67,21 @@ $userInfo = getUserInfo($conn, $id_user);
 
         <!-- Accès à la page de Gestion -->
         <?php if ($_SESSION['role'] == 'Admin'): ?>
-            <a href="Home_Admin.php" class="nav-btn">Gestion</a>
+            <a href="../Admin/Home_Admin.php" class="nav-btn">Gestion</a>
         <?php endif; ?>
 
         <!-- Accès à la messagerie -->
         <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
         <div class="dropdown">
-            <a href="Home_Admin.php#messagerie">
+            <a href= "<?= $_SESSION['origin'] ?>#messagerie">
                 <img src="../Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
+            <!-- Affichage de la pastille -->
+            <?php 
+            $showBadge = Pastille_nombre($_SESSION['Id_user']);
+            if ($showBadge > 0): ?>
+                <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
@@ -97,8 +103,8 @@ $userInfo = getUserInfo($conn, $id_user);
                 } else{
                     echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
                 }
-                ?>
-                <a href="#">Mon Profil</a>
+                if ($_SESSION["role"]!=='Admin'&& $_SESSION['Logged_user'] === true)
+                {echo "<a href='Menu_Mes_Infos.php'>Mon Profil</a>";} ?>
                 <a href="../Deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <!-- Options pour les utilisateurs non connectés -->
@@ -129,7 +135,7 @@ $userInfo = getUserInfo($conn, $id_user);
     <div id="messagerie" class="messagerie">
         <div class="messagerie-content">
             <!-- Lien de fermeture qui redirige vers Home_Admin.php -->
-            <a href="Home_Admin.php" class="close-btn">&times;</a>
+            <a href="<?= $_SESSION['origin'] ?>" class="close-btn">&times;</a>
             <h1>Centre de notifications</h1>
             <!-- Contenu de la messagerie -->
             <?php Affiche_notif($_SESSION['Id_user'])?>
@@ -138,12 +144,13 @@ $userInfo = getUserInfo($conn, $id_user);
 
     <?php
     // Récupérer le rôle de l'utilisateur
-$sql= $conn -> prepare("SELECT Role FROM USERS WHERE Id_user= :id_user");
-$sql->execute(['id_user' => $id_user]);
-$result=$sql->fetch(PDO::FETCH_ASSOC);
-$role=$result['Role'];
+    $sql= $conn -> prepare("SELECT Role FROM USERS WHERE Id_user= :id_user");
+    $sql->execute(['id_user' => $id_user]);
+    $result=$sql->fetch(PDO::FETCH_ASSOC);
+    $role=$result['Role'];
 
     ?>
+    <div class="content"> 
     <h1>Profil utilisateur</h1>
     
 
@@ -189,6 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 }
 ?>
- <button onclick="window.location.href='Menu_Mes_Infos.php';">Retour à la page précédente</button>
+<button onclick="window.location.href='Menu_Mes_Infos.php';">Retour à la page précédente</button>
+</div>
 </body>
 </html>
