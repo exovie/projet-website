@@ -1,6 +1,6 @@
 <?php
 session_start();
-$_SESSION['origin'] = 'Essais.php';
+$_SESSION['origin'] = 'Essais_cliniques';
 $role = $_SESSION['role'];
 $db_name = $_SESSION['db_name'];
 include 'Fonctions.php';
@@ -97,7 +97,6 @@ $list_essai = Get_essais($role);
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['essai_indi'])) {
                 header("Location: Essai_individuel.php");
             }
-
             ?>
             </form>
           </div>
