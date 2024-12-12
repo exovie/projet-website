@@ -136,61 +136,66 @@ $_SESSION['origin'] = 'Essai_individuel.php';
        <?php Afficher_Essai($Id_essai); ?>
         </div> 
         <div class="frame">
-        <?php   
+        <?php 
+
         echo '<form method="POST" action="hub.php">';
         if($role == 'Patient'){
                     if (Verif_Patient_Cet_Essai($Id_essai, $Id_user)){ //si ce patient est dans cet essai
                         echo '<button name = "action" value="se retirer patient" class="nav-btn_essai">Se retirer de cet essai</button>';
                    }
 
-                    
-                        $Statut_patient = Get_Statut_Patient($Id_essai, $Id_user);
-                         if(!Verif_Participation_Patient($Id_user)&& $Statut_essai == 'Recrutement' && $Statut_patient == null ){ 
-                            //si ce patient n'est pas dans cet essai et que l'essai est en recrutement
-                    echo '<button name = "action" value="participer patient" class="nav-btn_essai">Postuler à cet essai</button>';
-                    }
-                        if($Statut_patient == 'En attente'){
-                            echo '<p>Candidature en étude</p>';
-                        
                 
+                    $Statut_patient = Get_Statut_Patient($Id_essai, $Id_user);
+                        if(!Verif_Participation_Patient($Id_user)&& $Statut_essai == 'Recrutement' && $Statut_patient == null ){ 
+                        //si ce patient n'est pas dans cet essai et que l'essai est en recrutement
+                echo '<button name = "action" value="participer patient" type="submit" class="nav-btn_essai">Postuler à cet essai</button>';
                 }
-                }
+                    if($Statut_patient == 'En attente'){
+                        echo '<p>Candidature en étude</p>';
+                    
+            
+            }
+            }
 
-                if($role == 'medecin'){
-                    if(Verif_Participation_Medecin($Id_user, $Id_essai)){ // Si ce médecin s'occupe ou s'est occupé de cet essai
-                        echo '<div class="side-buttons_candidature">';
-                        echo '<button name = "action" value="se retirer medecin" class="nav-btn_essai">Se retirer de cet essai</button>';
-                        echo '</div>';
-                        echo'<div class="side-buttons__statistique">
-                        <a href="Homepage.php" class="nav-btn">Afficher les Stastistiques</a>
-                        </div>';
-                        //fonctionne mais nécessite surement actualisation
-                        Afficher_Patients($Id_essai, 'Actif');
-                        Afficher_Patients($Id_essai, 'En attente');
-                        
-                    } else { 
-                        // Si ce médecin ne s'occupe pas de cet essai
-                        $Statut_medecin = Get_Statut_Medecin($Id_essai, $Id_user);
-                        if($Statut_medecin == 'Sollicite'){
-                            echo '<div class="side-buttons_candidature">';
-                            echo '<p><strong>L\'entreprise souhaite vous solliciter sur cet essai, voulez-vous accepter ou refuser ?</strong></p>';
-                            echo '<button name = "action" value="accepter" class="nav-btn_essai_candidature">Accepter</button>';                                         
-                            echo '<button name = "action" value="refuser" class="nav-btn_essai_candidature">Refuser</button>';   
-                            //fonctionne mais nécessite actualisation                 
-                            echo '</div>';
-                        } 
-                        if($Statut_medecin == 'En attente'){
-                            //le medecin a demandé a participé à l'essai et attend la réponse
-                            //affichage erreur double clé
-                            echo '<p>Candidature en étude</p>';
-                        }
-                        elseif ($Statut_essai != 'Termine' && $Statut_medecin == null ) {
-                            echo '<div class="side-buttons_candidature">';
-                            echo '<button name = "action" value="participer medecin" class="nav-btn_essai">Postuler à cet essai</button></div>';
-                        } 
-                    }
-
+        if($role == 'Medecin'){
+            echo $role;
+            if(Verif_Participation_Medecin($Id_user, $Id_essai)){ // Si ce médecin s'occupe ou s'est occupé de cet essai
+                echo '<div class="side-buttons_candidature">';
+                echo '<button name = "action" value="se retirer medecin" type="submit" class="nav-btn_essai">Se retirer de cet essai</button>';
+                echo '</div>';
+                echo'<div class="side-buttons__statistique">
+                <a href="Homepage.php" type="submit" class="nav-btn">Afficher les Stastistiques</a>
+                </div>';
+                //fonctionne mais nécessite surement actualisation
+                $Statut_medecin = Get_Statut_Medecin($Id_essai, $Id_user);
+                if ($Statut_medecin === 'Actif') {
+                Afficher_Patients($Id_essai, 'Actif');
+                Afficher_Patients($Id_essai, 'En attente');
                 }
+                
+            } else { 
+                // Si ce médecin ne s'occupe pas de cet essai
+                $Statut_medecin = Get_Statut_Medecin($Id_essai, $Id_user);
+                if($Statut_medecin == 'Sollicite'){
+                    echo '<div class="side-buttons_candidature">';
+                    echo '<p><strong>L\'entreprise souhaite vous solliciter sur cet essai, voulez-vous accepter ou refuser ?</strong></p>';
+                    echo '<button name = "action" value="accepter" type="submit" class="nav-btn_essai_candidature">Accepter</button>';                                         
+                    echo '<button name = "action" value="refuser" type="submit" class="nav-btn_essai_candidature">Refuser</button>';   
+                    //fonctionne mais nécessite actualisation                 
+                    echo '</div>';
+                } 
+                if($Statut_medecin == 'En attente'){
+                    //le medecin a demandé a participé à l'essai et attend la réponse
+                    //affichage erreur double clé
+                    echo '<p>Candidature en étude</p>';
+                }
+                elseif ($Statut_essai != 'Termine' && $Statut_medecin == null ) {
+                    echo '<div class="side-buttons_candidature">';
+                    echo '<button name = "action" value="participer medecin" type="submit" class="nav-btn_essai">Postuler à cet essai</button></div>';
+                } 
+            }
+
+        }
 
             if ($role == 'Admin'){
                 //semble appeler postuler_medecin??
@@ -203,10 +208,10 @@ $_SESSION['origin'] = 'Essai_individuel.php';
                 Afficher_Medecins($Id_essai,'En attente', $Id_user, $role);
                 if($Statut_essai =='En cours'){
                     echo '<div class="side-buttons_candidature">';
-                    echo '<button name = "action" value="suspendre essai" class="nav-btn_essai">Suspendre cet essai</button></div>';}
+                    echo '<button name = "action" value="suspendre essai" type="submit" class="nav-btn_essai">Suspendre cet essai</button></div>';}
                 if($Statut_essai == 'Suspendu'){
                     echo '<div class="side-buttons_candidature">';
-                    echo '<button name = "action" value="relancer essai" class="nav-btn_essai">Relancer cet essai</button></div>';}
+                    echo '<button name = "action" value="relancer essai" type="submit" class="nav-btn_essai">Relancer cet essai</button></div>';}
                 }
                
                 //modifier l'essai?
@@ -224,16 +229,40 @@ $_SESSION['origin'] = 'Essai_individuel.php';
                     Afficher_Medecins($Id_essai,'En attente', $Id_user, $role);
                      if($Statut_essai == 'En cours'){
                         echo '<div class="side-buttons_candidature">';
-                        echo '<button name = "action" value="suspendre essai" class="nav-btn_essai">Suspendre cet essai</button></div>';}
+                        echo '<button name = "action" value="suspendre essai" type="submit" class="nav-btn_essai">Suspendre cet essai</button></div>';}
                      if($Statut_essai == 'Suspendu'){
                          echo '<div class="side-buttons_candidature">';
-                        echo '<button name = "action" value="relancer essai" class="nav-btn_essai">Relancer cet essai</button></div>';}
+                        echo '<button name = "action" value="relancer essai" type="submit" class="nav-btn_essai">Relancer cet essai</button></div>';}
+                    if (isset($postdata['liste_medecins'])) {
+                        $id_medecins = Get_id('MEDECINS', 'Id_medecin');
+                        $medecins = [];
+                            if (!empty($id_medecins)) { // Vérifie que le tableau n'est pas vide
+                                foreach ($id_medecins as $id_medecin) {
+                                    $medecins[] = List_Medecin($id_medecin);   
+                                }
+                                affichage_request_medecin($Id_essai, $medecins);       
+                            } else {
+                                // Gérer le cas où il n'y a pas de médecins à afficher
+                                echo "Aucun médecin trouvé.";
+                            }
+                        if (isset($postdata['demande_medecin'])) {
+                            list($Id_essai, $Id_medecin) = explode('_', $postdata['demande_medecin']);
+                            Demander_Medecin_essai($Id_essai, $Id_medecin);
+                        }
+                    }
+                    } else {
+                        echo '
+                        <form method="POST" action="hub.php">
+                            <button name="liste_medecins" value=' . $Id_essai . ' type="submit" class="search-button">Voir la liste des médecins</button>
+                        </form>
+                        ';
+                    }
            
                     //si le recrutement a commencé: afficher les statistiques
                     //demander un médecin
                     //modifier l'essai si le recrutement n'a pas débuté
                
-       }}
+       }
        echo '</form>';
       
        
@@ -241,18 +270,15 @@ $_SESSION['origin'] = 'Essai_individuel.php';
 ?>
 
 <?php
+$Id_entreprise_verif = Get_Entreprise($Id_essai);
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 }
 if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'medecins' est réellement présent dans $_POST
     $postdata = $_SESSION['postdata']; 
     unset($_SESSION['postdata']);
+    if (isset($postdata['action'])) {
 
-    if ($postdata['action'] === 'accepter') {
-        Traiter_Candidature_Medecin($Id_essai, $Id_user, 1);
-    } elseif ($postdata['action'] === 'refuser') {
-        Traiter_Candidature_Medecin($Id_essai, $Id_user, 0);
-    }
     if ($postdata['action'] === 'se retirer patient'){
         Retirer_Patient_Essai($Id_essai, $Id_user);
     }
@@ -271,8 +297,50 @@ if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'med
     if ($postdata['action'] === 'relancer essai'){
         Relancer_Essai($Id_essai);
     }
-    
-    if (isset($postdata['medecins'])) {
+}
+
+if (isset($postdata['aller_vers_patient'])) {
+    //$_SESSION['id_patient_consult'] = $postdata['aller_vers_patient'];
+    header("Location: Essais.php");
+}
+
+if (isset($postdata['aller_vers_patient_sans_modif'])) {
+    $_SESSION['id_patient_consult'] = $postdata['aller_vers_patient'];
+    header("Location: patient_consult.php");
+    exit;
+}
+
+if (isset($postdata['retirer_medecin'])){
+    $id_medecin = $Id_user;
+    Retirer_Medecin_Essai($Id_essai, $id_medecin);
+}
+
+if (isset($postdata['accepter_medecin'])){
+    $id_medecin = $postdata['accepter_medecin'];
+    Traiter_Candidature_Medecin($Id_essai, $id_medecin, 1);
+}
+
+if (isset($postdata['refuser_medecin'])){
+    $id_medecin = $postdata['refuser_medecin'];
+    Traiter_Candidature_Medecin($Id_essai, $id_medecin, 0);
+}
+
+if (isset($postdata['accepter_patient'])) {
+    $id_patient = $postdata['accepter_patient'];
+    Traiter_Candidature_Patient($Id_essai, $id_patient,1);
+}
+
+if (isset($postdata['refuser_patient'])) {
+    $id_patient = $postdata['refuser_patient'];
+    Traiter_Candidature_Patient($Id_essai, $id_patient,0);
+}
+
+if (isset($postdata['retirer_patient'])) {
+    $id_patient = $postdata['retirer_patient'];
+    Retirer_Patient_Essai($Id_essai, $id_patient);
+}
+
+if (isset($postdata['liste_medecins'])) {
     $id_medecins = Get_id('MEDECINS', 'Id_medecin');
     $medecins = [];
         if (!empty($id_medecins)) { // Vérifie que le tableau n'est pas vide
@@ -289,10 +357,11 @@ if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'med
         Demander_Medecin_essai($Id_essai, $Id_medecin);
     }
 }
-} else {
+
+} elseif (($Id_entreprise_verif == $Id_user || $role === 'Admin')) {
     echo '
     <form method="POST" action="hub.php">
-        <button name="medecins" value=' . $Id_essai . ' type="submit" class="search-button">Voir la liste des médecins</button>
+        <button name="liste_medecins" value=' . $Id_essai . ' type="submit" class="search-button">Voir la liste des médecins</button>
     </form>
     ';
 }
@@ -300,5 +369,7 @@ if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'med
 
    </div>
 </main>
+<?php 
+?>
 </body>
 </html>

@@ -8,7 +8,7 @@ if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true) {
     $role= $_SESSION['role'];
 
 } else {
-    $_SESSION['role'] = 'visiteur';
+    $_SESSION['role'] = 'Visiteur';
 }
 $role = $_SESSION['role'];
 include_once 'Fonctions.php';
