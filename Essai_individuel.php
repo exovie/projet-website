@@ -209,16 +209,16 @@ $_SESSION['origin'] = 'Essai_individuel.php';
             if ($role == 'Entreprise'){
                 $Id_entreprise = Get_Entreprise($Id_essai);
                 if($Id_entreprise == $Id_user){ //si l'entrepise gère cet essai
-                   echo'<div class="side-buttons__statistique">
-                   <a href="Page_Essai_Individuel/Page_aff_stat.php" class="nav-btn">Afficher les Stastistiques</a>
-                   </div>';
+                    echo'<div class="side-buttons__statistique">
+                    <a href="Page_Essai_Individuel/Page_aff_stat.php" class="nav-btn">Afficher les Stastistiques</a>
+                    </div>';
                     Afficher_Medecins($Id_essai,'Actif', $Id_user, $role);
                     Afficher_Medecins($Id_essai,'En attente', $Id_user, $role);
-                     if($Statut_essai == 'En cours'){
+                        if($Statut_essai == 'En cours'){
                         echo '<div class="side-buttons_candidature">';
                         echo '<button name = "action" value="suspendre essai" type="submit" class="nav-btn_essai">Suspendre cet essai</button></div>';}
-                     if($Statut_essai == 'Suspendu'){
-                         echo '<div class="side-buttons_candidature">';
+                        if($Statut_essai == 'Suspendu'){
+                            echo '<div class="side-buttons_candidature">';
                         echo '<button name = "action" value="relancer essai" type="submit" class="nav-btn_essai">Relancer cet essai</button></div>';}
                     if (isset($postdata['liste_medecins'])) {
                         $id_medecins = Get_id('MEDECINS', 'Id_medecin');
@@ -237,12 +237,6 @@ $_SESSION['origin'] = 'Essai_individuel.php';
                             Demander_Medecin_essai($Id_essai, $Id_medecin);
                         }
                     }
-                    } else {
-                        echo '
-                        <form method="POST" action="hub.php">
-                            <button name="liste_medecins" value=' . $Id_essai . ' type="submit" class="search-button">Voir la liste des médecins</button>
-                        </form>
-                        ';
                     }
            
                     //si le recrutement a commencé: afficher les statistiques
