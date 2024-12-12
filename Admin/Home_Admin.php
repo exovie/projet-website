@@ -7,7 +7,12 @@ if ($_SESSION['role'] !== 'Admin') {
     header('Location: ../Connexion/Form1_connexion.php#modal'); // Redirection si non Admin
     exit;
 }
-include("../Fonctions.php");
+
+// Ajout pour éviter le rendu HTML lors des tests
+if (defined('TEST_MODE') && TEST_MODE === true) {
+    return;
+}
+
 include_once '../Notifications/fonction_notif.php';
 ?>
 
