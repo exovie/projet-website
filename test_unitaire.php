@@ -916,9 +916,281 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
                 $manual_verification = "Création de l'essai",
                 ($manual_verification == $manual_verification),
             );
-
             ?>
-</body>       
+        </tbody>
+    </table>
+</body>  
+<body>
+<h2>Tests des Fonctions ESSSAIS INDIVIDUELS</h2>
+<table>
+<thead>
+    <tr>
+        <th>Fonction</th>
+        <th>Résultat Attendu</th>
+        <th>Résultat Obtenu</th>
+        <th>Commentaire</th>
+    </tr>
+</thead>
+<tbody>
+    <?php
+    include_once 'Fonctions_essai.php';
+
+    //création d'utilisateurs propre aux tests de roles différents pour éviter les conflits avec notre base de donnée
+    //Valider les users créés pour les utiliser par la suite 
+
+    foreach ($userCreated as $user){
+        $requete= $pdo -> prepare("SELECT Role FROM USERS WHERE Id_user = ?");
+        $requete -> execute(array($user));
+        $tableau = $requete->fetch();
+        $role_cree = $tableau['Role'];
+    // Mettre à jour la base de données en fonction du rôle
+         if ($role_cree == 'Medecin') {
+          $query = "UPDATE MEDECINS SET Statut_inscription = 1 WHERE Id_medecin = :userId";
+         } elseif ($role_cree == 'Entreprise') {
+            $query = "UPDATE ENTREPRISES SET Verif_inscription = 1 WHERE Id_entreprise = :userId";
+         }else {break;}
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+    $stmt->execute();}
+
+
+    $Id_entreprise = Get_Entreprise(5);
+    addTestResult( "Get_Entreprise(existe) ", "L'identifiant de l'entreprise est 8", 
+    is_integer($Id_entreprise) ? "L'identifiant de l'entreprise est $Id_entreprise" : "Erreur base de donnée, 
+    l'essai n'existe peutêtre pas: ",   is_integer($Id_entreprise) == True  );
+
+    $Id_entreprise = Get_Entreprise(13);
+    addTestResult( "Get_Entreprise(n'existe pas) ", "L'identifiant de l'entreprise est 8", 
+    is_integer($Id_entreprise) ? "L'identifiant de l'entreprise est $Id_entreprise" : "Erreur base de donnée, 
+    l'essai n'existe peut être pas ",   is_integer($Id_entreprise) == False  );
+
+    $Statut_patient = Get_Statut_Patient(10,26);
+    addTestResult( "Get_Statut_Patient(existe et est dans l'essai) ", "Le statut du patient est 'Termine'", 
+    ($Statut_patient=='Termine') ? "Le statut du patient est $Statut_patient" : "Erreur base de donnée, 
+    la patient n'existe pas ou existe mais n'est pas cet essai",   ($Statut_patient=='Termine') == True );
+
+    $Statut_patient = Get_Statut_Patient(10,27);
+    addTestResult( "Get_Statut_Patient(existe mais n'est pas dans l'essai) ", "Le statut du patient est 'Termine'", 
+    ($Statut_patient=='Termine') ? "Le statut du patient est $Statut_patient" : "Erreur base de donnée, 
+    la patient n'existe pas ou existe mais n'est pas cet essai",   ($Statut_patient=='Termine') == False );
+
+    $Statut_patient = Get_Statut_Patient(10,150);
+    addTestResult( "Get_Statut_Patient(n'existe pas) ", "Le statut du patient est 'Termine'", 
+    ($Statut_patient=='Termine') ? "Le statut du patient est $Statut_patient" : "Erreur base de donnée, 
+    la patient n'existe pas ou existe mais n'est pas cet essai",   ($Statut_patient=='Termine') == False );
+
+    $Statut_medecin = Get_Statut_Medecin(1, 18);
+    addTestResult( "Get_Statut_Medecin(existe et est dans cet essai) ", "Le statut du medecin est 'Termine'", 
+    ($Statut_medecin=='Termine') ? "Le statut du medecin est $Statut_medecin" : "Erreur base de donnée, 
+    le medecin n'existe pas ou existe mais n'est pas cet essai",  ($Statut_medecin=='Termine') == True );
+
+    $Statut_medecin = Get_Statut_Medecin(2, 18);
+    addTestResult( "Get_Statut_Medecin(existe mais n'est pas dans cet essai) ", "Le statut du medecin est 'Termine'", 
+    ($Statut_medecin=='Termine') ? "Le statut du medecin est $Statut_medecin" : "Erreur base de donnée, 
+    le medecin n'existe pas ou existe mais n'est pas cet essai",  ($Statut_medecin=='Termine') == False );
+
+    $Statut_medecin = Get_Statut_Medecin(1, 30);
+    addTestResult( "Get_Statut_Medecin(n'existe pas) ", "Le statut du medecin est 'Termine'", 
+    ($Statut_medecin=='Termine') ? "Le statut du medecin est $Statut_medecin" : "Erreur base de donnée, 
+    le medecin n'existe pas ou existe mais n'est pas cet essai",  ($Statut_medecin=='Termine') == False );
+
+
+
+
+    //$Statut_medecin_initial = Get_Statut_Medecin(7,20);
+    Demander_Medecin_essai(7,$id_Medecin);
+    $Statut_medecin = Get_Statut_Medecin(7,$id_Medecin);
+    //Retirer_Ligne_Medecin(7,20, $Statut_medecin_initial);
+    addTestResult( "Demander_Medecin_essai(le medecin n'est pas déjà dans l'essai) ","Le statut du médecin est 'Sollicite'", 
+    ($Statut_medecin=='Sollicite') ? "Le statut du médecin est $Statut_medecin" : "Erreur base de donnée, le medecin ne peut être sollicite",   
+    ($Statut_medecin=='Sollicite') == True );
+
+    Demander_Medecin_essai(5,13);
+    $Statut_medecin = Get_Statut_Medecin(5,13);
+    addTestResult( "Demander_Medecin_essai(le medecin est déjà sollicite) ","Erreur base de donnée, le medecin ne peut être sollicite", 
+    ($Statut_medecin=='Sollicite') ? "Le statut du médecin est $Statut_medecin" : "Erreur base de donnée, le medecin ne peut être sollicite",   
+    ($Statut_medecin=='Sollicite') == False );
+
+
+    Postuler_Medecin_Essai(8, $id_Medecin);
+    $Statut_medecin = Get_Statut_Medecin(8,$id_Medecin);
+    addTestResult( "Postuler_Medecin_Essai(le medecin n'est pas déjà dans l'essai) ","Le statut du médecin est 'En attente'", 
+    ($Statut_medecin=='En attente') ? "Le statut du médecin est $Statut_medecin" : "Erreur base de donnée, vous êtes déjà dans cet essai",   
+    ($Statut_medecin=='En attente') == True);
+
+    Postuler_Medecin_Essai(5, 13);
+    $Statut_medecin = Get_Statut_Medecin(5,13);
+    addTestResult( "Postuler_Medecin_Essai(le medecin n'est pas déjà dans l'essai) ","Erreur base de donnée, vous êtes déjà dans cet essai", 
+    ($Statut_medecin=='En attente') ? "Le statut du médecin est $Statut_medecin" : "Erreur base de donnée, vous êtes déjà dans cet essai",   
+    ($Statut_medecin=='En attente') == False);
+
+    Retirer_Medecin_Essai(7, $id_Medecin);
+    $Statut_medecin = Get_Statut_Medecin(7,$id_Medecin);
+    addTestResult( "Retirer_Medecin_Essai(le medecin est dans l'essai) ","Le statut du médecin est 'Retire'", 
+    ($Statut_medecin=='Retire') ? "Le statut du médecin est $Statut_medecin" : "Erreur base de donnée, vous n'êtes pas dans cet essai",   
+    ($Statut_medecin=='Retire') == True);
+
+    Retirer_Medecin_Essai(7, 13);
+    $Statut_medecin = Get_Statut_Medecin(7,13);
+    addTestResult( "Retirer_Medecin_Essai(le medecin n'est pas dans l'essai) ","Erreur base de donnée, vous n'êtes pas dans cet essai", 
+    ($Statut_medecin=='Retire') ? "Le statut du médecin est $Statut_medecin" : "Erreur base de donnée, vous n'êtes pas dans cet essai",   
+    ($Statut_medecin=='Retire') == False);
+    
+    Suspendre_Essai(6);
+    $Statut_essai = Get_Statut_Essai(6);
+    addTestResult( "Suspendre_Essai(l'essai n'est pas suspendu) ","l'essai est $Statut_essai", 
+    ($Statut_essai=='Suspendu') ? "Le statut de l'essai est $Statut_essai" : "l'essai est déjà suspendu",   
+    ($Statut_essai=='Suspendu') == True);
+
+    Suspendre_Essai(0);
+    $Statut_essai = Get_Statut_Essai(0);
+    addTestResult( "Suspendre_Essai(l'essai est pas suspendu) ","l'essai est déjà suspendu", 
+    ($Statut_essai=='Suspendu') ? "Le statut de l'essai est $Statut_essai" : "l'essai est déjà suspendu",   
+    ($Statut_essai=='Suspendu') == True);
+
+    Relancer_Essai(6);
+    $Statut_essai = Get_Statut_Essai(6);
+    addTestResult( "Relancer_Essai(l'essai est suspendu) ","L'essai est  $Statut_essai", 
+    ($Statut_essai=='En cours') ? "l'essai est $Statut_essai" : "L'essai est déjà suspendu",   
+    ($Statut_essai=='En cours') == True);
+
+    Relancer_Essai(6);
+    $Statut_essai = Get_Statut_Essai(6);
+    addTestResult( "Relancer_Essai(l'essai n'était pas suspendu) ","L'essai n'était pas suspendu", 
+    ($Statut_essai=='En cours') ? "l'essai est $Statut_essai" : "L'essai n'était pas suspendu",   
+    ($Statut_essai=='En cours') == True);
+
+    Postuler_Patient_Essai(2, $id_patent);
+    $Statut_patient = Get_Statut_Patient(2, $id_patent);
+    addTestResult( "Postuler_Patient_Essai(n'est pas dans l'essai) ","Le statut du patient est 'en attente'", 
+    ($Statut_patient=='En attente') ? "le statut du patient est $Statut_patient" : "Erreur bdd: le patient est déjà dans l'essai",   
+    ($Statut_patient=='En attente') == True);
+
+    Postuler_Patient_Essai(2,44);
+    $Statut_patient = Get_Statut_Patient(2,44);
+    addTestResult( "Postuler_Patient_Essai(est déjà dans l'essai) ","Le patient est déjà dans l'essai", 
+    ($Statut_patient=='En attente') ? "le statut du patient est $Statut_patient" : "Erreur bdd: le patient est déjà dans l'essai",   
+    ($Statut_patient=='En attente') == False); 
+
+    Retirer_Patient_Essai(2,$id_patent);
+    $Statut_patient = Get_Statut_Patient(2,$id_patent);
+    addTestResult( "Retirer_Patient_Essai(est dans l'essai) ","Le statut du patient est 'abandon'", 
+    ($Statut_patient=='Abandon') ? "le statut du patient est $Statut_patient" : "Erreur bdd: le patient n'est pas dans l'essai",   
+    ($Statut_patient=='Abandon') == True); 
+
+    Retirer_Patient_Essai(6, 31);
+    $Statut_patient = Get_Statut_Patient(6, 31);
+    addTestResult( "Retirer_Patient_Essai(n'est pas dans l'essai) ","Erreur bdd: le patient n'est pas dans l'essai", 
+    ($Statut_patient=='Abandon') ? "le statut du patient est $Statut_patient" : "Erreur bdd: le patient n'est pas dans l'essai",   
+    ($Statut_patient=='Abandon') == False);
+
+    Verif_nbMedecin_Essai(6, 'ok');
+    //cet essai a suffisamment de médecin
+    $Statut_essai = Get_Statut_Essai(6);
+    addTestResult( "Verif_nbMedecin_Essai(a assez de médecin) ","Le statut de l'essai est 'en cours' ou 'recrutement'", 
+    ($Statut_essai=='En cours') ? "le statut de l'essai est $Statut_essai" : "Erreur du statut de l'essai",   
+    ($Statut_essai=='En cours') == True); 
+
+    Verif_nbMedecin_Essai(7, 'pas ok');
+    //cet essai n'a pas suffisamment de médecin
+    $Statut_essai = Get_Statut_Essai(7);
+    addTestResult( "Verif_nbMedecin_Essai(n'a pas assez de médecin) ","Le statut de l'essai est 'en attente'", 
+    ($Statut_essai=='En attente') ? "le statut de l'essai est $Statut_essai" : "Erreur du statut de l'essai",   
+    ($Statut_essai=='En attente') == True); 
+
+    Verif_nbPatient_Essai(6); //essai qui a suffisamment de patients
+    $Statut_essai = Get_Statut_Essai(6);
+    addTestResult( "Verif_nbPatients_Essai(a assez de patients) ","Le statut de l'essai est 'en cours'", 
+    ($Statut_essai=='En cours') ? "le statut de l'essai est $Statut_essai" : "Erreur du statut de l'essai",   
+    ($Statut_essai=='En cours') == True); 
+
+    Verif_nbPatient_Essai(11); //essai qui n'a pas suffisamment de patients
+    $Statut_essai = Get_Statut_Essai(11);
+    addTestResult( "Verif_nbPatients_Essai(n'a pas assez de patients) ","Le statut de l'essai est en 'recrutement'", 
+    ($Statut_essai=='Recrutement') ? "le statut de l'essai est $Statut_essai" : "Erreur du statut de l'essai",   
+    ($Statut_essai=='Recrutement') == True); 
+
+    //medecin en attente donc
+    Traiter_Candidature_Medecin(8, $id_Medecin, 1);
+    $Statut_medecin = Get_Statut_Medecin(8, $id_Medecin);
+    addTestResult( "Traiter_Candidature_Medecin(accepter) ","Le statut du médecin est 'actif'", 
+    ($Statut_medecin=='Actif') ? "le statut du médecin est $Statut_medecin" : "Erreur du statut du médecin",   
+    ($Statut_medecin=='Actif') == True); 
+
+    Postuler_Medecin_Essai(7, $id_Medecin);  //demande de participation d'un médecin
+    Traiter_Candidature_Medecin(7, $id_Medecin, 0); //refus
+    $Statut_medecin = Get_Statut_Medecin(7, $id_Medecin);
+    addTestResult( "Traiter_Candidature_Medecin(refuser) ","Le médecin n'est plus relié à cet essai", 
+    ($Statut_medecin==null) ? "Le médecin n'est plus relié à cet essai (Statut_medecin = null)" : "Erreur du statut du médecin",   
+    ($Statut_medecin==null) == True); 
+
+    Postuler_Patient_Essai(11, $id_patent);
+    Traiter_Candidature_Patient(11, $id_patent, 1);
+    $Statut_patient = Get_Statut_Patient(11, $id_patent);
+    addTestResult( "Traiter_Candidature_Patient(accepter) ","Le statut du patient est 'actif'", 
+    ($Statut_patient=='Actif') ? "le statut du patient est $Statut_patient" : "Erreur du statut du patient",   
+    ($Statut_patient=='Actif') == True); 
+
+
+    $resultat = Verif_Participation_Patient(31); //actif dans un essai
+    addTestResult("Verif_Participation_Patient(est actif dans un essai) ","Le patient est actif dans un essai", 
+    ($resultat== True) ? "le patient est actif dans un essai" : "Le patient n'est pas actif dans un essai",   
+    $resultat == True); 
+
+    $resultat = Verif_Participation_Patient(26); //n'est pas actif dans un essai
+    addTestResult("Verif_Participation_Patient(n'est pas actif dans un essai) ","Le patient n'est pas actif dans un essai", 
+    ($resultat== True) ? "le patient est actif dans un essai" : "Le patient n'est pas actif dans un essai",   
+    $resultat== False);
+
+    $resultat = Verif_Patient_Cet_Essai(11,31); //membre de l'essai
+    addTestResult("Verif_Patient_Cet_Essai(est dans l'essai) ","Le patient participe à cet essai", 
+    ($resultat== True) ? "le patient participe à cet essai" : "Le patient ne participe pas à cet essai",   
+    $resultat == True); 
+
+    $resultat = Verif_Patient_Cet_Essai(11,26); //pas membre de l'essai
+    addTestResult("Verif_Patient_Cet_Essai(n'est pas dans l'essai) ","Le patient ne participe pas à cet essai", 
+    ($resultat== True) ? "le patient participe à cet essai" : "Le patient ne participe pas à cet essai",   
+    $resultat== False);
+
+    $resultat = Verif_Participation_Medecin(13,5);
+    addTestResult("Verif_Participation_Medecin(est dans l'essai) ","Le medecin participe à cet essai", 
+    ($resultat== True) ? "le medecin participe à cet essai" : "Le medecin ne participe pas à cet essai",   
+    $resultat == True); 
+
+    $resultat = Verif_Participation_Medecin(13,2);
+    addTestResult("Verif_Participation_Medecin(n'est pas dans l'essai) ","Le medecin ne participe pas à cet essai", 
+    ($resultat== True) ? "le medecin participe à cet essai" : "Le medecin ne participe pas à cet essai",   
+    $resultat == False); 
+
+    $resultat = Recup_Patients(1); //a des patients
+    addTestResult(  "Recup_Patients(a des patients)",   "Renvoie un tableau non vide",   (!empty($resultat[0]) || !empty($resultat[1])) 
+          ? "Renvoie un tableau non vide"  : "Pas de patients dans cet essai",  (!empty($resultat[0]) || !empty($resultat[1]))  );
+
+    $resultat = Recup_Patients(3); // Exemple d'ID pour un essai sans patients
+    addTestResult(  "Recup_Patients(n'a pas de patients)",   "Renvoie un tableau vide",  (empty($resultat[0]) && empty($resultat[1])) ? 
+    "Pas de patients dans cet essai"   : "Renvoie un tableau non vide", (empty($resultat[0]) && empty($resultat[1])) );
+
+    $resultat = Recup_Medecins(1); //a des patients
+    addTestResult(  "Recup_Medecins(existe et a des médecins)",   "Renvoie un tableau non vide",   (!empty($resultat[0]) || !empty($resultat[1])) 
+          ? "Renvoie un tableau non vide"  : "Pas de médecins dans cet essai",  (!empty($resultat[0]) || !empty($resultat[1]))  );
+
+    $resultat = Recup_Medecins(15); // Essai qui n'existe pas
+    addTestResult(  "Recup_Medecins(n'a pas de patients)",   "Renvoie un tableau vide",  (empty($resultat[0]) && empty($resultat[1])) ? 
+    "Pas de médecins dans cet essai ou essai inexistant"   : "Renvoie un tableau non vide", (empty($resultat[0]) && empty($resultat[1])) );
+
+
+     //Supprimer les utilisateurs ajoutés pour les tests
+    foreach ($userCreated as $Id) {
+        $sql = $pdo->prepare("DELETE FROM `USERS` WHERE `Id_user` = :id_user;");
+        $sql->execute(['id_user' => $Id]);
+   
+   }
+    ?>
+</thead>
+</table>
+</body>
+
+</html>     
 </html>
 
 

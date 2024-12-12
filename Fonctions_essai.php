@@ -174,36 +174,73 @@ function Modif_Infos_Patient(int $Id_patient, int $Id_essai, int $Poids, string 
 
 //méthode entreprise
 //vérifiée
-function Demander_Medecin_essai(int $Id_essai, int $Id_medecin){
+function Demander_Medecin_essai(int $Id_essai, int $Id_medecin)
+{
     try {
-    $conn = Connexion_base();
-    $requete = $conn -> prepare("INSERT INTO MEDECIN_ESSAIS(`Id_medecin`, `Id_essai`, `Statut_medecin`) VALUES (?,?,'Sollicite')");
-    $requete -> execute(array($Id_medecin, $Id_essai));
-    echo "Nouveau médecin sollicité avec succès pour cet essai!";
-    Fermer_base($conn);
-    Generer_notif(3,$Id_essai, $Id_medecin);
-    }
-    catch (PDOException $e) {
+        // Connexion à la base de données
+        $conn = Connexion_base();
+
+        // Vérifier si la ligne existe déjà
+        $requete_verification = $conn->prepare(
+            "SELECT COUNT(*) FROM MEDECIN_ESSAIS WHERE Id_medecin = ? AND Id_essai = ?"
+        );
+        $requete_verification->execute([$Id_medecin, $Id_essai]);
+        $existe = $requete_verification->fetchColumn();
+
+        if ($existe > 0) {
+            echo "Le médecin est déjà sollicité pour cet essai.";
+        } else {
+            // Insérer le nouveau médecin dans l'essai
+            $requete = $conn->prepare(
+                "INSERT INTO MEDECIN_ESSAIS (Id_medecin, Id_essai, Statut_medecin) VALUES (?, ?, 'Sollicite')"
+            );
+            $requete->execute([$Id_medecin, $Id_essai]);
+            echo "Nouveau médecin sollicité avec succès pour cet essai!";
+
+            // Générer la notification
+            Generer_notif(3, $Id_essai, $Id_medecin);
+        }
+
+        // Fermer la connexion
+        Fermer_base($conn);
+    } catch (PDOException $e) {
+        // Gérer les erreurs
         $_SESSION['ErrorCode'] = 12;
         header("Location: " . $_SESSION['origin']);
-        exit; }
-
+        exit;
+    }
 }
 
 //vérifiée
 //méthode médecin: médecin qui demande à participer à un essai
-function Postuler_Medecin_Essai(int $Id_essai, int $Id_medecin){
-    try{
+function Postuler_Medecin_Essai(int $Id_essai, int $Id_medecin)
+{
+    try {
         $conn = Connexion_base();
-        $requete = $conn -> prepare("INSERT INTO MEDECIN_ESSAIS(`Id_medecin`, `Id_essai`, `Statut_medecin`) VALUES (?,?,'En attente')");
-        $requete -> execute(array($Id_medecin, $Id_essai));
-        echo "Demande de participation enregistrée avec succès pour cet essai!";
+
+        // Vérifier si le médecin est déjà dans l'essai
+        $checkQuery = $conn->prepare("SELECT COUNT(*) FROM MEDECIN_ESSAIS WHERE Id_essai = ? AND Id_medecin = ?");
+        $checkQuery->execute([$Id_essai, $Id_medecin]);
+        $exists = $checkQuery->fetchColumn();
+
+        if ($exists > 0) {
+            echo "Le médecin $Id_medecin est déjà associé à l'essai $Id_essai.";
+        } else {
+            // Insérer le médecin dans l'essai
+            $requete = $conn->prepare("INSERT INTO MEDECIN_ESSAIS(`Id_medecin`, `Id_essai`, `Statut_medecin`) VALUES (?, ?, 'En attente')");
+            $requete->execute([$Id_medecin, $Id_essai]);
+            echo "Demande de participation enregistrée avec succès pour cet essai!";
+            
+            // Générer une notification
+            $Id_enterprise = Get_Entreprise($Id_essai);
+            Generer_notif(5, $Id_essai, $Id_medecin);
+        }
+
         Fermer_base($conn);
-        $Id_enterprise = Get_Entreprise($Id_essai);
-        Generer_notif(5,$Id_essai, $Id_medecin);}
-         catch (PDOException $e) {
-        echo "Erreur notification: " . $e->getMessage(); }
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
     }
+}
 
 //vérifiée
 //méthode entreprise et médecin
@@ -266,39 +303,38 @@ function Suspendre_Essai(int $Id_essai){
 
 
 //Méthode patient
-function Postuler_Patient_Essai(int $Id_essai, int $Id_patient){
-   
-    try{
+function Postuler_Patient_Essai(int $Id_essai, int $Id_patient)
+{
+    try {
         $conn = Connexion_base();
+        // Vérifier si le patient est déjà inscrit dans l'essai
+        $checkQuery = $conn->prepare("SELECT COUNT(*) FROM `PATIENTS_ESSAIS` WHERE `Id_patient` = ? AND `Id_essai` = ?");
+        $checkQuery->execute([$Id_patient, $Id_essai]);
+        $exists = $checkQuery->fetchColumn();
+        if ($exists > 0) {
+            echo "Le patient $Id_patient est déjà inscrit dans l'essai $Id_essai.";
+            return; // Arrêter l'exécution si le patient est déjà inscrit
+        }
+        // Si le patient n'est pas déjà inscrit, ajouter sa participation
         $DateduJour = date('Y-m-d');
-        $requete = $conn -> prepare("INSERT INTO `PATIENTS_ESSAIS`(`Id_patient`, `Id_essai`, `Date_participation`,`Statut_participation`) VALUES (?,?,?,'En attente')");  //quand met-on la date?
-        $requete -> execute(array($Id_patient, $Id_essai, $DateduJour));
+        $requete = $conn->prepare("INSERT INTO `PATIENTS_ESSAIS`(`Id_patient`, `Id_essai`, `Date_participation`, `Statut_participation`) VALUES (?, ?, ?, 'En attente')");
+        $requete->execute([$Id_patient, $Id_essai, $DateduJour]);
         echo "Demande de participation enregistrée avec succès pour cet essai!";
-        Fermer_base($conn);
-        } catch (PDOException $e) {
-        echo "Erreur bdd: " . $e->getMessage(); }
-    
-    try{
-        $conn = Connexion_base();
-        $requete_bis = $conn->prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
-        $requete_bis->execute(array($Id_essai));
-        // Récupérer tous les résultats de la requête
-        $tableau = $requete_bis->fetchAll();
-        // Vérifier si le tableau contient des résultats
-        if ($tableau) {
-            foreach ($tableau as $medecin) {
-                // Accéder à chaque 'Id_medecin' dans les résultats
+        // Trouver les médecins associés à cet essai
+        $requete_bis = $conn->prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai` = ?");
+        $requete_bis->execute([$Id_essai]);
+        $medecins = $requete_bis->fetchAll();
+        if ($medecins) {
+            foreach ($medecins as $medecin) {
                 $Id_medecin = $medecin['Id_medecin'];
-                // Appeler la fonction Generer_notif pour chaque médecin
-                Generer_notif(10, $Id_essai, $Id_medecin);
-                Fermer_base($conn);
-            }
+                Generer_notif(10, $Id_essai, $Id_medecin); }
         } else {
-            echo "Aucun médecin trouvé pour cet essai.";
-        }}
-    catch (PDOException $e) {
-        echo "Erreur notif: " . $e->getMessage(); }
+            echo "Aucun médecin trouvé pour cet essai.";}
+        Fermer_base($conn);
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
     }
+}
 
 //Méthode patient, médecin
 
