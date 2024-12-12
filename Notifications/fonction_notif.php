@@ -188,7 +188,8 @@ function Affiche_notif($Id_D) {
             20=> "Votre phase de traitement est terminée. Merci d’avoir participé",
             21=> "Vous avez été refusé de l’essai ".$titre_Essai,
             22=> "Vous avez été accepté dans l’essai ".$titre_Essai." en tant que médecin",
-            23=> "Vous avez été refusé de l’essai $titre_Essai en tant que médecin"
+            23=> "Vous avez été refusé de l’essai $titre_Essai en tant que médecin",
+            24=> "L'essai $titre_Essai vient d'être relancé."
         ];
 
         // Détermine la classe du tableau en fonction du statut
