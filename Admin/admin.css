@@ -1,12 +1,10 @@
-/*Style pour Home_Admin.php*/
-
-.button-container {
+.Ad-btn-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* Deux colonnes de largeur égale */
     gap: 20px;
     margin-top: 50px; /* Ajoute un espace en haut si nécessaire */
 }
-button {
+.Ad-btn {
     background-color: turquoise;
     color: black;
     font-size: 18px;
@@ -18,190 +16,76 @@ button {
     height: 70px; /* Hauteur fixe pour tous les boutons */
     cursor: pointer;
     text-align: center;
-}
-button:hover {
-    background-color: white;
-    color: turquoise;
-}
-/*Style pour Appliquer_modif.php*/
-body{
-    font-family: Arial, sans-serif;
-    background-color: #f0f8ff;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
+    position: relative; /* Nécessaire pour positionner la pastille */
 }
 
-.message-container {
+.Ad-btn:hover {
+    background-color: rgb(24, 98, 104);
+    color: white;
+}
+
+.table-list {
+    width: 80%;
+    margin-top: 50px;
     background-color: white;
-    padding: 30px;
+    justify-content: center;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-h1 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
-}
-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    text-decoration: none;
-}
-button:hover {
-    background-color: #45a049;
-}
 
-
-/*Style pour Confirmer_modif.php*/
-.container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-p {
-    font-size: 1.2em;
-}
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-li {
-    margin-bottom: 10px;
-}
-form {
-    margin-top: 20px;
-}
-button {
-    padding: 10px 20px;
-    margin: 5px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-button:hover {
-    background-color: #0056b3;
-}
-.cancel-button {
-    background-color: #f44336;
-}
-.cancel-button:hover {
-    background-color: #d32f2f;
-}
-
-/*Style pou les Liste_{Role}.php*/
-h2 {
-    margin-top: 120px;
-    padding: 20px; /* Espace entre le texte et la bordure */
-    border: 5px solid white; /* Bordure blanche autour du titre */
-    border-radius: 10px; /* Coins arrondis de la bordure */
-    background-color: rgba(0, 0, 0, 0.5); /* Fond légèrement transparent derrière le titre pour un meilleur contraste */
-    color: white; /* Couleur du texte en blanc */
-}
-/* Centrage de la liste (table) */
-.content {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    margin-top: 100px; /* Décale la liste un peu plus bas */
-    width: 80%; /* La table prendra 80% de la largeur de la page */
-    margin-bottom: 40px; /* Espace entre la table et le bouton retour */
-}
-
-/* Styles pour la table */
 table {
+    width: 100%;
     border-collapse: collapse;
-    width: 100%; /* Table occupe toute la largeur de son conteneur */
 }
 
 th, td {
-    border: 1px solid black;
-    padding: 12px;
-    text-align: center;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
 th {
-    background-color: #4CAF9A;
-    color: white;
-}
-
-td {
     background-color: #f2f2f2;
 }
-/*Bouton Modifier et Supprimer dans le tableau*/
-button-liste {
-    padding: 10px 15px;
-    background-color: #4CAF9A;
-    color: white;
-    border: none;
+
+button {
+    padding: 5px 10px;
     cursor: pointer;
-    border-radius: 5px;
-}
-button-liste:hover {
-    background-color: #45a049;
-}
-/* Styles pour le bouton "Retour" */
-.back-button {
-    margin-top: 10px;
-    padding: 10px 15px;
-    background-color: #f44336;
-    color: white;
     border: none;
-    cursor: pointer;
-    border-radius: 5px;
+    color: white;
+    font-weight: bold;
 }
 
-.back-button:hover {
-    background-color: #e53935;
+.validate-btn {
+    background-color: #4CAF50;
 }
 
-/*Style pour Modifier_{Role}.php*/
-
-/* Styles pour le titre */
-h3 {
-    margin-bottom: 20px; /* Espacement en dessous du titre */
-    color: #333; /* Couleur du titre */
-    font-size: 24px; /* Taille du titre */
+.validate-btn:hover {
+    background-color: gray;
 }
 
-/* Styles pour le formulaire */
-form-modif {
-    display: flex;
-    flex-direction: column; /* Alignement des éléments en colonne */
-    gap: 15px; /* Espacement entre les éléments du formulaire */
+.reject-btn {
+    background-color:rgb(165, 52, 32);
 }
 
-label {
-    font-size: 15px; /* Taille de la police pour les labels */
-    display: inline-block;
-    margin-bottom: 5px;
+.reject-btn:hover {
+    background-color: gray;
 }
 
-input[type="text"], select {
+.back-btn {
+    display: block;
+    width: 200px;
     padding: 10px;
+    background-color: rgb(24, 98, 104);
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
     font-size: 16px;
-    border: 2px solid #ccc; /* Bordure grise pour les champs */
-    border-radius: 5px; /* Coins arrondis pour les champs */
-    width: 100%; /* Les champs prennent toute la largeur disponible */
-    box-sizing: border-box; /* Assure que padding et border ne dépassent pas la largeur */
+    margin-top: 20px;
 }
 
-
-
-
-
+.back-btn:hover {
+    background-color: rgb(29, 186, 197);
+}
