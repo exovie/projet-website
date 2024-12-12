@@ -3,7 +3,7 @@ session_start();
 $_SESSION['origin'] = $_SERVER['REQUEST_URI'];
 include '../Fonctions.php';
 include_once '../Notifications/fonction_notif.php';
-include 'Fonction_Mes_infos.php';
+include '../Page_Mes_Infos/Fonction_Mes_infos.php';
 
 $Id_user =$_SESSION['Id_user'];
 $role= $_SESSION['role'];
@@ -145,7 +145,7 @@ $userInfo = getUserInfo($conn, $Id_user);
     <?php
     // Récupérer le rôle de l'utilisateur
     $sql= $conn -> prepare("SELECT Role FROM USERS WHERE Id_user= :id_user");
-    $sql->execute(['id_user' => $id_user]);
+    $sql->execute(['id_user' => $Id_user]);
     $result=$sql->fetch(PDO::FETCH_ASSOC);
     $role=$result['Role'];
 
@@ -159,7 +159,7 @@ $userInfo = getUserInfo($conn, $Id_user);
         <?php foreach ($userInfo as $key => $value): ?>
             <?php 
                 // Ignorer les clés spécifiques
-                if ($key === 'Id_Patients' || $key === 'Id_medecin' || $key === 'Id_entreprise' || $key === 'Profile_picture') {
+                if ($key === 'Id_patient' || $key === 'Id_medecin' || $key === 'Id_entreprise' || $key === 'Profile_picture') {
                     continue;
                 }
             ?>
@@ -185,7 +185,7 @@ $userInfo = getUserInfo($conn, $Id_user);
     <?php 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Mise à jour des informations de l'utilisateur
-    $success = updateUserInfo($conn, $id_user);
+    $success = updateUserInfo($conn, $Id_user);
 
     // Affichage des messages d'erreur stockés dans $_SESSION
     if (isset($_SESSION['FormsErr'])): ?>
