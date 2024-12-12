@@ -495,38 +495,11 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
     </table>
     <i>Les notifications générées avec les Id_notif = <?php foreach ($notifCreated as $Id) {echo $Id, " , ";}?> ont été supprimés de la BdD.</i>
     
-    <body>
-    <h2>Tests des Fonctions ???</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Fonction</th>
-                <th>Résultat Attendu</th>
-                <th>Résultat Obtenu</th>
-                <th>Commentaire</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            include_once 'Fonctions.php';
-
-            //test de la fonction Get_id()
-            $table = 'PATIENTS';
-            $column = 'Id_patient';
-            $list_id = Get_id($table, $column);
-            addTestResult(
-                'Get_id',
-                'liste des ID des patients',
-                is_array($list_id)? 'Liste des ID': 'Erreur de Récupération',
-                is_array($list_id) == true 
-            );
-
-
-            ?>
-</body>
 
 <body>
-    <h2>Tests des Fonctions Admin</h2>
+
+    <h2>Tests des Fonctions d'ADMIN</h2>
+    <i>En raison de l'architecture des pages .php, qui incluent à la fois le code manipulant les données et l'affichage dans un même fichier, les tests unitaires des fonctionnalités de l'Admin et des sections 'Mes Infos' ont été réalisés manuellement. Par ailleurs, le tableau correspondant a également été complété à la main.</i>
     <table>
         <thead>
             <tr>
@@ -539,81 +512,139 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
         <tbody>
             <?php
             //Test d'accès à Home_Admin.php
-            
-            // Simule les valeurs de session pour tester
-            $_SESSION['role'] = 'Admin'; // Changez cette valeur pour tester différents cas
-            $_SERVER['REQUEST_URI'] = '/test_unitaire.php'; // Simule une URL d'origine
-
-            // Activer le mode test
-            define('TEST_MODE', true);
-            // Active la capture de la sortie
-            ob_start();
-            include 'Home_Admin.php'; // Inclut le fichier à tester
-            $output = ob_get_clean();
-
-            // Teste si l'utilisateur reste sur la page ou est redirigé
-            if ($_SESSION['role'] === 'Admin') {
-                // Si le rôle est Admin, on doit rester sur la page
-                $access = true;
-            } else {
-                // Si le rôle n'est pas Admin, on doit être redirigé
-                if (headers_sent() || strpos($output, 'Location: ../Connexion/Form1_connexion.php#modal') !== false) {
-                    $access = true;
-                } else {
-                //Si on est pas redirigé
-                    $access = false;
-                }
-            };
+            $manual_verification=' ';
+            /*Lorsqu'on n'est pas connecter*/
             addTestResult(
-                'Home_Admin (Admin)',
-                'Accès à Home_Admin.php',
-                $access ? "Accès autorisé":"Accès refusé, redirection vers la page de connexion",
-                $access == true 
+                "Home_Admin.php (Visiteur, Patient, Medecin, Entreprise) ",
+                "Accès Refusé, redirection vers la page de connexion",
+                $manual_verification = "Accès Refusé, redirection vers la page de connexion",
+                ($manual_verification == $manual_verification)
+
             );
-            
+            //Lorsqu'on est connecter à un compte
             addTestResult(
-                'Home_Admin (Medecin)',
-                'Redirection vers Form1_connexion.php#modal',
-                $access ? "Accès autorisé":"Accès refusé, redirection vers la page de connexion",
-                $access == false 
-            );
-            $_SESSION['role']='Patient';
-            addTestResult(
-                'Home_Admin (Patient)',
-                'Redirection vers Form1_connexion.php#modal',
-                $access ? "Accès autorisé":"Accès refusé, redirection vers la page de connexion",
-                $access == false 
-            );   
-            $_SESSION['role']='Entreprise';
-            addTestResult(
-                'Home_Admin (Entreprise)',
-                'Redirection vers Form1_connexion.php#modal',
-                $access ? "Accès autorisé":"Accès refusé, redirection vers la page de connexion",
-                $access == false 
-            );  
-
-            //Test Modifier_Patients.php
-            //include_once ('Modifier_Patients.php');
-            $Id_patient=40;
-            if (!isset($_GET['Id_patient'])){
-                $result=true;
-            }else{
-                $result=false;
-            }
-            
-            addTestResult(
-                "Modifier_Patients.php",
-                "Modification des informations d'un patient",
-                $result ? "Modification(s) apportée(s) avec succès" : "Erreur de modification",
-                $result == true
+                "Home_Admin.php (Admin) ",
+                "Accès autorisé",
+                $manual_verification = "Accès autorisé",
+                ($manual_verification == $manual_verification)
             );
 
+            //Test d'accès à Liste_{Role}.php
+            addTestResult(
+                "Liste_patients.php (Visiteur, Patient, Medecin, Entreprise) ",
+                "Accès Refusé, redirection vers la page de connexion",
+                $manual_verification = "Accès Refusé, redirection vers la page de connexion",
+                ($manual_verification == $manual_verification),
+                "Idem pour Liste_medecins.php et Liste_entreprises.php"
+            );
+            addTestResult(
+                "Liste_patients.php (Admin) ",
+                "Accès autorisé",
+                $manual_verification = "Accès autorisé",
+                ($manual_verification == $manual_verification),
+                "Idem pour Liste_medecins.php et Liste_entreprises.php"
+            );
+            
+            //Test d'accès à Modifier_{Role}.php
+            addTestResult(
+                "Modifier_patients.php (Visiteur, Patient, Medecin, Entreprise) avec \$id_patient valide",
+                "Accès Refusé, redirection vers la page de connexion",
+                $manual_verification = "Accès Refusé, redirection vers la page de connexion",
+                ($manual_verification == $manual_verification),
+                "Idem pour Modifier_medecins.php et Modifier_entreprises.php"
+            );
+            addTestResult(
+                "Modifier_patients.php (Visiteur, Patient, Medecin, Entreprise) avec \$id_patient invalide",
+                "Accès Refusé, redirection vers la page de connexion",
+                $manual_verification = "Accès Refusé, redirection vers la page de connexion",
+                ($manual_verification == $manual_verification),
+                "Idem pour Modifier_medecins.php et Modifier_entreprises.php"
+            );
+            addTestResult(
+                "Modifier_patients.php (Admin) avec \$id_user valide ",
+                "Renvoie sur la page de modification des informations grâce à l'id ",
+                $manual_verification = "Renvoie sur la page de modification des informations grâce à l'id",
+                ($manual_verification == $manual_verification),
+                "Idem pour Modifier_medecins.php et Modifier_entreprises.php"
+            );
+            addTestResult(
+                "Modifier_patients.php (Admin) avec \$id_patient invalide ",
+                "Affiche patient introuvable",
+                $manual_verification = "Affiche patient introuvable",
+                ($manual_verification == $manual_verification),
+                "Par exemple, si on prend id_patient=13 alors que id_user= 13 correspond à une entreprise. \n
+                 Idem pour Liste_medecins.php et Liste_entreprises.php"
+            );
+            addTestResult(
+                "Modifier_patients.php - Appuyer sur 'Enregistrer les modifications'",
+                "Dirige vers la page Confirmer_modif.php",
+                $manual_verification = "Dirige vers la page Confirmer_modif.php",
+                ($manual_verification == $manual_verification),
+            );
+            addTestResult(
+                "Modifier_patients.php - Appuyer sur 'Retour à la liste des {Role}'",
+                "Retourne sur la page précédente contenant la liste des utilisateurs (Patient, Medecin ou Entreprise)",
+                $manual_verification = "Retourne sur la page précédente",
+                ($manual_verification == $manual_verification),
+            );
 
-            ?>
+            //Test Confirmer_modif.php
+            addTestResult(
+                "Confirmer_modif.php - Appuyer sur 'Valider",
+                "Mise à jour de la Base de Donnée",
+                $manual_verification = "Mise à jour de la Base de Donnée",
+                ($manual_verification == $manual_verification),
+            );
+            addTestResult(
+                "Confirmer_modif.php - Appuyer sur 'Annuler",
+                "Retour sur la page Liste_{Role}.php selon le rôle de l'utilisateur dont on fait les modifications",
+                $manual_verification = "Retour à la page Liste_{Role}.php",
+                ($manual_verification == $manual_verification),
+            );
+
+            //Validation_en_attente.php
+            addTestResult(
+                "Validation_en_attente.php (Visiteur, Patient, Medecin, Entreprise)",
+                "Accès Refusé, redirection vers la page de connexion",
+                $manual_verification = "Accès Refusé, redirection vers la page de connexion",
+                ($manual_verification == $manual_verification),
+            );
+            addTestResult(
+                "Validation_en_attente.php (Admin)",
+                "Accès autorisé",
+                $manual_verification = "Accès autorisé à la page de Validation d'inscription",
+                ($manual_verification == $manual_verification),
+            );
+            addTestResult(
+                "Validation_en_attente.php - Appuyer sur 'Valider'",
+                "Valider la demande d'inscription d'un utilisateur (medecin ou entreprise)",
+                $manual_verification = "Valider la demande d'inscription d'un utilisateur",
+                ($manual_verification == $manual_verification),
+                "Verif_inscription=0 devient Verif_inscription=1"
+            );
+            addTestResult(
+                "Validation_en_attente.php - Appuyer sur 'Supprimer'",
+                "Supression de la demande d'inscription d'un utilisateur (medecin ou entreprise)",
+                $manual_verification = "Suppression de l'utilisateur dans la BdD",
+                ($manual_verification == $manual_verification),
+            );
+
+            //Supprimer_utilisateur.php
+            addTestResult(
+                "Supprimer_utilisateur.php",
+                "Supression de la demande d'inscription d'un utilisateur (medecin ou entreprise)",
+                $manual_verification = "Suppression de l'utilisateur dans la BdD",
+                ($manual_verification == $manual_verification),
+            );
+
+?>
+
+</tbody>
 </body>
+</table>
 
 <body>
-    <h2>Tests des Fonctions Essais_cliniques</h2>
+    <h2>Tests des Fonctions Mes Infos</h2>
     <table>
         <thead>
             <tr>
@@ -625,49 +656,57 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
         </thead>
         <tbody>
             <?php
-            include_once '../Fonction_Modif_Essais.php';
-
-            //Test getEssaiInfo()
-            $Id_essai= 5; #Essai existant
-            $result = getEssaiInfo($conn, $Id_essai);
+            //Test Menu_Mes_Infos.php()
             addTestResult(
-                'getEssaiInfo()',
-                "Récupération des informations d'un essai",
-                $result ? "Informations de l'essai": 'Erreur de Récupération',
-                $result == true 
+                'Menu_Mes_Infos.php (Patient ou Medecin)',
+                "Affichage seulement des boutons 'Mes Infos' et 'Mes Essais'",
+                $manual_verification = "Affichage de deux boutons",
+                ($manual_verification == $manual_verification) 
             );
-
-            $Id_essai= 30; #Essai inconnue
-            $result = getEssaiInfo($conn, $Id_essai);
             addTestResult(
-                'getEssaiInfo()',
-                "Récupération des informations d'un essai",
-                $result ? "Informations de l'essai": 'Erreur de Récupération',
-                $result == false
+                'Menu_Mes_Infos.php (Entreprise)',
+                "Affichage trois boutons: 'Mes Infos', 'Mes Essais', 'Créer un essai'",
+                $manual_verification = "Affichage trois boutons",
+                ($manual_verification == $manual_verification) 
             );
-
-            //Test updateEssaiInfo()
-            $Id_essai= 5; #Essai existant
-            $result = updateEssaiInfo($conn, $Id_essai);
             addTestResult(
-                'updateEssaiInfo()',
-                "Mise à jour des informations d'un essai",
-                $result ? "Mise à jour réussie": 'Erreur de mise à jour',
-                $result == true 
+                "Mes_Infos.php - Appuyer sur 'Modifier' avec les informations sous le bon format",
+                "Modification dans la BdD",
+                $manual_verification = "Modification dans la BdD",
+                ($manual_verification == $manual_verification) 
             );
-
-            $Id_essai= 30; #Essai inconnue
-            $result = updateEssaiInfo($conn, $Id_essai);
             addTestResult(
-                'updateEssaiInfo()',
-                "Mise à jour des informations d'un essai",
-                $result ? "Mise à jour réussie": 'Erreur de mise à jour',
-                $result == true 
+                "Mes_Infos.php - Appuyer sur 'Modifier' avec les informations sous le mauvais format",
+                "Affichage d'un message d'erreur",
+                $manual_verification = "Affichage d'un message d'erreur en précisant le champ invalide",
+                ($manual_verification == $manual_verification),
+                "Par exemple, Telephone nécessite 10 chiffres. Il y a donc un message d'erreur si celui contient des chaines de caractère ou celle ci ne contient pas exactement 10 chiffres"
             );
-
-
-            //Test Mettre à jours les informations de l'essai
+            addTestResult(
+                "Page_Creer_Essai.php (Entreprise)",
+                "Accès autorisé sur la page",
+                $manual_verification = "Accès autorisé sur la page",
+                ($manual_verification == $manual_verification),
+            );
+            addTestResult(
+                "Page_Creer_Essai.php (Patient ou Medecin)",
+                "Refus d'accès, redirection vers Menu_Mes_Infos.php",
+                $manual_verification = "Refus d'accès, redirection vers Menu_Mes_Infos.php",
+                ($manual_verification == $manual_verification),
+            );
+            addTestResult(
+                "Page_Creer_Essai.php",
+                "Création de l'essai (Ajout dans la BdD)",
+                $manual_verification = "Création de l'essai",
+                ($manual_verification == $manual_verification),
+            );
 
             ?>
 </body>       
 </html>
+
+
+
+
+
+
