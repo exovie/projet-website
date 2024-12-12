@@ -1,10 +1,9 @@
 <?php
 session_start();
-$_SESSION['origin'] = 'Essais_cliniques';
+$_SESSION['origin'] = 'Essais.php';
 $role = $_SESSION['role'];
 $db_name = $_SESSION['db_name'];
 include 'Fonctions.php';
-include 'Notifications/fonction_notif.php';
 $list_essai = Get_essais($role);
 ?>
 
@@ -16,12 +15,10 @@ $list_essai = Get_essais($role);
     <meta charset="'utf-8">
     <link rel="stylesheet" href='website.css'>
     <link rel="stylesheet" href='navigationBar.css'>
-    <link rel="stylesheet" href='Notifications/Notifications_style.css'>
-
 
 </head>
 <body>
-    <!-- Code de la barre de navigation -->
+    <!-- Conteneur fixe en haut de la page -->
     <div class="navbar">
         <div id="logo">
             <a href="Homepage.php">
@@ -30,78 +27,30 @@ $list_essai = Get_essais($role);
         </div>
         <a href="Essais.php" class="nav-btn">Essais Cliniques</a>
         <a href="Entreprises.php" class="nav-btn">Entreprise</a>
-
-        <!-- Accès à la page de Gestion -->
-        <?php if ($_SESSION['role'] == 'Admin'): ?>
-            <a href="Admin/Home_Admin.php" class="nav-btn">Gestion</a>
-        <?php endif; ?>
-
-        <!-- Accès à la messagerie -->
-        <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
+        <a href="Contact.php" class="nav-btn">Contact</a>
         <div class="dropdown">
-            <a href="Homepage.php#messagerie">
+            <a href="Homepage.php">
                 <img src="Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
             </a>
-        </div>
-        <?php endif; ?>
-
-        <!-- Connexion / Inscription -->
+            </div>
         <div class="dropdown">
             <a>
                 <img src="Pictures/pictureProfil.png" alt="pictureProfil" style="cursor: pointer;">
             </a>
             <div class="dropdown-content">
-            <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
-                <!-- Options pour les utilisateurs connectés -->
-                <?php 
-                if ($_SESSION['role'] == 'Medecin') {
-                    echo "<h1 style='font-size: 18px; text-align: center;'>Dr " . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
-                } elseif ($_SESSION['role'] == 'Entreprise') {
-                    echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "®</h1>";
-                } elseif(($_SESSION['role']=='Admin')){
-                    echo "<h1 style='font-size: 18px; text-align: center;'>Admin</h1>";
-                } else{
-                    echo "<h1 style='font-size: 18px; text-align: center;'>" . htmlspecialchars($_SESSION['Nom'], ENT_QUOTES, 'UTF-8') . "</h1>";
-                }
-                ?>
-                <a href="#">Mon Profil</a>
-                <a href="Deconnexion.php">Déconnexion</a>
-            <?php else: ?>
-                <!-- Options pour les utilisateurs non connectés -->
-                <a href="Connexion/Form1_connexion.php#modal">Connexion</a>
-                <a href="Inscription/Form1_inscription.php#modal">S'inscrire</a>
-            <?php endif; ?>
+                <?php if (isset($_SESSION['Logged_user']) && $_SESSION['Logged_user'] === true): ?>
+                    <!-- Options pour les utilisateurs connectés -->
+                    <a href="#">Mon Profil</a>
+                    <a href="#">Déconnexion</a>
+                <?php else: ?>
+                    <!-- Options pour les utilisateurs non connectés -->
+                    <a href="Connexion/Form1_connexion.php#modal">Connexion</a>
+                    <a href="Inscription/Form1_inscription.php#modal">S'inscrire</a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
-
-    <!-- Message Success -->
-    <?php 
-    if (isset($_SESSION['SuccessCode'])): 
-        SuccesEditor($_SESSION['SuccessCode']);
-        unset($_SESSION['SuccessCode']); // Nettoyage après affichage
-    endif; 
-    ?>
-
-    <!-- Message Erreur -->
-    <?php 
-    if (isset($_SESSION['ErrorCode'])): 
-        ErrorEditor($_SESSION['ErrorCode']);
-        unset($_SESSION['ErrorCode']); // Nettoyage après affichage
-    endif; 
-    ?>
-    
-    <!-- Messagerie -->
-    <div id="messagerie" class="messagerie">
-        <div class="messagerie-content">
-            <!-- Lien de fermeture qui redirige vers Homepage.php -->
-            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
-            <h1>Centre de notifications</h1>
-            <!-- Contenu de la messagerie -->
-            <?php Affiche_notif($_SESSION['Id_user'])?>
-        </div>
-    </div>
-    
+    <!-- Contenu principal -->
     <div class="content">
     <!-- Barre de recherche -->
     <form method="POST">
@@ -132,6 +81,7 @@ $list_essai = Get_essais($role);
 
       <div>
           <div id="trial_boxes">
+            <form method="POST" action="Essai_individuel.php">
           <?php
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 Display_essais($list_essai);
@@ -143,10 +93,13 @@ $list_essai = Get_essais($role);
                 $filtres = [$_POST['phaseFilter'], $_POST['companyFilter']]; 
                 recherche_EC($list_essai, $recherche, $filtres);
             }
-
-            // Fonction PHP appelée
             
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['essai_indi'])) {
+                header("Location: Essai_individuel.php");
+            }
+
             ?>
+            </form>
           </div>
       </div>
     </div>

@@ -1,5 +1,4 @@
 <?php
-session_start();
 $db_name = "mysql:host=localhost;dbname=website_db"; 
 $_SESSION['db_name'] = $db_name;
 
@@ -154,6 +153,10 @@ function Get_essais($role) {
         'entreprise' => null // Utilisation de null pour indiquer "tous les statuts"
     ];
     
+    if (!isset($statuses[$role])) {
+        return [];
+    }
+
     try {
         // Construction dynamique de la requête
         $sql = "
@@ -216,7 +219,10 @@ function Display_essais($resultats) {
     }
 }
 
-function List_Medecin(int $id_medecin): array {
+function List_Medecin($id_medecin): array {
+    if (!is_int($id_medecin)) {
+        return [];
+    }
     $conn = Connexion_base();
 
     try {
@@ -234,7 +240,6 @@ function List_Medecin(int $id_medecin): array {
     $stmt->execute();
     
     // Récupérer les résultats
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         echo "Erreur : " . $e->getMessage();
@@ -258,87 +263,6 @@ function display_medecin($medecin) {
     echo '<li class = "specialite">' . htmlspecialchars($medecin['Specialite']) . '</li>';
     echo '</ul>';
 }
-
-function Valider_inscription($id_user) {
-    $conn = Connexion_base();
-        try {
-            // Vérifier si l'utilisateur est dans la table MEDECINS
-            $queryMedecin = "SELECT Id_medecin FROM MEDECINS WHERE Id_medecin = ?";
-            $stmtMedecin = $conn->prepare($queryMedecin);
-            $stmtMedecin->execute([$id_user]);
-    
-            if ($stmtMedecin->rowCount() > 0) {
-                // Si l'utilisateur est un médecin, mettre à jour le statut
-                $updateQuery = "UPDATE MEDECINS SET Verif_inscription = 1 WHERE Id_medecin = ?";
-                $stmtUpdate = $conn->prepare($updateQuery);
-                $stmtUpdate->execute([$id_user]);
-                return "Statut_inscription mis à jour pour le médecin avec l'ID $id_user.";
-            }
-    
-            // Vérifier si l'utilisateur est dans la table ENTREPRISES
-            $queryEntreprise = "SELECT Id_entreprise FROM ENTREPRISES WHERE Id_entreprise = ?";
-            $stmtEntreprise = $conn->prepare($queryEntreprise);
-            $stmtEntreprise->execute([$id_user]);
-    
-            if ($stmtEntreprise->rowCount() > 0) {
-                // Si l'utilisateur est une entreprise, mettre à jour le statut
-                $updateQuery = "UPDATE ENTREPRISES SET Verif_inscription = 'True' WHERE Id_entreprise = ?";
-                $stmtUpdate = $conn->prepare($updateQuery);
-                $stmtUpdate->execute([$id_user]);
-                return "Statut_inscription mis à jour pour l'entreprise avec l'ID $id_user.";
-            }
-    
-            // Si l'utilisateur n'est trouvé dans aucune des deux tables
-            return "L'utilisateur avec l'ID $id_user n'est ni un médecin ni une entreprise.";
-        } catch (PDOException $e) {
-            return "Erreur : " . $e->getMessage();
-        }
-     finally {
-    // Fermer la connexion
-    Fermer_base($conn);
-    }
-}
-
-function refus_inscription($id_user) {
-    $conn = Connexion_base();
-    try {
-        // Vérifier si l'utilisateur est dans la table MEDECINS
-        $queryMedecin = "SELECT Id_medecin FROM MEDECINS WHERE Id_medecin = ?";
-        $stmtMedecin = $conn->prepare($queryMedecin);
-        $stmtMedecin->execute([$id_user]);
-
-        if ($stmtMedecin->rowCount() > 0) {
-            // Si l'utilisateur est un médecin, supprimer l'enregistrement
-            $deleteQuery = "DELETE FROM MEDECINS WHERE Id_medecin = ?";
-            $stmtDelete = $conn->prepare($deleteQuery);
-            $stmtDelete->execute([$id_user]);
-            return "L'utilisateur médecin avec l'ID $id_user a été supprimé.";
-        }
-
-        // Vérifier si l'utilisateur est dans la table ENTREPRISES
-        $queryEntreprise = "SELECT Id_entreprise FROM ENTREPRISES WHERE Id_entreprise = ?";
-        $stmtEntreprise = $conn->prepare($queryEntreprise);
-        $stmtEntreprise->execute([$id_user]);
-
-        if ($stmtEntreprise->rowCount() > 0) {
-            // Si l'utilisateur est une entreprise, supprimer l'enregistrement
-            $deleteQuery = "DELETE FROM ENTREPRISES WHERE Id_entreprise = ?";
-            $stmtDelete = $conn->prepare($deleteQuery);
-            $stmtDelete->execute([$id_user]);
-            return "L'utilisateur entreprise avec l'ID $id_user a été supprimé.";
-        }
-
-        // Si l'utilisateur n'est trouvé dans aucune des deux tables
-        return "L'utilisateur avec l'ID $id_user n'est ni un médecin ni une entreprise.";
-    } catch (PDOException $e) {
-        return "Erreur : " . $e->getMessage();
-    } finally {
-        // Fermer la connexion
-        Fermer_base($conn);
-    }
-}
-
-
 
 function recherche_EC($liste_EC, $recherche, $filtres) { 
     // Remove comments from the input
@@ -491,32 +415,6 @@ function SuccesEditor($SuccessCode){
         </div>
     </div>';}
 
-
-function get_company(int $id_company): array {
-    $conn = Connexion_base();
-
-    try {
-        $sql = "
-    SELECT *
-    FROM ENTREPRISES
-    WHERE Id_entreprise = :id_entreprise;
-    ";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':id_entreprise', $id_company, PDO::PARAM_INT);
-    $stmt->execute();
-    
-    // Récupérer les résultats
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "Erreur : " . $e->getMessage();
-        return [];
-    
-    } finally {
-    // Fermer la connexion
-    Fermer_base($conn);
-    }
-}
-
 function get_patient(int $id_patient): array {
     $conn = Connexion_base();
 
@@ -598,6 +496,132 @@ function display_patient_medecin($patient){
     echo '<li>' . htmlspecialchars($patient['Allergies']) . '</li>';
     echo '<li>' . htmlspecialchars($patient['Cni']) . '</li>';
     echo '</ul>';  
+}
+
+function tablename($id_user) {
+    $conn = Connexion_base();
+
+    $sql = "
+        SELECT 'PATIENTS' AS TableName FROM PATIENTS WHERE Id_patient = ?
+        UNION ALL
+        SELECT 'MEDECINS' AS TableName FROM MEDECINS WHERE Id_medecin = ?
+        UNION ALL
+        SELECT 'ENTREPRISES' AS TableName FROM ENTREPRISES WHERE Id_entreprise = ?
+    ";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(1, $id_user, PDO::PARAM_INT);
+    $stmt->bindParam(2, $id_user, PDO::PARAM_INT);
+    $stmt->bindParam(3, $id_user, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Analyse des résultats
+    if ($result) {
+        return $result['TableName'];
+    } else {
+        echo "Id_user $id_user n'existe dans aucune table liée.";
+    }
+}
+
+
+function Verif_inscription($id_user) {
+    // Définitions des correspondances
+    $tableau = [
+        'MEDECINS' => 'Statut_inscription',
+        'ENTREPRISES' => 'Verif_inscription'
+    ];
+    $id_table = [
+        'MEDECINS' => 'Id_medecin',
+        'ENTREPRISES' => 'Id_entreprise'
+    ];
+    
+    // Récupération du nom de la table
+    $tablename = tablename($id_user);
+    
+    // Vérification si la table est valide
+    if (!isset($tableau[$tablename]) || !isset($id_table[$tablename])) {
+        throw new Exception("Nom de table ou colonne invalide.");
+    }
+    
+    $id_name = $id_table[$tablename];
+    $column = $tableau[$tablename];
+
+    // Connexion à la base de données
+    $conn = Connexion_base();
+
+    // Construction sécurisée de la requête SQL
+    $sql = "SELECT $column FROM $tablename WHERE $id_name = :id_user";
+
+    // Préparation de la requête
+    $stmt = $conn->prepare($sql);
+
+    // Liage de la variable :id_user
+    $stmt->bindParam(':id_user', $id_user, PDO::PARAM_INT);
+
+    // Exécution de la requête
+    try {
+        $stmt->execute();
+    } catch (PDOException $e) {
+        // Gérer les exceptions
+        throw new Exception("Erreur lors de l'exécution de la requête : " . $e->getMessage());
+    }
+
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $result[$column];
+}
+
+//entreprise en fonction essai
+//liste des medecins actifs d'un essai
+//statut d'un patient dans un essai
+
+function company_trial ($id_essai) {
+    $conn = Connexion_base();
+
+    $sql = "
+        SELECT Id_entreprise
+        FROM ESSAIS_CLINIQUES
+        WHERE ESSAIS_CLINIQUES.Id_essai = :Id_essai;
+    "; 
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_essai', $id_essai, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Analyse des résultats
+    if ($result) {
+        return $result['TableName'];
+    } else {
+        echo "Id_user $id_essai n'existe dans aucune table liée.";
+    }
+}
+
+
+function get_medecin_trial(int $id_medecin, $id_essai): array {
+    $conn = Connexion_base();
+
+    try {
+        $sql = "
+            SELECT Id_medecin
+            FROM MEDECINS_ESSAIS
+            WHERE MEDECINS_ESSAIS.Id_essai = :Id_essai;
+        "; 
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':Id_essai', $id_essai, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    // Récupérer les résultats
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return [];
+    
+    } finally {
+    // Fermer la connexion
+    Fermer_base($conn);
+    }
 }
 
 ?>

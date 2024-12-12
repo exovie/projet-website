@@ -10,32 +10,65 @@ ini_set('display_startup_errors', 1); // Affiche les erreurs au démarrage de PH
 //include 'module.php';
 //include 'Notifications/fonction_notif.php';
 
-function Connexion_base(){
-    $host = 'localhost';
-    $dbname = 'website_db';
-    $user = 'root';
-    $password = '';
-
-    try {
-        $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die("Erreur : " . $e->getMessage());
-    } 
-    return $pdo;
-    }
-
-
-function Fermer_base($pdo){
-    // Fermeture de la connexion
-    $pdo = null; // Cela libère la connexion
-}
 
 //Fonctions  liées aux essais
 
 //attention aux dates, elles sont initialisées à 000/00/00 à la création, il faut donc les update et non les insert
 //verif_nombremedecin, manque le cas où le nombre re passe en dessous de 2, changer le 2 d'ailleurs
 
+
+function Get_Entreprise($Id_essai) {
+    try{
+    $conn = Connexion_base();
+    $stmt = $conn->prepare("SELECT Id_entreprise FROM ESSAIS_CLINIQUES WHERE Id_essai = ?");
+    $stmt->execute(array($Id_essai));
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['Id_entreprise'];}
+    catch (PDOException $e) {
+        echo "Erreur bdd: " . $e->getMessage(); 
+    }}
+    
+function Get_Statut_Patient($Id_essai, $Id_patient) {
+    try {
+        $conn = Connexion_base();
+        $stmt = $conn->prepare("SELECT Statut_participation FROM PATIENTS_ESSAIS WHERE Id_essai = ? AND Id_patient = ?");
+        $stmt->execute(array($Id_essai, $Id_patient));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Vérification si un résultat est trouvé
+        if ($result) {
+            return $result['Statut_participation'];
+        } else {
+            // Si aucun résultat trouvé, renvoyer une valeur par défaut ou null
+            return null;
+        }
+    } catch (PDOException $e) {
+        // Gérer l'erreur proprement
+        error_log("Erreur BDD dans Get_Statut_Patient: " . $e->getMessage());
+        return null; // Renvoyer null en cas d'erreur
+    }
+}
+
+function Get_Statut_Medecin($Id_essai, $Id_medecin) {
+    try {
+        $conn = Connexion_base();
+        $stmt = $conn->prepare("SELECT Statut_medecin FROM MEDECIN_ESSAIS WHERE Id_essai = ? AND Id_medecin = ?");
+        $stmt->execute(array($Id_essai, $Id_medecin));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Vérification si un résultat est trouvé
+        if ($result) {
+            return $result['Statut_medecin'];
+        } else {
+            // Si aucun résultat trouvé, renvoyer une valeur par défaut ou null
+            return null;
+        }
+    } catch (PDOException $e) {
+        // Gérer l'erreur proprement
+        error_log("Erreur BDD dans Get_Statut_Medecin: " . $e->getMessage());
+        return null; // Renvoyer null en cas d'erreur
+    }
+}
 
 function Ajout_Bdd_Essai(int $Id_entreprise, string $Titre, string $Contexte, string $Objectif_essai, string $Design_etude, string $Criteres_evaluation, string $Resultats_attendus, int $Id_essai_precedent, int $Nb_medecins, int $Nb_patients) {
     try{
@@ -688,9 +721,9 @@ function Afficher_Patients($Id_essai, $Statut_participation){
     echo '</tbody></table>';
 }
 
-function Afficher_Medecins($Id_essai, $Statut_medecin){
+function Afficher_Medecins($Id_essai, $Statut_medecin, $Id_user, $role){
     if($Statut_medecin=='Actif'){
-    $tableau_medecins = Recup_Medecins($Id_essai)[0];
+         $tableau_medecins = Recup_Medecins($Id_essai)[0];
     echo '<h1>Liste des Medecins</h1>';}
     if($Statut_medecin=='En attente'){
         $tableau_medecins = Recup_Medecins($Id_essai)[1];
@@ -715,6 +748,7 @@ function Afficher_Medecins($Id_essai, $Statut_medecin){
                 <td colspan="4">Aucun médecin trouvé.</td>
               </tr>';
     } else {
+        echo '<form method="POST">';
         foreach ($tableau_medecins as $medecin) {
             echo '<tr>
                 <td>' . htmlspecialchars($medecin["Nom"]) . '</td>
@@ -723,32 +757,141 @@ function Afficher_Medecins($Id_essai, $Statut_medecin){
                 <td>' . htmlspecialchars($medecin["Matricule"]) . '</td>
                 <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
                 <td>';
-                if ($Statut_medecin == 'Actif'){
+               
+                if ($Statut_medecin == 'Actif' && (verif_entreprise($Id_essai, $Id_user) || $role === 'admin')){
                     echo '
-                      
-                        <button class="btn delete" onclick="Retirer_Medecin_Essai(' . htmlspecialchars($Id_essai) . ', ' . htmlspecialchars($medecin["Id_medecin"]) . ')">Retirer de l\'essai</button>
+                        <button name="action" value="retirer medecin" type="submit" class="btn delete">Retirer de l\'essai</button>
                     ';
                 }
                 if ($Statut_medecin == 'En attente'){
                     echo '
-                    <button class="btn delete" onclick="Traiter_Candidature_Medecin('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 1 . ')">Accepter le médecin</button>
-                    <button class="btn delete" onclick="Traiter_Candidature_Medecin('. htmlspecialchars($Id_essai).',' . htmlspecialchars($medecin["Id_medecin"]) . ', ' . 0 . ')">Refuser le médecin</button>
+                    <button name="action" value="accepter medecin" type="submit" class="btn delete">Accepter le médecin</button>
+                    <button name="action" value="refuser medecin" type="submit" class="btn delete">Refuser le médecin</button>
                 ';
                 
                 }
 
                 echo '</tr>';
-                
+            }
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+
+                }
+                if ($_SERVER['REQUEST_METHOD']=== 'POST') {
+                 if (isset($_POST['action'])) {
+                     if ($_POST['action'] === 'retirer medecin') {
+                         Retirer_Medecin_Essai($Id_essai, $medecin['Id_medecin']);
+                     }
+                     if ($_POST['action'] === 'accepter medecin') {
+                        Traiter_Candidature_Medecin($Id_essai, $medecin['Id_medecin'],1);
+                    }
+                    if ($_POST['action'] === 'accepter medecin') {
+                        Traiter_Candidature_Medecin($Id_essai, $medecin['Id_medecin'],0);
+                    }
+            }}
         }
-    }
+        echo '</POST>';
+    
     echo '</tbody></table>';
-}
+ }
 
 function A() {
     // Définir la logique pour la fonction
 }
 
+function affichage_request_medecin($Id_essai, $praticien){
 
+    echo '<h1>Choisissez un médecin parmi cette liste</h1>';
+    echo '
+        <table>
+            <thead>
+                <tr>
+                
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Spécialité</th>
+                    <th>Matricule</th>
+                    <th>Numéro de téléphone</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>';
+    foreach($praticien as $medecin) {
+        $medecin = $medecin[0];
+        echo '<tr>
+            <td>' . htmlspecialchars($medecin["Nom"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Prenom"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Specialite"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Matricule"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
+            <td>';
+                echo '
+                    <form method="POST" action="hub.php">
+                        <button name="demande_medecin" value="' . htmlspecialchars($Id_essai . '_' . $medecin["Id_medecin"]) . '" type="submit">Demander ce médecin</button>
+                    </form>
+                ';
+    
+        
+    }
+    echo '</tr>';
+            
+    echo '</tbody></table>';
+    }
+    
+    function verif_entreprise($Id_essai, $Id_entreprise) {
+    $conn = Connexion_base();
+    
+    try {
+        $sql = "
+            SELECT EXISTS (
+                SELECT 1
+                FROM ESSAIS_CLINIQUES
+                WHERE Id_entreprise = :Id_entreprise
+                AND Id_essai = :Id_essai
+            ) AS EssaiTrouve;
+        "; 
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':Id_entreprise', $Id_entreprise, PDO::PARAM_INT);
+        $stmt->bindParam(':Id_essai', $Id_essai, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        // Récupérer le résultat de la requête
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Si l'essai est trouvé, retourne true, sinon false
+        return (bool)$result['EssaiTrouve'];
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return false;
+    } finally {
+        // Fermer la connexion
+        Fermer_base($conn);
+    }
+    }
 
+    function Relancer_Essai(int $Id_essai){
 
-
+        try{
+            $conn = Connexion_base();
+            $requete = $conn -> prepare("UPDATE `ESSAIS_CLINIQUES` SET `Statut` = 'En cours' WHERE `Id_essai` = ?");
+            $requete -> execute(array($Id_essai));
+            echo "Essai relancé avec succès!";
+            Fermer_base($conn);
+            //Envoi à l'entreprise
+            $Id_entreprise = Get_Entreprise($Id_essai);
+             Generer_notif(17, $Id_essai, $Id_entreprise);
+            // Envoi aux médecins
+            $conn = Connexion_base();
+            $requete_ter = $conn -> prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
+            $requete_ter->execute(array($Id_essai));
+            $tableau_medecin = $requete_ter->fetchAll();
+            foreach ($tableau_medecin as $medecin) {
+                $Id_medecin = $medecin['Id_medecin'];
+                //Generer_notif(17, $Id_essai, $Id_medecin);
+            }
+            Fermer_base($conn);
+        }
+        catch (PDOException $e) {
+            echo "Erreur notif: " . $e->getMessage(); 
+        }
+       
+    }

@@ -512,15 +512,202 @@ function addTestResult($functionName, $expected, $actual, $condition, $com='') {
 
             //test de la fonction Get_id()
             $table = 'PATIENTS';
-            $column = 'Id_patient   ';
+            $column = 'Id_patient';
             $list_id = Get_id($table, $column);
             addTestResult(
-                'Get_id',
+                'Get_id()',
                 'liste des ID des patients',
-                is_array($list_id)? 'Liste des ID': 'Erreur de Récupération',
-                is_array($list_id) == true 
+                !empty($list_id)? 'Liste des ID des patients': 'Erreur de Récupération',
+                !empty($list_id) == true 
             );
 
+            $table = 'PATIENTS';
+            $column = 'Id_patients';
+            $list_id = Get_id($table, $column);
+            addTestResult(
+                'Get_id(avec une colonne incorrecte)',
+                'Liste vide',
+                empty($list_id)? 'Liste vide': 'Erreur de Récupération',
+                empty($list_id) == true,
+                $com = "Erreur: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'Id_patients' in 'field list'" 
+            );
+
+            $table = 'PATIENT';
+            $column = 'Id_patient';
+            $list_id = Get_id($table, $column);
+            addTestResult(
+                'Get_id(avec une table incorrecte)',
+                'Liste vide',
+                empty($list_id)? 'Liste vide': 'Erreur de Récupération',
+                empty($list_id) == true,
+                $com = "Erreur: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'website_db.patient' doesn't exist" 
+            );
+
+            //test de la fonction Get_entreprise_data
+            $id_entreprise = 5;
+            $data = Get_entreprise_data($id_entreprise);
+            $entreprise = $data['entreprise'];
+            $clinical_trials = $data['clinical_trials'];
+            $medecins = $data['medecins'];
+            addTestResult(
+                'Get_entreprise_data()',
+                'Array contenant l`ensemble des données de l`entreprise',
+                !empty($entreprise) && is_array($entreprise)? 'Array contenant l`ensemble des données de l`entreprise': 'erreur',
+                !empty($entreprise) && is_array($entreprise) == true
+            );
+
+            $id_entreprise = 4;
+            $data = Get_entreprise_data($id_entreprise);
+            $entreprise = $data['entreprise'];
+            $clinical_trials = $data['clinical_trials'];
+            $medecins = $data['medecins'];
+            addTestResult(
+                'Get_entreprise_data(quand l`identifiant est incorrect)',
+                'Arrays vides',
+                empty($entreprise) && is_array($entreprise)? 'Arrays vides': 'erreur',
+                empty($entreprise) && is_array($entreprise) == true
+            );
+
+            //test de la fonction Get_essais
+            $role = 'patient';
+            $essais = Get_essais($role);
+            addTestResult(
+                'Get_essais($role = "patient")',
+                'array contenants les informations des essais à afficher',
+                !empty($data) && is_array($data)? 'array contenants les informations des essais à afficher': 'erreur',
+                !empty($data) && is_array($data) == true
+            );
+
+            $role = 'medecin';
+            $essais = Get_essais($role);
+            addTestResult(
+                'Get_essais($role = "medecin")',
+                'array contenants les informations des essais à afficher',
+                !empty($data) && is_array($data)? 'array contenants les informations des essais à afficher': 'erreur',
+                !empty($data) && is_array($data) == true
+            );
+
+            $role = 'entreprise';
+            $essais = Get_essais($role);
+            addTestResult(
+                'Get_essais($role = "entreprise")',
+                'array contenants les informations des essais à afficher',
+                !empty($data) && is_array($data)? 'array contenants les informations des essais à afficher': 'erreur',
+                !empty($data) && is_array($data) == true
+            );
+
+            $role = 'visiteur';
+            $essais = Get_essais($role);
+            addTestResult(
+                'Get_essais($role = "visiteur")',
+                'array contenants les informations des essais à afficher',
+                !empty($data) && is_array($data)? 'array contenants les informations des essais à afficher': 'erreur',
+                !empty($data) && is_array($data) == true
+            );
+
+            $role = 'admin';
+            $essais = Get_essais($role);
+            addTestResult(
+                'Get_essais($role = "admin")',
+                'array contenants les informations des essais à afficher',
+                !empty($data) && is_array($data)? 'array contenants les informations des essais à afficher': 'erreur',
+                !empty($data) && is_array($data) == true
+            );
+
+            $role = 'fake';
+            $essais = Get_essais($role);
+            addTestResult(
+                'Get_essais($role = "fake")',
+                'array vide',
+                empty($essais) && is_array($essais)? 'array vide': 'erreur',
+                empty($essais) && is_array($essais) == true
+            );
+
+            //test de la fonction List_medecin
+            $id_medecin = 16;
+            $data = List_Medecin($id_medecin);
+            addTestResult(
+                'List_Medecin(quand l`identifiant est correct)',
+                'Array contenant toutes les informations d`un medecin',
+                !empty($data) && is_array($data)? 'Array contenant toutes les informations d`un medecin': 'erreur',
+                !empty($data) && is_array($data) == true
+            );
+
+            $id_medecin = 4;
+            $data = List_Medecin($id_medecin);
+            addTestResult(
+                'List_Medecin(quand l`identifiant est incorrect)',
+                'Array vide',
+                empty($data) && is_array($data)? 'Array vide': 'erreur',
+                empty($data) && is_array($data) == true
+            );
+
+            $id_medecin = 'string';
+            $data = List_Medecin($id_medecin);
+            addTestResult(
+                'List_Medecin(quand l`identifiant est une chaine de caractère)',
+                'Array vide',
+                empty($data) && is_array($data)? 'Array vide': 'erreur',
+                empty($data) && is_array($data) == true
+            );
+
+            //test de la fonction recherche_EC
+            $list_ec = Get_essais('patient');
+            $recherche = '';
+            $filtres = ['Tous', 'Tous'];
+            $data = recherche_EC($list_ec, $recherche, $filtres);
+            addTestResult(
+                'recherche_EC(quand la recherche est vide et sans filtres)',
+                'array identique à la liste complète',
+                $data === $list_ec? 'array identique à la liste complète': 'erreur',
+                ($data === $list_ec) == true
+            );
+
+            $list_ec = Get_essais('patient');
+            $recherche = '';
+            $filtres = ['Tous', 'Tous'];
+            $data = recherche_EC($list_ec, $recherche, $filtres);
+            addTestResult(
+                'recherche_EC(quand la recherche a une correspondance)',
+                'array comprenant la liste des essais à afficher',
+                !empty($data) && is_array($data)? 'array comprenant la liste des essais à afficher': 'erreur',
+                !empty($data) && is_array($data) == true
+            );
+
+            $list_ec = Get_essais('patient');
+            $recherche = 'sdvsdgszdg';
+            $filtres = ['Tous', 'Tous'];
+            $data = recherche_EC($list_ec, $recherche, $filtres);
+            addTestResult(
+                'recherche_EC(quand la recherche n`a pas de correspondance)',
+                'array vide',
+                empty($data) && is_array($data)? 'array vide': 'erreur',
+                empty($data) && is_array($data) == true,
+                $com = "Aucun essai ne correspond à votre recherche."
+            );
+
+            $list_ec = Get_essais('patient');
+            $recherche = 'DELETE TABLE PATIENTS';
+            $filtres = ['Tous', 'Tous'];
+            $data = recherche_EC($list_ec, $recherche, $filtres);
+            addTestResult(
+                'recherche_EC(quand la recherche tente une injection sql)',
+                'array vide',
+                empty($data) && is_array($data)? 'array vide': 'erreur',
+                empty($data) && is_array($data) == true,
+                $com = "Aucun essai ne correspond à votre recherche."
+            );
+
+            $list_ec = Get_essais('patient');
+            $recherche = '//commentaire';
+            $filtres = ['Tous', 'Tous'];
+            $data = recherche_EC($list_ec, $recherche, $filtres);
+            addTestResult(
+                'recherche_EC(quand la recherche est un commentaire php)',
+                'le contenu n`est pas pris en compte et les essais ne sont pas filtrés',
+                $data === $list_ec? 'array identique à la liste complète': 'erreur',
+                ($data === $list_ec) == true
+            );
 
             ?>
 </body>
