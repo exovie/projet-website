@@ -12,7 +12,11 @@ if (isset($_POST['Ne_plus'])) {
     if ($Id_Notif && $Id_D) {
         // Traitez la notification (par exemple, marquer comme lu)
         Ne_plus_lire_notif($Id_Notif , $Id_D );
-        header("Location:../" . $_SESSION['origin'] . "#messagerie");
+        if ($_SESSION['origin'] === '/Essai_individuel.php') {
+            header("Location: ../Essai_individuel.php#messagerie");
+        }else{
+            header("Location:" . $_SESSION['origin'] . "#messagerie");
+        }
     }
 } elseif (isset($_POST['Lire'])) {
     // Accéder aux valeurs du tableau Lire
@@ -22,7 +26,11 @@ if (isset($_POST['Ne_plus'])) {
     if ($Id_Notif && $Id_D) {
         // Traitez la notification (par exemple, marquer comme non lu)
         Lire_notif($Id_Notif , $Id_D );
-        header("Location: ../" . $_SESSION['origin'] . "#messagerie");
+        if ($_SESSION['origin'] === '/Essai_individuel.php') {
+            header("Location: ../Essai_individuel.php#messagerie");
+        }else{
+            header("Location:" . $_SESSION['origin'] . "#messagerie");
+        }
     }
 }
 
