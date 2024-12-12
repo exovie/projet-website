@@ -4,7 +4,12 @@ include("../Fonctions.php");
 include_once '../Notifications/fonction_notif.php';
 $conn=Connexion_base();
 
-
+//Vérification du role de l'utilisateur
+if ($_SESSION['role'] !== 'Admin') {
+    header('Location: ../Connexion/Form1_connexion.php#modal'); // Redirection si non Admin
+    exit;
+}
+//Vérification si on a obtenue l'id qu'on souhaite modifier
 if (!isset($_GET['id'])) {
     header('Location: Liste_medecins.php');
     exit;
@@ -154,12 +159,12 @@ if (!$medecin) {
     <!-- Contenu Principal-->
     <div class="content">
         <h1>Modifier les informations du Médecin</h1>
-        <form-modif id="form-modification" method="POST" action="Enregistrer_modif.php">
+        <form id="form-modification" method="POST" action="Enregistrer_modif.php">
             <input type="hidden" name="role" value="Medecin">
             <input type="hidden" name="id" value="<?= htmlspecialchars($medecin['Id_medecin']) ?>">
             <label>Nom <input type="text" name="Nom" value="<?= htmlspecialchars($medecin['Nom']) ?>"></label><br>
             <label>Prénom <input type="text" name="Prenom" value="<?= htmlspecialchars($medecin['Prenom']) ?>"></label><br>
-            <label>Spécialité <input type="text" name="Spécialité" value="<?= htmlspecialchars($medecin['Specialite']) ?>"></label><br>
+            <label>Spécialité <input type="text" name="Specialite" value="<?= htmlspecialchars($medecin['Specialite']) ?>"></label><br>
             <label>Matricule <input type="text" name="Matricule" value="<?= htmlspecialchars($medecin['Matricule']) ?>"></label><br>
             <label>Téléphone <input type="text" name="Telephone" value="<?= htmlspecialchars($medecin['Telephone']) ?>"></label><br>
             <!-- Conteneur des boutons -->
@@ -172,7 +177,7 @@ if (!$medecin) {
             <div class="buttons-container">
                 <button type="submit" class="cancel-bt">Retour à la liste des médecins</button>
             </div>
-        </form-modif>
+        </form>
         </div>
 </body>
 </html>

@@ -16,16 +16,14 @@
                             Prenom = :Prenom, 
                             Sexe = :Sexe, 
                             Telephone = :Telephone 
-                          WHERE Id_Patient = :id";
+                          WHERE Id_patient = :id";
             } elseif ($role === 'Medecin') {
                 $query = "UPDATE MEDECINS SET 
                             Nom = :Nom, 
                             Prenom = :Prenom, 
                             Specialite = :Specialite, 
                             Matricule = :Matricule, 
-                            Telephone = :Telephone,
-                            Profil_Picture= NULL,
-                            Statut_inscription= 1
+                            Telephone = :Telephone
                           WHERE Id_medecin = :id";
             } elseif ($role === 'Entreprise') {
                 $query = "UPDATE ENTREPRISES SET 

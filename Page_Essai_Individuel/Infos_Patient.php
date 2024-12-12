@@ -3,9 +3,11 @@
 qui participent à un essai*/
 
 session_start();
-include("Connexion_base.php");
-
-$Id_patient= isset($_POST['Id_patient']);
+include_once('../Fonctions.php');
+$servername = "mysql:host=localhost;dbname=website-project"; // ou l'adresse de votre serveur
+$_SESSION['servername'] = $servername;
+$Id_patient=40;
+//$Id_patient= isset($_POST['Id_patient']);
 $conn= Connexion_base();
 
 function Info_Patient_Essais($conn, int $Id_patient){

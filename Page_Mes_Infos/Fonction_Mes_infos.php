@@ -3,7 +3,7 @@
 
 //session_start();
 include_once("../Fonctions.php");
-include_once("../fonctionInscription.php");
+include_once("../Inscription/fonctionInscription.php");
 $conn = Connexion_base();
 
 
@@ -24,7 +24,7 @@ function getUserInfo($conn, int $id_user) {
             $query = "SELECT Nom, Prenom, Specialite, Telephone, Matricule FROM MEDECINS WHERE Id_medecin = :id_user";
             break;
         case 'Entreprise':
-            $query = "SELECT Nom_entreprise, Telephone, Siret = :Siret FROM ENTREPRISES WHERE Id_entreprise = :id_user";
+            $query = "SELECT Nom_entreprise, Telephone, Siret FROM ENTREPRISES WHERE Id_entreprise = :id_user";
             break;
         default:
             return null;
@@ -65,11 +65,11 @@ function updateUserInfo($conn, int $id_user) {
 
                 break;
             case 'Medecin':
-                $query = "UPDATE MEDECINS SET Nom = :Nom, Prenom = :Prenom, Specialite = :Specialite,
-                          Telephone = :Telephone, Matricule = :Matricule WHERE Id_medecin = :id_user";
+                $query = "UPDATE MEDECINS SET Nom = :Nom, Prenom = :Prenom, Specialite = :Specialite,Telephone = :Telephone, 
+                Matricule = :Matricule,Profile_picture = :Profile_picture WHERE Id_medecin = :id_user";
                 break;
             case 'Entreprise':
-                $query = "UPDATE ENTREPRISES SET Nom_entreprise = :Nom_entreprise, Telephone = :Telephone, Profil_picture = :Profil_picture,
+                $query = "UPDATE ENTREPRISES SET Nom_entreprise = :Nom_entreprise, Telephone = :Telephone, Profile_picture = :Profile_picture,
                           Siret = :Siret WHERE Id_entreprise = :id_user";
                 break;
             default:
@@ -87,10 +87,15 @@ function updateUserInfo($conn, int $id_user) {
         } else {
         // Si aucune nouvelle image n'a été téléchargée, garder l'ancienne image
         // Vous devez peut-être récupérer l'image existante depuis la base de données
-        $stmt = $conn->prepare("SELECT Profile_picture FROM PATIENTS WHERE Id_patient = :id_user");
-        $stmt->execute(['id_user' => $id_user]);
-        $existingProfilePicture = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+                if ($roleValue=='Patient'){
+                    $stmt = $conn->prepare("SELECT Profile_picture FROM PATIENTS WHERE Id_patient = :id_user");
+                } elseif ($roleValue=='Medecin'){
+                    $stmt = $conn->prepare("SELECT Profile_picture FROM MEDECINS WHERE Id_medecin = :id_user");
+                }else {
+                    $stmt = $conn->prepare("SELECT Profile_picture FROM ENTREPRISES WHERE Id_entreprise = :id_user");
+                }
+            $stmt->execute(['id_user' => $id_user]);
+            $existingProfilePicture = $stmt->fetch(PDO::FETCH_ASSOC);
         // Si une image existante est trouvée, la conserver dans $data['Profile_picture']
         if ($existingProfilePicture) {
             $data['Profile_picture'] = $existingProfilePicture['Profile_picture'];
@@ -101,20 +106,41 @@ function updateUserInfo($conn, int $id_user) {
         $newArray = [];
         $profilePicture = isset($data['Profile_picture']) ? $data['Profile_picture'] : null;  // Conserver la valeur de Profile_picture si elle existe
 
-        foreach ($data as $key => $value) {
-            // Si on arrive sur Telephone, on ajoute d'abord Telephone puis Profile_picture
-            if ($key === 'Telephone') {
-                $newArray['Telephone'] = $value;
-                if ($existingProfilePicture !== null) {
-                    $newArray['Profile_picture'] = $existingProfilePicture['Profile_picture'];
-                    $existingProfilePicture = null; // On s'assure de ne pas rajouter deux fois Profile_picture
-            }
-            } else {
-                // Ajouter les autres éléments normalement
-                if ($key !== 'Profile_picture') {
-                $newArray[$key] = $value;
-            }
-            }
+        //Réorganiser selon le rôle à mettre à jour (car contraint par ValidateResponsesByRole)
+        if ($roleValue=='Patient'|| $roleValue=='Entreprise'){
+            foreach ($data as $key => $value) {
+                // Si on arrive sur Telephone, on ajoute d'abord Telephone puis Profile_picture
+                if ($key === 'Telephone') {
+                    $newArray['Telephone'] = $value;
+                    if ($existingProfilePicture !== null) {
+                        $newArray['Profile_picture'] = $existingProfilePicture['Profile_picture'];
+                        $existingProfilePicture = null; // On s'assure de ne pas rajouter deux fois Profile_picture
+                }
+                } else {
+                    // Ajouter les autres éléments normalement
+                    if ($key !== 'Profile_picture') {
+                    $newArray[$key] = $value;
+                }
+                }
+            }}
+        elseif ($roleValue=='Medecin'){
+            foreach ($data as $key => $value) {
+                // Si on arrive sur Telephone, on ajoute d'abord Telephone puis Profile_picture
+                if ($key === 'Telephone') {
+                    $newArray['Telephone'] = $value;
+                    if ($existingProfilePicture !== null) {
+                        $newArray['Profile_picture'] = $existingProfilePicture['Profile_picture'];
+                        $existingProfilePicture = null; // On s'assure de ne pas rajouter deux fois Profile_picture
+                }
+                } else {
+                    // Ajouter les autres éléments normalement
+                    if ($key !== 'Profile_picture') {
+                    $newArray[$key] = $value;
+                }
+                }
+            }}
+        else{
+            echo "Rôle non pris en charge : $roleValue";
         }
 
         // Si Profile_picture n'a pas été inséré et qu'il y a une image, on l'ajoute à la fin
@@ -124,14 +150,15 @@ function updateUserInfo($conn, int $id_user) {
 
         // Résultat dans $newArray : les données réorganisées avec Profile_picture juste après Telephone
         $data = $newArray;
-
+        
         //Changement des clés en valeurs numériques
         $numericArray = array_values($data);
 
         // Vérification du format des réponses
         $errorMessages = '';
-        $date = $_POST['Date_naissance'];
+        
         if ($role == 'Patient'){
+            $date = $_POST['Date_naissance'];
             $ageErr= Verif_age($date); 
             if ($ageErr == false) {
             $errorMessages= $errorMessages."Vous devez être majeur pour vous inscrire.";
@@ -139,7 +166,6 @@ function updateUserInfo($conn, int $id_user) {
         }
 
         $errors = validateResponsesByRole($roleValue, $numericArray);
-        
         
         if (!empty($errors)) {
          // S'il y a des erreurs, on les affiche
@@ -151,16 +177,16 @@ function updateUserInfo($conn, int $id_user) {
         }
 
         $_SESSION['FormsErr'] = $errorMessages;
-        //Fermer_base($conn);
-        //header('Location: Menu_Mes_Infos.php#modal');
+        Fermer_base($conn);
+        header('Location: Menu_Mes_Infos.php#modal');
         } else {
         // Si pas d'erreur, on passe à la page suivante
         
         $update = $conn->prepare($query);
 
-        //$_SESSION['reponsesInscription'] = ($_POST); 
-        //Fermer_base($pdo);
-        //header("Location: Menu_Mes_Infos.php#modal");
+        $_SESSION['reponsesInscription'] = ($_POST); 
+        Fermer_base($conn);
+        header("Location: Menu_Mes_Infos.php#modal");
         $result = $update->execute($data);
         
         if ($result) {

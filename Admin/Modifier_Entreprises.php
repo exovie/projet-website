@@ -3,10 +3,18 @@
 include("../Fonctions.php");
 include_once '../Notifications/fonction_notif.php';
 $conn=Connexion_base();
+
+//Vérification du role de l'utilisateur
+if ($_SESSION['role'] !== 'Admin') {
+    header('Location: ../Connexion/Form1_connexion.php#modal'); // Redirection si non Admin
+    exit;
+}
+//Vérification si on a obtenue l'id qu'on souhaite modifier
 if (!isset($_GET['id'])) {
     header('Location: Liste_entreprises.php');
     exit;
 }
+
 session_start();
 $_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 
@@ -67,7 +75,6 @@ if (!$entreprise) {
         .cancel-btn:hover {
         background-color: #d32f2f; /* Couleur au survol */
     }
-
     </style>
 </head>
 <body>
@@ -146,14 +153,16 @@ if (!$entreprise) {
         unset($_SESSION['ErrorCode']); // Nettoyage après affichage
     endif; 
     ?>
+    
+
 
     <!-- Contenu Principal-->
     <div class="content">
-        <h3>Modifier les informations de l'Entreprise</h3>
-        <form-modif id="form-modification" method="POST" action="Enregistrer_modif.php">
+        <h1>Modifier les informations de l'Entreprise</h1>
+        <form id="form-modification" method="POST" action="Enregistrer_modif.php">
             <input type="hidden" name="role" value="Entreprise">
             <input type="hidden" name="id" value="<?= htmlspecialchars($entreprise['Id_entreprise']) ?>">
-            <label>Nom de l'entreprise <input type="text" name="Nom" value="<?= htmlspecialchars($entreprise['Nom_entreprise']) ?>"></label><br>
+            <label>Nom de l'entreprise <input type="text" name="Nom_entreprise" value="<?= htmlspecialchars($entreprise['Nom_entreprise']) ?>"></label><br>
             <label>Téléphone <input type="text" name="Telephone" value="<?= htmlspecialchars($entreprise['Telephone']) ?>"></label><br>
             <label>Siret <input type="text" name="Siret" value="<?= htmlspecialchars($entreprise['Siret']) ?>"></label><br>
             <!-- Conteneur des boutons -->
@@ -166,7 +175,7 @@ if (!$entreprise) {
             <div class="buttons-container">
                 <button type="submit" class="cancel-bt">Retour à la liste des entreprises</button>
             </div>
-        </form-modif>
+        </form>
         </div>
 </body>
 </html>

@@ -4,8 +4,14 @@ include("../Fonctions.php");
 include_once '../Notifications/fonction_notif.php';
 $conn=Connexion_base();
 
+//Vérification du role de l'utilisateur
+if ($_SESSION['role'] !== 'Admin') {
+    header('Location: ../Connexion/Form1_connexion.php#modal'); // Redirection si non Admin
+    exit;
+}
+//Vérification si on a obtenue l'id qu'on souhaite modifier
 if (!isset($_GET['id'])) {
-    header('Location: Liste_Patients.php');
+    header('Location: Liste_patients.php');
     exit;
 }
 
@@ -13,7 +19,7 @@ session_start();
 $_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 
 $id_patient = intval($_GET['id']);
-$query = "SELECT Id_Patient, Nom, Prenom, Sexe, Telephone FROM PATIENTS WHERE Id_Patient = :id_patient";
+$query = "SELECT Id_patient, Nom, Prenom, Sexe, Telephone FROM PATIENTS WHERE Id_patient = :id_patient";
 $stmt = $conn->prepare($query);
 $stmt->execute(['id_patient' => $id_patient]);
 $patient = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -151,9 +157,9 @@ if (!$patient) {
     <!-- Contenu de la page -->
     <div class="content">
         <h1>Modifier les informations du patient</h1>
-        <form-modif id="form-modification" method="POST" action="Enregistrer_modif.php">
+        <form id="form-modification" method="POST" action="Enregistrer_modif.php">
             <input type="hidden" name="role" value="Patient">
-            <input type="hidden" name="id" value="<?= htmlspecialchars($patient['Id_Patient']) ?>">
+            <input type="hidden" name="id" value="<?= htmlspecialchars($patient['Id_patient']) ?>">
             
             <label>Nom
                 <input type="text" name="Nom" value="<?= htmlspecialchars($patient['Nom']) ?>">
@@ -180,7 +186,7 @@ if (!$patient) {
             <div class="buttons-container">
                 <button type="submit" class="cancel-bt">Retour à la liste des patients</button>
             </div>
-        </form-modif>
+        </form>
     </div>
 </body>
 </html>

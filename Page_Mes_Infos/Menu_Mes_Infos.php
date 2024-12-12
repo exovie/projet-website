@@ -1,5 +1,5 @@
 <?php
-// Exemple : Récupérer le rôle depuis une session ou une base de données
+
 session_start();
 $_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 $role = $_SESSION['role']; // Par exemple : "Patient", "Medecin", ou "Entreprise"
@@ -7,7 +7,7 @@ include '../Fonctions.php';
 include_once '../Notifications/fonction_notif.php';
 
 $role = $_SESSION['role']; 
-$id_user = $_SESSION['id_user'];
+$id_user = $_SESSION['Id_user'];
 ?>
 
 <!DOCTYPE html>

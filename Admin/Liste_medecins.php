@@ -3,8 +3,16 @@
 include("../Fonctions.php");
 include_once '../Notifications/fonction_notif.php';
 $conn=Connexion_base();
+
 session_start();
+
+
 $_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
+//Vérification du role de l'utilisateur
+if ($_SESSION['role'] !== 'Admin') {
+    header('Location: ../Connexion/Form1_connexion.php#modal'); // Redirection si non Admin
+    exit;
+}
 
 //Récupération des infos
 $query = "

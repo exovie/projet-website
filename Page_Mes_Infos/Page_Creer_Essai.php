@@ -81,12 +81,7 @@ if ($_SESSION['role'] !== "Entreprise") {
                 <a href= "<?= $_SESSION['origin'] ?>#messagerie">
                     <img src="../Pictures/letterPicture.png" alt="letterPicture" style="cursor: pointer;">
                 </a>
-                <!-- Affichage de la pastille -->
-                <?php 
-                $showBadge = Pastille_nombre($_SESSION['Id_user']);
-                if ($showBadge > 0): ?>
-                    <span class="notification-badge"><?= htmlspecialchars($showBadge) ?></span>
-                <?php endif; ?>
+
             </div>
             <?php endif; ?>
 

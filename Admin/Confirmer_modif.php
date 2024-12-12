@@ -1,14 +1,14 @@
 <?php
 //Connexion à la base
-include("../Fonctions.php");
-include ("Fonctions_admin.php");
+
+include_once ("Fonctions_admin.php");
 include_once '../Notifications/fonction_notif.php';
-$conn=Connexion_base();
+
 
 session_start();
 $_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 if (!isset($_SESSION['modifications'])) {
-    header('Location: admin_home.php');
+    header('Location: Home_Admin.php');
     exit;
 }
 
@@ -22,6 +22,7 @@ $modifications = $_SESSION['modifications'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href='../website.css'>
     <link rel="stylesheet" href= '../navigationBar.css'>
+    <link rel="stylesheet" href='../Notifications/Notifications_style.css'>
     <title>Confirmer les modifications</title>
 
     <style>
@@ -115,6 +116,24 @@ $modifications = $_SESSION['modifications'];
         </div>
     </div>
 
+
+    <!-- Message Success -->
+    <?php 
+    if (isset($_SESSION['SuccessCode'])): 
+        SuccesEditor($_SESSION['SuccessCode']);
+        unset($_SESSION['SuccessCode']); // Nettoyage après affichage
+    endif; 
+    ?>
+
+    <!-- Message Erreur -->
+    <?php 
+    if (isset($_SESSION['ErrorCode'])): 
+        ErrorEditor($_SESSION['ErrorCode']);
+        unset($_SESSION['ErrorCode']); // Nettoyage après affichage
+    endif; 
+    ?>
+    
+    
     <!-- Message Success -->
     <?php 
     if (isset($_SESSION['SuccessCode'])): 
@@ -144,7 +163,7 @@ $modifications = $_SESSION['modifications'];
 
     
     <!-- Contenu de la page -->
-    <div class="container">
+    <div class="content">
         <h1>Confirmer les modifications</h1>
         <p>Vous êtes sur le point de modifier les informations suivantes :</p>
         <ul>
@@ -162,7 +181,7 @@ $modifications = $_SESSION['modifications'];
         <!-- Bouton d'annulation -->
         <?php 
             // Détermine la page de redirection en fonction du rôle
-            $redirectUrl = '#'; // Valeur par défaut
+            $redirectUrl = ''; // Valeur par défaut
             if (isset($modifications['role'])) {
                 if ($modifications['role'] === 'Patient') {
                     $redirectUrl = 'Liste_Patients.php';
