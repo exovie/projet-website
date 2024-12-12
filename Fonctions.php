@@ -1,5 +1,4 @@
 <?php
-session_start();
 $db_name = "mysql:host=localhost;dbname=website_db"; 
 $_SESSION['db_name'] = $db_name;
 
@@ -168,6 +167,10 @@ function Get_essais($role) {
         'entreprise' => null // Utilisation de null pour indiquer "tous les statuts"
     ];
     
+    if (!isset($statuses[$role])) {
+        return [];
+    }
+
     try {
         // Construction dynamique de la requête
         $sql = "
@@ -231,7 +234,10 @@ function Display_essais($resultats) {
     }
 }
 
-function List_Medecin(int $id_medecin): array {
+function List_Medecin($id_medecin): array {
+    if (!is_int($id_medecin)) {
+        return [];
+    }
     $conn = Connexion_base();
 
     try { 
@@ -597,6 +603,8 @@ function get_medecin_trial(int $id_medecin, $id_essai): array {
     }
 }
 
+
+
 function verif_entreprise($Id_essai, $Id_entreprise) {
     $conn = Connexion_base();
 
@@ -692,4 +700,4 @@ function SuccesEditor($SuccessCode){
             <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
         </div>
     </div>';}
-
+?>

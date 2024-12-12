@@ -4,7 +4,6 @@ $_SESSION['origin'] =  $_SERVER['REQUEST_URI'];
 $role = $_SESSION['role'];
 $db_name = $_SESSION['db_name'];
 include 'Fonctions.php';
-include 'Notifications/fonction_notif.php';
 $list_essai = Get_essais($role);
 ?>
 
@@ -19,7 +18,7 @@ $list_essai = Get_essais($role);
     <link rel="stylesheet" href='Notifications/Notifications_style.css'>
 </head>
 <body>
-    <!-- Code de la barre de navigation -->
+    <!-- Conteneur fixe en haut de la page -->
     <div class="navbar">
         <div id="logo">
             <a href="Homepage.php">

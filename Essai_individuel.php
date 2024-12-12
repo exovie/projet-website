@@ -156,7 +156,7 @@ $_SESSION['origin'] = 'Essai_individuel.php';
                 }
                 }
 
-                if($role == 'Medecin'){
+                if($role == 'medecin'){
                     if(Verif_Participation_Medecin($Id_user, $Id_essai)){ // Si ce médecin s'occupe ou s'est occupé de cet essai
                         echo '<div class="side-buttons_candidature">';
                         echo '<button name = "action" value="se retirer medecin" class="nav-btn_essai">Se retirer de cet essai</button>';
@@ -298,7 +298,7 @@ if (isset($_SESSION['postdata'])) {  // Utilisez isset() pour vérifier que 'med
 }
 ?>
 
-</div>
-</div>
+   </div>
+</main>
 </body>
 </html>

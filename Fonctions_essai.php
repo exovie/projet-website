@@ -790,45 +790,98 @@ function A() {
 
 function affichage_request_medecin($Id_essai, $praticien){
 
-echo '<h1>Choisissez un médecin parmi cette liste</h1>';
-echo '
-    <table>
-        <thead>
-            <tr>
-            
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Spécialité</th>
-                <th>Matricule</th>
-                <th>Numéro de téléphone</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>';
-foreach($praticien as $medecin) {
-    $medecin = $medecin[0];
-    echo '<tr>
-        <td>' . htmlspecialchars($medecin["Nom"]) . '</td>
-        <td>' . htmlspecialchars($medecin["Prenom"]) . '</td>
-        <td>' . htmlspecialchars($medecin["Specialite"]) . '</td>
-        <td>' . htmlspecialchars($medecin["Matricule"]) . '</td>
-        <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
-        <td>';
-            echo '
-                <form 
-
-function Generer_Notif($code, $Id_essai, $Id_destinataire){}
-
-method="POST" action="hub.php">
-                    <button name="demande_medecin" value="' . htmlspecialchars($Id_essai . '_' . $medecin["Id_medecin"]) . '" type="submit">Demander ce médecin</button>
-                </form>
-            ';
-
+    echo '<h1>Choisissez un médecin parmi cette liste</h1>';
+    echo '
+        <table>
+            <thead>
+                <tr>
+                
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Spécialité</th>
+                    <th>Matricule</th>
+                    <th>Numéro de téléphone</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>';
+    foreach($praticien as $medecin) {
+        $medecin = $medecin[0];
+        echo '<tr>
+            <td>' . htmlspecialchars($medecin["Nom"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Prenom"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Specialite"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Matricule"]) . '</td>
+            <td>' . htmlspecialchars($medecin["Telephone"]) . '</td>
+            <td>';
+                echo '
+                    <form method="POST" action="hub.php">
+                        <button name="demande_medecin" value="' . htmlspecialchars($Id_essai . '_' . $medecin["Id_medecin"]) . '" type="submit">Demander ce médecin</button>
+                    </form>
+                ';
     
-}
-echo '</tr>';
         
-echo '</tbody></table>';
-}
+    }
+    echo '</tr>';
+            
+    echo '</tbody></table>';
+    }
+    
+    function verif_entreprise($Id_essai, $Id_entreprise) {
+    $conn = Connexion_base();
+    
+    try {
+        $sql = "
+            SELECT EXISTS (
+                SELECT 1
+                FROM ESSAIS_CLINIQUES
+                WHERE Id_entreprise = :Id_entreprise
+                AND Id_essai = :Id_essai
+            ) AS EssaiTrouve;
+        "; 
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':Id_entreprise', $Id_entreprise, PDO::PARAM_INT);
+        $stmt->bindParam(':Id_essai', $Id_essai, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        // Récupérer le résultat de la requête
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Si l'essai est trouvé, retourne true, sinon false
+        return (bool)$result['EssaiTrouve'];
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return false;
+    } finally {
+        // Fermer la connexion
+        Fermer_base($conn);
+    }
+    }
 
+    function Relancer_Essai(int $Id_essai){
 
+        try{
+            $conn = Connexion_base();
+            $requete = $conn -> prepare("UPDATE `ESSAIS_CLINIQUES` SET `Statut` = 'En cours' WHERE `Id_essai` = ?");
+            $requete -> execute(array($Id_essai));
+            echo "Essai relancé avec succès!";
+            Fermer_base($conn);
+            //Envoi à l'entreprise
+            $Id_entreprise = Get_Entreprise($Id_essai);
+             Generer_notif(17, $Id_essai, $Id_entreprise);
+            // Envoi aux médecins
+            $conn = Connexion_base();
+            $requete_ter = $conn -> prepare("SELECT `Id_medecin` FROM `MEDECIN_ESSAIS` WHERE `Id_essai`=?");
+            $requete_ter->execute(array($Id_essai));
+            $tableau_medecin = $requete_ter->fetchAll();
+            foreach ($tableau_medecin as $medecin) {
+                $Id_medecin = $medecin['Id_medecin'];
+                //Generer_notif(17, $Id_essai, $Id_medecin);
+            }
+            Fermer_base($conn);
+        }
+        catch (PDOException $e) {
+            echo "Erreur notif: " . $e->getMessage(); 
+        }
+       
+    }
