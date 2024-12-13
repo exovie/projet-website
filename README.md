@@ -38,6 +38,15 @@ Avant de commencer, assurez-vous que les outils suivants sont installés et conf
    - Démarrez XAMPP et activez le serveur Apache et MySQL.
    - Ouvrez votre navigateur et accédez à l'adresse : `http://localhost/projet-website/Homepage.php`.
 
+
+## Base de données - SQL 
+
+La base de données a été générée avec  le module [Fake](https://fakepy.readthedocs.io/en/0.3.1/) de Python.   
+
+Par conséquent les mots de passes sont personnalisés pour chaque utilisateur.
+- patient/medecin = initiale prénom + ‘.’ + nom
+- entreprise/ admin = nom
+
 ## Arborescence des fichiers
 
 opt/lampp/htdocs/projet-website
