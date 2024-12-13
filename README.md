@@ -42,9 +42,8 @@ Avant de commencer, assurez-vous que les outils suivants sont installés et conf
 
 opt/lampp/htdocs/projet-website
 
-├── Admin 
-│   ├── Admin.css 
-
+├── Admin   
+│   ├── Admin.css   <br>
 │   ├── Confirmer_modif.php 
 
 │   ├── Enregistrer_modif.php
