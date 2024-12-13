@@ -1,4 +1,138 @@
-/* STYLE POUR LES MODALES*/
+#main_page {
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+
+#grologo {
+    margin-top: 100px;
+}
+
+.border{
+    background-color: turquoise; /* Couleur de fond pour le haut de la page */
+    height: 70px; /* Hauteur du conteneur */
+    margin: 0; /* Supprime les marges par défaut pour occuper toute la largeur */
+    width: 100%; /* S'assure que le conteneur occupe toute la largeur */
+    position: fixed; /* Fixe le conteneur en haut de la page */
+    top: 0; /* Positionne le conteneur tout en haut de la page */
+    left: 0; /* Positionne le conteneur tout à gauche */
+    z-index: 1000; /* Assure que le conteneur est au-dessus des autres éléments */
+}
+.banner{
+    background: rgb(3, 132, 245); /* Dégradé de couleur */
+    height: 5px; /* Hauteur fixe du bandeau esthétique */
+    width: 100%; /* S'assure que le conteneur occupe toute la largeur */
+    position: fixed; /* Fixe le conteneur en dessous du bandeau turquoise */
+    top: 70px; /* Positionne le conteneur juste en dessous du bandeau turquoise */
+    left: 0; /* Positionne le conteneur tout à gauche */
+    z-index: 999; /* Assure que le conteneur est en dessous du bandeau turquoise */    
+}
+#navbar ul {
+    padding:0%;
+    list-style-type: none; /* Retire les puces */
+    display: flex; /* Affiche les éléments en ligne */
+}
+#logo{
+    margin-left: 50px;
+    position: relative;
+    top: 5px;
+}
+#first {
+    margin-left: 70px;
+    margin-right: 40px;
+}
+#Entreprises {
+    margin-left: 40px;
+    margin-right: 10px;
+}
+#main_search{
+    margin-left: 600px;
+    margin-right: 10px;
+    background-color: white;
+    position: relative;
+    top: 8px;
+}
+#Subscription{
+    margin-left: 50px;
+    position: relative;
+    top: -20px;
+}
+.content {
+    margin-top: 60px; /* Pour laisser de l'espace sous la barre de navigation */
+    padding-top: 100px;
+    text-align: center;
+}
+.capsule-border {
+    background-color: blue; /* Couleur de fond */
+    border: 2px solid black; /* Couleur et épaisseur de la bordure */
+    border-radius: 50px; /* Arrondi pour donner la forme de gélule */
+    padding: 10px; /* Espacement intérieur */
+    display: inline-block; /* Pour que la bordure s'adapte au contenu */
+}
+#envelope{
+    width: 24px;
+    height: 24px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Style pour le conteneur principal */
+.entreprise {
+    width: 300px; /* Ajustez selon vos besoins */
+    padding: 20px;
+    border: 2px solid black;
+    border-radius: 20px;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    text-align: left;
+    background-color: #f9f9f9;
+  }
+  
+  /* Titre de l'entreprise */
+  .entreprise h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+    margin: 0;
+  }
+  
+  .entreprise h1 span {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: normal;
+  }
+  
+  /* Information de base */
+  .entreprise p {
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  
+  /* Section des essais cliniques */
+  .entreprise .clinical-trials {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff; /* Bleu pour lien */
+    text-decoration: underline;
+    margin-bottom: 10px;
+  }
+  
+  /* Liste des médecins */
+  .entreprise .medecins {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+  
+  .entreprise .medecins div {
+    width: 40px;
+    height: 40px;
+    background: #d9d9d9;
+    border-radius: 50%;
+  }
+  
+
+
 .modal {
     display: none; /* Caché par défaut */
     position: fixed;
@@ -89,4 +223,207 @@ button:hover {
     padding: 10px;
     border-radius: 4px;
     background-color: rgba(0, 128, 0, 0.1);
+}
+
+/* Style pour le conteneur principal */
+.entreprise {
+    width: 25%; /* Largeur fixe pour uniformiser */
+    padding: 10px;
+    border: 5px solid rgba(64, 224, 208, 0.2);
+    border-radius: 20px;
+    background-color: rgba(132, 219, 210, 0.475);
+    text-align: left;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+}
+  
+  /* Titre de l'entreprise */
+  .entreprise h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: rgb(24, 98, 104);
+    margin: 0;
+  }
+
+  /* Information de base */
+  .entreprise p {
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  
+  /* Section des essais cliniques */
+  .entreprise .clinical-trials {
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: normal;
+    color:black;
+    text-decoration: none;
+  }
+  
+  /* Liste des médecins */
+  .entreprise #medecins {
+    display: flex;
+    justify-content: left;
+    margin-top: 15px;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .entreprise #medecins li {
+    padding-right: 5px;
+  }
+  
+
+#boxes {
+    display: flex; /* Active Flexbox */
+    justify-content: center; /* Centre horizontalement */
+    align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
+    flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */
+    gap: 20px; /* Espacement entre les boîtes */
+    padding: 20px; /* Optionnel : ajoute de l'espace interne */    
+}
+    
+.presentation {
+    color: rgb(24, 98, 104);
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.fixed_picture {
+    width: 32px; /* Largeur fixe */
+    height: 32px; /* Hauteur fixe */
+}
+
+.minilogo {
+    width: 50px; /* Largeur fixe */
+    height: 50px; /* Hauteur fixe */
+}
+
+.trials {
+    width: 70%; /* Largeur fixe pour uniformiser */
+    padding: 10px;
+    border: 5px solid rgba(64, 224, 208, 0.2);
+    border-radius: 20px;
+    background-color: rgba(132, 219, 210, 0.475);
+    text-align: left;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+    list-style: none;
+}
+
+
+.trials li {
+    margin: 5px 0;
+}
+
+#trial_boxes {
+    display: flex; /* Active Flexbox */
+    justify-content: center; /* Centre horizontalement */
+    align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
+    flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */ /* Espacement entre les boîtes */
+    padding: 20px; /* Optionnel : ajoute de l'espace interne */    
+}
+
+.trials .trial_title {
+    font-weight: bold;
+}
+
+.trials .trial_company {
+    font-style: italic;
+    color: rgb(24, 98, 104);
+}
+
+.search-container {
+    width: 100%;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+}
+
+.search-box {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    margin-top: 15px;
+}
+
+.search-box:focus {
+    border-color:rgb(29, 186, 197);
+}
+
+.search-button {
+    padding: 10px 15px;
+    margin-left: 10px;
+    background-color: #008b8b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.search-button:hover {
+    background-color: #00b3aa;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    width:fit-content;
+}
+
+.filter-container select {
+    flex: 1;
+    margin: 0 5px;
+    background-color: #f8f8f9;
+    border: solid 1px #ccc;
+    border-radius: 5px;
+
+}
+.medecins {
+    width: 15%; /* Largeur fixe pour uniformiser */
+    padding: 10px;
+    border: 5px solid rgba(224, 64, 211, 0.2);
+    border-radius: 20px;
+    background-color: rgba(209, 132, 219, 0.475);
+    text-align: left;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+    list-style: none;
+}
+
+.medecins li {
+    margin: 5px 0;
+}
+
+
+.medecins .noms_medecins {
+    font-weight: bold;
+}
+
+.medecins .specialite {
+    font-style: italic;
+    color: rgb(91, 24, 104);
+}
+
+#medecin_boxes {
+    display: flex; /* Active Flexbox */
+    justify-content: center; /* Centre horizontalement */
+    align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
+    flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */ /* Espacement entre les boîtes */
+    padding: 20px; /* Optionnel : ajoute de l'espace interne */    
+    gap: 20px;
+}
+
+#medecin {
+    color: rgb(91, 24, 104);
+}
+
+.image_nom {
+    display: flex;
+    align-items: center; /* Aligner verticalement les éléments */
+    list-style: none;
+}
+
+.image_nom li {
+    margin-right: 10px;
 }

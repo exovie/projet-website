@@ -1,0 +1,124 @@
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.indiv_trials{
+    width: 60%; /* Largeur fixe pour uniformiser */
+    padding: 10px;
+    border: 5px solid rgba(64, 224, 208, 0.2);
+    border-radius: 20px;
+    background-color: rgba(132, 219, 210, 0.475);
+    text-align: left;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Optionnel : ombre */
+    list-style: none;
+}
+
+.indiv_trials .indiv_trial_title {
+    font-weight: bold;
+    font-size: 40px; 
+}
+
+.indiv_trials li {
+    margin: 5px 0;
+    margin-bottom: 15px; /* Ajoute un espacement entre les lignes */
+    line-height: 1.6;  
+    font-size: 20px; 
+}
+
+#indiv_trial_boxes {
+    display: flex; /* Active Flexbox */
+    justify-content: center; /* Centre horizontalement */
+    align-items: flex-start; /* Alignement vertical (si nécessaire, modifiez à 'center') */
+    flex-wrap: wrap; /* Permet de passer à la ligne si plusieurs boîtes */ /* Espacement entre les boîtes */
+    padding: 20px; /* Optionnel : ajoute de l'espace interne */    
+}
+
+.nav-btn_essai {
+    position: fixed;
+    top: 220px;  /* Distance depuis le bas de la fenêtre */
+    right: 40px; 
+    background-color: rgb(24, 98, 104);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 28px;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.frame {
+    border: 1px solid #ccc; /* Bordure grise */
+    padding: 15px;
+    margin: 20px auto; /* Centré avec marge */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 1200px; /* Plus large */
+    background-color: rgba(132, 219, 210, 0.475);
+    border: 5px solid rgba(64, 224, 208, 0.2);
+}
+
+/* Style du tableau */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(132, 219, 210, 0.475);
+}
+
+th, td {
+
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+}
+
+th {
+
+    background-color: rgba(132, 219, 210, 0.475);
+}
+
+/* Conteneur fixé sur le côté droit de l'écran */
+.side-buttons_candidature {
+    position: fixed;
+    top: 20%; /* Ajustez la position verticale */
+    right: 10px; /* Positionne la boîte à droite */
+    background-color: rgba(132, 219, 210, 0.475); /* Couleur de fond de la boîte */
+    padding: 15px; /* Ajoute un peu d'espace autour du contenu */
+    width: 15%; /* Réduit la largeur du cadre */
+    border-radius: 10px; /* Coins arrondis */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère autour de la boîte */
+}
+
+/* Style des boutons dans la box */
+.nav-btn_essai_candidature {
+    width: 100%; /* Prend toute la largeur de la boîte */
+    font-size: 16px; /* Agrandit la taille du texte */
+    padding: 10px; /* Agrandit les boutons */
+    margin-bottom: 10px; /* Ajoute de l'espace entre les boutons */
+    background-color: rgb(24, 98, 104); /* Couleur du bouton (vert ici) */
+    color: white; /* Couleur du texte */
+    border: none;
+    border-radius: 5px; /* Coins arrondis pour les boutons */
+    cursor: pointer; /* Change le curseur en main pour indiquer que c'est cliquable */
+    transition: background-color 0.3s ease; /* Effet de transition sur la couleur de fond */
+}
+
+/* Effet au survol */
+.nav-btn_essai_candidature:hover {
+    background-color: #0056b3;
+}
+
+.side-buttons_statistique {
+    position: fixed;
+    top: 40%; /* Ajustez la position verticale */
+    right: 10px; /* Positionne la boîte à droite */
+    background-color: rgba(132, 219, 210, 0.475); /* Couleur de fond de la boîte */
+    padding: 15px; /* Ajoute un peu d'espace autour du contenu */
+    width: 15%; /* Réduit la largeur du cadre */
+    border-radius: 10px; /* Coins arrondis */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère autour de la boîte */
+}

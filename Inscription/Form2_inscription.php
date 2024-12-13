@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 /* Verification de si le premier formulaire a deja ete rempli*/
 if (!isset($_SESSION['email'], $_SESSION['role'])) {
     header("Location: /projet-website/Inscription/Form1_inscription.php");
@@ -10,13 +11,6 @@ $role = $_SESSION['role'];
 if (isset($_SESSION['FormsErr'])) {
     $FormsErr= $_SESSION['FormsErr'];
 }
-
-// Questions spécifiques
-$questions = [
-    'patient' => ['Nom','Prenom','Date de naissance','Sexe','Telephone','Profil Picture','Taille', 'Poids', 'Traitements', 'Allergies', 'CNI'],
-    'medecin' => ['Nom','Prenom','Spécialité','Telephone','Matricule', 'Profil Picture'],
-    'entreprise' => ['Nom Entreprise', 'Telephone','Adresse', 'Profil Picture', 'SIRET']
-];
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -36,14 +30,25 @@ $questions = [
             <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
             <h1>Inscription - <?php echo $role?></h1>
             <form method="POST" action="/projet-website/Inscription/verification2_inscription.php">
+
+            <!-- Affichage des erreurs -->
             <?php if (isset($FormsErr)): ?>
                         <p class="error-message"><?php echo htmlspecialchars($FormsErr); ?></p>
                         <?php unset($FormsErr);
                         unset($_SESSION['FormsErr']); ?>
-                    <?php endif; ?>
-            <?php foreach ($questions[$role] as $question): ?>
-            <div class="form-group">
+            <?php endif; ?>
 
+            <!-- Affichage du formulaire -->
+            <?php 
+            // Questions spécifiques
+            $questions = [
+                'Patient' => ['Nom','Prenom','Date de naissance','Sexe','Telephone','Profil Picture','Taille', 'Poids', 'Traitements', 'Allergies', 'CNI'],
+                'Medecin' => ['Nom','Prenom','Spécialité','Telephone','Matricule', 'Profil Picture'],
+                'Entreprise' => ['Nom Entreprise', 'Telephone','Profil Picture', 'SIRET']
+            ];
+
+            foreach ($questions[$role] as $question): ?>
+            <div class="form-group">
                 <?php if ($question == 'Sexe'): ?>
                     <label><?php echo htmlspecialchars($question); ?></label>
                     <select name="reponses[]" required>
@@ -55,10 +60,10 @@ $questions = [
                     <input type="text" name="reponses[]" placeholder="AAAA-MM-JJ" required>
                 <?php elseif ($question == 'Profil Picture'): ?>
                     <label><?php echo htmlspecialchars($question); ?></label>
-                    <input type="file" name="reponses[]">
+                    <input type="file" name="reponses[]" accept="image/*">
                 <?php elseif ($question == 'CNI'): ?>
                     <label><?php echo htmlspecialchars($question); ?></label>
-                    <input type="file" name="reponses[]">
+                    <input type="file" name="reponses[]" accept="image/*">
                 <?php elseif ($question == 'Taille'): ?>
                     <label><?php echo htmlspecialchars($question); ?></label>
                     <input type="int" name="reponses[]" placeholder=" en cm " required>
@@ -80,7 +85,7 @@ $questions = [
                 <?php endif; ?>
             </div>
             <?php endforeach; ?>
-            
+
             <?php
             if ($role == 'medecin' or $role == 'entreprise') {
                 echo "Votre inscription sera soumise à validation par un administrateur.\n Vous pourrez vous connecter une fois votre compte validé.";

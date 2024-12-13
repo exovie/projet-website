@@ -1,0 +1,99 @@
+/* Affichage du modal messagerie */
+.messagerie {
+    display: none; /* Par défaut, la messagerie est cachée */
+    position: fixed;
+    z-index: 10000;
+    right: 0;
+    top: 75px;
+    width: 40%;
+    height: 100%;
+    overflow: auto;
+    text-align: center;
+}
+/* Contenu de la messagerie */
+.messagerie-content {
+    /*margin: 15% auto;*/
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 520px;
+    max-height: 80vh; /* Limite la hauteur du modal à 80% de la hauteur de la fenêtre */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow-y: auto; /* Ajoute un défilement vertical si le contenu dépasse la hauteur */
+}
+
+#messagerie:target {
+    display: flex; /* Utilise flex pour centrer */
+}
+/* Style pour le bouton de fermeture */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 25px;
+    color: black;
+    cursor: pointer;
+}
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+}
+
+
+
+/*==================== Style pour l'intérieur ====================*/
+/* Style général des tables */
+table {
+    table-layout: fixed; /* Force une disposition fixe */
+    width:100%; /* Taille fixe en pourcentage de l'écran */
+    border-collapse: collapse;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* Spécifique aux notifications ouvertes */
+table.opened-notifications {
+    background-color: rgba(108, 141, 138, 0.76);
+}
+
+/* Spécifique aux notifications non ouvertes */
+table.non-notifications {
+    background-color: rgba(64, 224, 208, 0.61);
+    }
+    
+    th, td {
+        text-align: left;
+        padding: 8px;
+    }
+    
+    a {
+        text-decoration: none;
+        color: black;
+    }
+
+    .notif-column {
+            width:20px; 
+            text-align: left;
+        }
+
+    .date-column {
+    width: 70px; /* Taille fixe */
+    text-align: right; /* Aligne le texte à droite */
+    vertical-align: top; /* Positionne le texte en haut */
+    padding-right: 15px; /* Ajoute un espacement à droite */
+    font-style: italic; /* Texte en italique */
+    color: gray; /* Couleur grise */
+    font-size: 12px; /* Taille du texte réduite */
+    }
+
+    button {
+        border: none; 
+        border-radius: 10px; 
+        background-color: lightgrey; 
+        padding: 5px 10px;
+    }

@@ -1,20 +1,11 @@
 <?php
-// Connexion à la base de données
-$host = 'localhost';
-$dbname = 'website_db';
-$user = 'root';
-$password = '';
-
+session_start();
 //import des fonctions
 include 'fonctionInscription.php';
+include '../Fonctions.php';
 
 // Connexion à la base de données
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur : " . $e->getMessage());
-}
+$pdo = Connexion_base();
 
 // Vérification de l'envoi du formulaire
 if (isset($_POST['part1'])) {
@@ -25,24 +16,28 @@ if (isset($_POST['part1'])) {
 // Appel de la fonction pour vérifier l'email
     if (! Verif_mail($pdo, $email)) {
         // Email déjà utilisé
-        session_start();
-        $_SESSION['EmailUnicityError'] = true;
+        $_SESSION['ErrorCode'] = 6;
         header('Location: Form1_inscription.php#modal');
+        Fermer_base($pdo);
         exit();
     } else {
         // Si pas d'erreur, on passe à la page suivante
-        session_start();
         $_SESSION['email'] = $email;
         $_SESSION['password'] = password_hash($password, PASSWORD_DEFAULT); // Hachage du mot de passe
         if(!isHashedPassword($_SESSION['password'])) {
-            $_SESSION['HashedPasswordError'] = true;
+            $_SESSION['ErrorCode'] = 7;
             header("Location: Form1_inscription.php#modal");
         }
         $_SESSION['role'] = $role;
 
         // Redirection vers la page de confirmation
         header("Location: /projet-website/Inscription/Form2_inscription.php#modal");
+        Fermer_base($pdo);
         exit();
     }
+}else {
+    header('Location: /projet-website/Homepage.php');
+    Fermer_base($pdo);
+    exit;
 }
 ?>
