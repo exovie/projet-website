@@ -42,31 +42,57 @@ Avant de commencer, assurez-vous que les outils suivants sont installés et conf
 
 opt/lampp/htdocs/projet-website
 ├── Admin 
+
 │   ├── Admin.css 
+
 │   ├── Confirmer_modif.php 
+
 │   ├── Enregistrer_modif.php
+
 │   ├── Fonctions_admin.php
+
 │   ├── Home_Admin.php
+
 │   ├── Liste_entreprises.php
+
 │   ├── Liste_medecins.php
+
 │   ├── Liste_patients.php
+
 │   ├── Modifier_Entreprises.php
+
 │   ├── Modifier_Medecins.php
+
 │   ├── Modifier_Patients.php
+
 │   ├── Supprimer_utilisateur.php
+
 │   └── Validation_en_attente.php
+
 ├── Connexion
+
 │   ├── fonctionConnexion.php
+
 │   ├── Form1_connexion.php
+
 │   └── verification1_connexion.php
+
 ├── Deconnexion.php
+
 ├── essai_indiv.css
+
 ├── Essai_individuel.php
+
 ├── Essais.php
+
 ├── Fonctions_essai.php
+
 ├── Fonctions.php
+
 ├── Homepage.php
+
 ├── hub.php
+
 ├── Inscription
 │   ├── finalisation_inscription.php
 │   ├── fonctionInscription.php
