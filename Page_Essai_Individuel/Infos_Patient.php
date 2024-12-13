@@ -8,11 +8,12 @@ include_once ("../Fonctions.php");
 
 if (isset($_POST['Id_patient'])) {
     $Id_patient = $_POST['Id_patient']; }
-    else {$Id_patient = $_SESSION['Id_patient_redirect'];}
-$conn= Connexion_base();
+    else {
+        if(isset($_SESSION['Id_patient_redirect']))
+        $Id_patient = $_SESSION['Id_patient_redirect'];}
 
-function Info_Patient_Essais($conn, int $Id_patient){
-    
+function Info_Patient_Essais(int $Id_patient){
+    $conn= Connexion_base();
     try {
         $query= $conn -> prepare("
         SELECT Id_patient, Nom, Prenom, Date_naissance, Sexe, Telephone, Poids, Taille, Traitements, Allergies
@@ -85,7 +86,7 @@ function Info_Patient_Essais($conn, int $Id_patient){
 </head>
 
 <?php
-$datasPatient = Info_Patient_Essais($conn, $Id_patient);
+$datasPatient = Info_Patient_Essais($Id_patient);
 ?>
 
 <body>
@@ -199,6 +200,15 @@ $datasPatient = Info_Patient_Essais($conn, $Id_patient);
         <?php endif; ?>
         </div>
         <button class="back-btn" onclick="window.location.href='../<?php echo $_SESSION['origin']; ?>'">Retour</button>
+        <form method="POST" action="../Essai_individuel.php">
+        <?php
+            $historique = historique_patient($Id_patient);
+            Display_essais($historique);
 
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['essai_indi'])) {
+                header("Location: ../Essai_individuel.php");
+            }
+        ?>
+        </form>
 </body>
 </html>

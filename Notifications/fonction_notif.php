@@ -173,7 +173,7 @@ function Affiche_notif($Id_D) {
             5=> "Un médecin vient de rejoindre l’équipe de l’essai ".$titre_Essai, 
             6=> "Un médecin vient de se retirer de l’équipe de l’essai" . $titre_Essai, 
             7=> "Le nombre de médecins requis pour l’essai ".$titre_Essai ."est atteint La phase de recrutement est sur le point de débuter.",
-            8=> "L’essai ".$titre_Essai." est en pause due au nombre insuffisant de médecin gérant. Veuillez consulter l’annonce de cet essai.",
+            8=> "L’essai ".$titre_Essai." est suspendu dû au nombre insuffisant de médecin gérant. Veuillez consulter l’annonce de cet essai.",
             9=> "L’essai ".$titre_Essai." auquel vous participez est suspendu pour des raisons administratives.",
             10=> "Vous avez une ou plusieurs demande de participation à l’essai". $titre_Essai,
             11=> "Votre candidature pour l’essai". $titre_Essai ."vient d’être acceptée",

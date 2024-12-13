@@ -228,6 +228,16 @@ if ($Id_essai !== null) {
     <input type="submit" value="Enregistrer">
     <button class="back-btn" onclick="window.location.href='../Essai_individuel.php'">Retour</button>
     </form>
+    <form method="POST" action="../Essai_individuel.php">
+        <?php
+            $historique = historique_patient($Id_patient);
+            Display_essais($historique);
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['essai_indi'])) {
+                header("Location: ../Essai_individuel.php");
+            }
+        ?>
+        </form>
 </div>
 </body>
 </html>

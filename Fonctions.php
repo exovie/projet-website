@@ -1,10 +1,6 @@
 <?php
-
-session_start();
-
 $db_name = "mysql:host=localhost;dbname=website_db"; 
 $_SESSION['db_name'] = $db_name;
-
 
 function Connexion_base(): PDO {
     $host = 'localhost';
@@ -21,7 +17,6 @@ try {
 }
 return $pdo;
 }
-
 
 function Fermer_base($conn): void {
     $conn = null;
@@ -55,7 +50,6 @@ function Get_id(string $table, string $column): array {
 
 
 function Get_entreprise_data(int $id_entreprise): array {
-
     $conn = Connexion_base();
 
     try {
@@ -63,8 +57,7 @@ function Get_entreprise_data(int $id_entreprise): array {
         $sql = "
             SELECT *
             FROM ENTREPRISES
-            WHERE Id_entreprise = :Id_entreprise AND
-            Verif_inscription = 1;
+            WHERE Id_entreprise = :Id_entreprise;
         ";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
@@ -76,8 +69,7 @@ function Get_entreprise_data(int $id_entreprise): array {
             SELECT ESSAIS_CLINIQUES.Titre
             FROM ESSAIS_CLINIQUES
             JOIN ENTREPRISES ON ESSAIS_CLINIQUES.Id_entreprise = ENTREPRISES.Id_entreprise
-            WHERE ENTREPRISES.Id_entreprise = :Id_entreprise AND
-            ESSAIS_CLINIQUES.Statut IN ('Termine', 'En cours', 'fini');
+            WHERE ENTREPRISES.Id_entreprise = :Id_entreprise;
         ";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
@@ -98,8 +90,7 @@ function Get_entreprise_data(int $id_entreprise): array {
             JOIN 
                 MEDECINS ON MEDECIN_ESSAIS.Id_medecin = MEDECINS.Id_medecin
             WHERE 
-                ENTREPRISES.Id_entreprise = :Id_entreprise AND
-                MEDECIN_ESSAIS.Statut_medecin IN ('Actif', 'Termine');
+                ENTREPRISES.Id_entreprise = :Id_entreprise;
         ";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':Id_entreprise', $id_entreprise, PDO::PARAM_INT);
@@ -159,7 +150,6 @@ function Display_entreprise_data(array $data) {
     }
 }
 
-
 function Get_essais($role) {
     $conn = Connexion_base();
     $statuses = [
@@ -192,8 +182,8 @@ function Get_essais($role) {
             LEFT JOIN ENTREPRISES E ON EC.Id_entreprise = E.Id_entreprise
         ";
     
-        // Si le statut n'est pas "tous", on ajoute une clause WHERE
-        if ($statuses[$role] !== ['Tout']) {
+        // Si le statut n'est pas "tous", on ajoute une clause WHERE 
+        if ($statuses[$role] !=='Tout') {
             $placeholders = implode(',', array_fill(0, count($statuses[$role]), '?'));
             $sql .= "WHERE EC.Statut IN ($placeholders) ";
         }
@@ -204,7 +194,7 @@ function Get_essais($role) {
         $stmt = $conn->prepare($sql);
     
         // Lier les variables seulement si le statut est défini
-        if ($statuses[$role] !== ['Tout']) {
+        if ($statuses[$role] !== 'Tout') {
             foreach ($statuses[$role] as $index => $status) {
                 $stmt->bindValue($index + 1, $status, PDO::PARAM_STR);
             }
@@ -230,7 +220,8 @@ function Display_essais($resultats) {
         echo '<button name="essai_indi" value="' . htmlspecialchars($essai['Id_essai']) . '" type="submit" class="search-button">';
         echo '<ul class = "trials">';
         echo '<li class = "trial_title">' . htmlspecialchars($essai['Titre']) . '</li>';
-        echo '<li class = "trial_company">' . htmlspecialchars($essai['Nom_Entreprise']) . '</li>';
+        if (isset($essai['Nom_Entreprise'])) {
+        echo '<li class = "trial_company">' . htmlspecialchars($essai['Nom_Entreprise']) . '</li>';}
         echo '<li>' . htmlspecialchars($essai['Objectif_essai']) . '</li>';
         
         // Vérifier si un médecin est associé à cet essai
@@ -249,7 +240,7 @@ function List_Medecin($id_medecin): array {
     }
     $conn = Connexion_base();
 
-    try { 
+    try {
         $sql = "
     SELECT *
     FROM MEDECINS
@@ -331,7 +322,7 @@ function recherche_EC($liste_EC, $recherche, $filtres) {
         // Affichage des résultats
         if (!empty($results)) {
             foreach ($results as $essai) {
-                echo '<button name="essai_indi" value="' . htmlspecialchars($essai['Id_essai']) . '" type="submit" class="search-button">';
+                echo '<button name="essai_indi" value="' . htmlspecialchars($essai['Id_essai']) . '" type="submit" class="trial_button">';
                 echo '<ul class="trials">';
                 echo '<li class="trial_title">' . htmlspecialchars($essai['Titre']) . '</li>';
                 echo '<li class="trial_company">' . htmlspecialchars($essai['Nom_Entreprise']) . '</li>';
@@ -376,123 +367,76 @@ function enterprise_filter($liste_EC) {
     }
 }
 
-function get_company(int $id_company): array {
-    $conn = Connexion_base();
+//-------------------------------------- Notifications --------------------------------------//
+// Fonction pour afficher un message d'erreur
+function ErrorEditor($errorCode, $modal='false'){
+    //if $_SESSION['ErrorCode'] is set, it will display the corresponding error message
+    $ScriptError= [
+        1 => "qsjk", 
+        2=> "Erreur lors de la récupération des informations",
+        3=> "L'email saisi ne correspond à aucun compte. Veuillez le vérifier et réessayer.",
+        4=> "Votre compte n'a pas encore été validé par un administrateur. Veuillez réessayer ultérieurement.",
+        5=> "Le mot de passe saisi est incorrect. Veuillez réessayer.",
+        6=> "Cet email est déjà utilisé. Veuillez en choisir un autre ou vous connecter.",
+        7=> "Erreur lors de la protection du mot de passe.",
+        8=> "Erreur lors de l'ajout de l'utilisateur.",
+    ];
 
-    try {
-        $sql = "
-    SELECT *
-    FROM ENTREPRISES
-    WHERE Id_entreprise = :id_entreprise;
-    ";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':id_entreprise', $id_company, PDO::PARAM_INT);
-    $stmt->execute();
-    
-    // Récupérer les résultats
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "Erreur : " . $e->getMessage();
-        return [];
-    
-    } finally {
-    // Fermer la connexion
-    Fermer_base($conn);
+    // Check if the error code exists in the array
+    $errorMessage = isset($ScriptError[$errorCode]) ? $ScriptError[$errorCode] : "Erreur inconnue.";
+
+
+    //If the error code is display on another modal 
+    if ($modal == 'true') {
+        echo'<p class="error-message">' . htmlspecialchars($errorMessage). '</p>'; 
+    }
+    else {
+    //Display the modal with the message
+    echo '
+    <div id="modal" class="modal" style="display: flex; text-align: center;">
+        <div class="modal-content">
+        <p class="error-message">' . htmlspecialchars($errorMessage) . '</p>
+            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
+        </div>
+    </div>';
     }
 }
 
-function get_patient(int $id_patient): array {
-    $conn = Connexion_base();
-
-    try {
-        $sql = "
-    SELECT *
-    FROM PATIENTS
-    WHERE Id_patient = :id_patient;
-    ";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':id_patient', $id_patient, PDO::PARAM_INT);
-    $stmt->execute();
-    
-    // Récupérer les résultats
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "Erreur : " . $e->getMessage();
-        return [];
-    
-    } finally {
-    // Fermer la connexion
-    Fermer_base($conn);
-    }
-}
-
-function display_patient_unique ($patient) {
-    $patient = $patient[0];
-    echo '<ul class = "patients">';
-    echo '<li class = "noms_patients">' . htmlspecialchars($patient['Nom']) . " " .htmlspecialchars($patient['Prenom']). '</li>';
-    echo '<li class = "age">' . htmlspecialchars($patient['Age']) . '</li>';
-    if ($patient['Profile_picture'] == null){
-        echo '<li> <img src="Pictures/defaultPicture.png" alt="pictureProfil" class="fixed_picture" style="cursor: pointer;"> </li>';
-    } else {
-    echo '<li class="fixed_picture">' . htmlspecialchars($patient['Profile_picture']) . '</li>';
-    }
-    echo '</ul>';
-}
-
-function verifier_essai_clinique(int $id_medecin, int $id_patient): bool {
-    // Connexion à la base de données
-    $conn = Connexion_base();
-    
-    try {
-        // Vérifier si le médecin et le patient sont inscrits au même essai clinique
-        $sql = "
-        SELECT COUNT(*) AS count
-        FROM MEDECIN_ESSAIS m
-        JOIN PATIENTS_ESSAIS p ON m.Id_essai = p.Id_essai
-        WHERE m.Id_medecin = :id_medecin
-        AND p.Id_patient = :id_patient;
-        ";
-        
-        // Préparer et exécuter la requête
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':id_medecin', $id_medecin, PDO::PARAM_INT);
-        $stmt->bindParam(':id_patient', $id_patient, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        // Récupérer le résultat
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        // Si le résultat est supérieur à 0, cela signifie que le médecin et le patient sont inscrits au même essai
-        return $result['count'] > 0;
-    } catch (PDOException $e) {
-        echo "Erreur : " . $e->getMessage();
-        return false;
-    } finally {
-        // Fermer la connexion
-        Fermer_base($conn);
-    }
-}
-
-function display_patient_medecin($patient){
-    $patient = $patient[0];
-    echo '<ul class = "patients">';
-    echo '<li>' . htmlspecialchars($patient['Taille']) . '</li>';
-    echo '<li>' . htmlspecialchars($patient['Poids']) . '</li>';
-    echo '<li>' . htmlspecialchars($patient['Traitements']) . '</li>';
-    echo '<li>' . htmlspecialchars($patient['Allergies']) . '</li>';
-    echo '<li>' . htmlspecialchars($patient['Cni']) . '</li>';
-    echo '</ul>';  
-}
+// Fonction pour afficher un message de succès
+function SuccesEditor($SuccessCode){
+    $ScriptSucces= [
+        1=> 'Votre inscription a bien été enregistrée.',
+        2=> 'Bienvenue ' . $_SESSION['Nom'] .'. Ravi de vous revoir !',
+        3=> 'Votre déconnexion a bien été prise en compte.',
+        4=> 'Votre candidature a bien été enregistrée. Vous recevrez une notification dès qu\'elle sera traitée.',
+        5=> 'Les modifications ont bien été enregistrées.'
+    ];
 
 
-//entreprise en fonction essai
-//liste des medecins actifs d'un essai
-//statut d'un patient dans un essai
+    $CommSucces = [
+        1 => 'Si votre inscription concerne un compte Médecin ou Entreprise,votre demande est soumise à la validation d\' administateur. </p>' . 
+        '<p> Si vous vous êtes inscrit en tant que Patient,vous pouvez déjà vous connecter pour candidater à l\'un de nos essais cliniques !', 
+
+        3=> 'Au plaisir de vous revoir.'
+    ];
+
+    $SuccesMessage = isset($ScriptSucces[$SuccessCode]) ? $ScriptSucces[$SuccessCode] :'Succès inconnu.';
+    $Commentaire = isset($CommSucces[$SuccessCode]) ? $CommSucces[$SuccessCode] : '';
+
+    // Affiche le modal avec le message
+    echo '
+    <div id="modal" class="modal" style="display: flex; text-align: center;">
+        <div class="modal-content">
+            <p class="validation-message">' . htmlspecialchars($SuccesMessage) . '</p>
+            <p> '. ($Commentaire). '</p>
+            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
+        </div>
+    </div>';}
 
 
 function tablename($id_user) {
     $conn = Connexion_base();
-
+    try {
     $sql = "
         SELECT 'PATIENTS' AS TableName FROM PATIENTS WHERE Id_patient = ?
         UNION ALL
@@ -507,6 +451,13 @@ function tablename($id_user) {
     $stmt->bindParam(3, $id_user, PDO::PARAM_INT);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Erreur : " . $e->getMessage();
+        return false;
+    } finally {
+        // Fermer la connexion
+        Fermer_base($conn);
+    }
 
     // Analyse des résultats
     if ($result) {
@@ -564,81 +515,25 @@ function Verif_inscription($id_user) {
     return $result[$column];
 }
 
-//entreprise en fonction essai
-//liste des medecins actifs d'un essai
-//statut d'un patient dans un essai
-
-function company_trial ($id_essai) {
+function historique_patient($Id_patient) {
     $conn = Connexion_base();
-
+    try {
     $sql = "
-        SELECT Id_entreprise
-        FROM ESSAIS_CLINIQUES
-        WHERE ESSAIS_CLINIQUES.Id_essai = :Id_essai;
-    "; 
-
+    SELECT 
+        *
+    FROM 
+        ESSAIS_CLINIQUES ec
+    JOIN 
+        PATIENTS_ESSAIS pe ON ec.Id_essai = pe.Id_essai
+    WHERE 
+        pe.Id_patient = :id_patient;
+    ORDER BY Date_creation ASC;
+    ";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':Id_essai', $id_essai, PDO::PARAM_INT);
+    $stmt->bindParam(':id_patient', $Id_patient, PDO::PARAM_INT);
     $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Analyse des résultats
-    if ($result) {
-        return $result['TableName'];
-    } else {
-        echo "Id_user $id_essai n'existe dans aucune table liée.";
-    }
-}
-
-
-function get_medecin_trial(int $id_medecin, $id_essai): array {
-    $conn = Connexion_base();
-
-    try {
-        $sql = "
-            SELECT Id_medecin
-            FROM MEDECINS_ESSAIS
-            WHERE MEDECINS_ESSAIS.Id_essai = :Id_essai;
-        "; 
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':Id_essai', $id_essai, PDO::PARAM_INT);
-    $stmt->execute();
-    
-    // Récupérer les résultats
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "Erreur : " . $e->getMessage();
-        return [];
-    
-    } finally {
-    // Fermer la connexion
-    Fermer_base($conn);
-    }
-}
-
-
-function verif_entreprise($Id_essai, $Id_entreprise) {
-    $conn = Connexion_base();
-
-    try {
-        $sql = "
-            SELECT EXISTS (
-                SELECT 1
-                FROM ESSAIS_CLINIQUES
-                WHERE Id_entreprise = :Id_entreprise
-                AND Id_essai = :Id_essai
-            ) AS EssaiTrouve;
-        "; 
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':Id_entreprise', $Id_entreprise, PDO::PARAM_INT);
-        $stmt->bindParam(':Id_essai', $Id_essai, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        // Récupérer le résultat de la requête
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        // Si l'essai est trouvé, retourne true, sinon false
-        return (bool)$result['EssaiTrouve'];
     } catch (PDOException $e) {
         echo "Erreur : " . $e->getMessage();
         return false;
@@ -646,70 +541,11 @@ function verif_entreprise($Id_essai, $Id_entreprise) {
         // Fermer la connexion
         Fermer_base($conn);
     }
-}
 
-//-------------------------------------- Notifications --------------------------------------//
-// Fonction pour afficher un message d'erreur
-function ErrorEditor($errorCode, $modal='false'){
-    //if $_SESSION['ErrorCode'] is set, it will display the corresponding error message
-    $ScriptError= [
-        1 => "qsjk", 
-        2=> "Erreur lors de la récupération des informations",
-        3=> "L'email saisi ne correspond à aucun compte. Veuillez le vérifier et réessayer.",
-        4=> "Votre compte n'a pas encore été validé par un administrateur. Veuillez réessayer ultérieurement.",
-        5=> "Le mot de passe saisi est incorrect. Veuillez réessayer.",
-        6=> "Cet email est déjà utilisé. Veuillez en choisir un autre ou vous connecter.",
-        7=> "Erreur lors de la protection du mot de passe.",
-        8=> "Erreur lors de l'ajout de l'utilisateur.",
-    ];
-
-    // Check if the error code exists in the array
-    $errorMessage = isset($ScriptError[$errorCode]) ? $ScriptError[$errorCode] : "Erreur inconnue.";
-
-
-    //If the error code is display on another modal 
-    if ($modal == 'true') {
-        echo'<p class="error-message">' . htmlspecialchars($errorMessage). '</p>'; 
-    }
-    else {
-    //Display the modal with the message
-    echo '
-    <div id="modal" class="modal" style="display: flex; text-align: center;">
-        <div class="modal-content">
-        <p class="error-message">' . htmlspecialchars($errorMessage) . '</p>
-            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
-        </div>
-    </div>';
+    // Analyse des résultats
+    if ($result) {
+        return $result;
+    } else {
+        return[];
     }
 }
-
-// Fonction pour afficher un message de succès
-function SuccesEditor($SuccessCode){
-    $ScriptSucces= [
-        1=> 'Votre inscription a bien été enregistrée.',
-        2=> 'Bienvenue ' . $_SESSION['Nom'] .'. Ravi de vous revoir !',
-        3=> 'Votre déconnexion a bien été prise en compte.',
-        4=> 'Votre candidature a bien été enregistrée. Vous recevrez une notification dès qu\'elle sera traitée.'
-    ];
-
-
-    $CommSucces = [
-        1 => 'Si votre inscription concerne un compte Médecin ou Entreprise,votre demande est soumise à la validation d\' administateur. </p>' . 
-        '<p> Si vous vous êtes inscrit en tant que Patient,vous pouvez déjà vous connecter pour candidater à l\'un de nos essais cliniques !', 
-
-        3=> 'Au plaisir de vous revoir.'
-    ];
-
-    $SuccesMessage = isset($ScriptSucces[$SuccessCode]) ? $ScriptSucces[$SuccessCode] :'Succès inconnu.';
-    $Commentaire = isset($CommSucces[$SuccessCode]) ? $CommSucces[$SuccessCode] : '';
-
-    // Affiche le modal avec le message
-    echo '
-    <div id="modal" class="modal" style="display: flex; text-align: center;">
-        <div class="modal-content">
-            <p class="validation-message">' . htmlspecialchars($SuccesMessage) . '</p>
-            <p> '. ($Commentaire). '</p>
-            <a href="/projet-website/Homepage.php" class="close-btn">&times;</a>
-        </div>
-    </div>';}
-?>
