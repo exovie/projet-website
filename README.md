@@ -41,9 +41,9 @@ Avant de commencer, assurez-vous que les outils suivants sont installés et conf
 ## Arborescence des fichiers
 
 opt/lampp/htdocs/projet-website
-├── Admin
-│   ├── Admin.css
-│   ├── Confirmer_modif.php
+├── Admin ;
+│   ├── Admin.css ;
+│   ├── Confirmer_modif.php ;
 │   ├── Enregistrer_modif.php
 │   ├── Fonctions_admin.php
 │   ├── Home_Admin.php
