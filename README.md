@@ -41,8 +41,8 @@ Avant de commencer, assurez-vous que les outils suivants sont installés et conf
 ## Arborescence des fichiers
 
 opt/lampp/htdocs/projet-website
-├── Admin 
 
+├── Admin 
 │   ├── Admin.css 
 
 │   ├── Confirmer_modif.php 
