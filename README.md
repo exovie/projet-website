@@ -44,95 +44,71 @@ opt/lampp/htdocs/projet-website
 
 ├── Admin   
 │   ├── Admin.css   <br>
-│   ├── Confirmer_modif.php 
-
-│   ├── Enregistrer_modif.php
-
-│   ├── Fonctions_admin.php
-
-│   ├── Home_Admin.php
-
-│   ├── Liste_entreprises.php
-
-│   ├── Liste_medecins.php
-
-│   ├── Liste_patients.php
-
-│   ├── Modifier_Entreprises.php
-
-│   ├── Modifier_Medecins.php
-
-│   ├── Modifier_Patients.php
-
-│   ├── Supprimer_utilisateur.php
-
-│   └── Validation_en_attente.php
-
-├── Connexion
-
-│   ├── fonctionConnexion.php
-
-│   ├── Form1_connexion.php
-
-│   └── verification1_connexion.php
-
-├── Deconnexion.php
-
-├── essai_indiv.css
-
-├── Essai_individuel.php
-
-├── Essais.php
-
-├── Fonctions_essai.php
-
-├── Fonctions.php
-
-├── Homepage.php
-
-├── hub.php
-
-├── Inscription
-│   ├── finalisation_inscription.php
-│   ├── fonctionInscription.php
-│   ├── Form1_inscription.php
-│   ├── Form2_inscription.php
-│   ├── verification1_inscription.php
-│   └── verification2_inscription.php
-├── navigationBar.css
-├── Notifications
-│   ├── fonction_notif.php
-│   ├── Notifications.php
-│   ├── Notifications_style.css
-│   └── Redirect_notif.php
-├── Page_Essai_Individuel
-│   ├── Aff_Statistiques.php
-│   ├── Fonction_Modif_Essais.php
-│   ├── Infos_Patient.php
-│   ├── Liste_Patients_Essai.php
-│   ├── Modifier_Essais.php
-│   ├── Modifier_Patient_Essai.php
-│   └── Page_aff_stat.php
-├── Page_Mes_Infos
-│   ├── Creer_essai.php
-│   ├── Fonction_Mes_infos.php
-│   ├── Historique_Essais.php
-│   ├── Menu_Mes_Infos.php
-│   ├── Mes_infos.php
-│   └── Page_Creer_Essai.php
-├── Pictures
-│   ├── defaultPicture.png
-│   ├── eyes_close.png
-│   ├── letterPicture.png
-│   ├── logo.png
-│   ├── minilogo.png
-│   ├── open_eye.png
-│   ├── pictureProfil.png
-│   └── subscription.png
-├── README.md
-├── test_unitaire.php
-├── website.css
-└── website_db.sql
+│   ├── Confirmer_modif.php   
+│   ├── Enregistrer_modif.php  
+│   ├── Fonctions_admin.php  
+│   ├── Home_Admin.php    
+│   ├── Liste_entreprises.php   
+│   ├── Liste_medecins.php  
+│   ├── Liste_patients.php   
+│   ├── Modifier_Entreprises.php    
+│   ├── Modifier_Medecins.php    
+│   ├── Modifier_Patients.php    
+│   ├── Supprimer_utilisateur.php    
+│   └── Validation_en_attente.php    
+├── Connexion   
+│   ├── fonctionConnexion.php   
+│   ├── Form1_connexion.php  
+│   └── verification1_connexion.php   
+├── Deconnexion.php  
+├── essai_indiv.css  
+├── Essai_individuel.php  
+├── Essais.php   
+├── Fonctions_essai.php  
+├── Fonctions.php  
+├── Homepage.php  
+├── hub.php  
+├── Inscription  
+│   ├── finalisation_inscription.php  
+│   ├── fonctionInscription.php  
+│   ├── Form1_inscription.php  
+│   ├── Form2_inscription.php  
+│   ├── verification1_inscription.php  
+│   └── verification2_inscription.php  
+├── navigationBar.css  
+├── Notifications  
+│   ├── fonction_notif.php  
+│   ├── Notifications.php  
+│   ├── Notifications_style.css  
+│   └── Redirect_notif.php  
+├── Page_Essai_Individuel  
+│   ├── Aff_Statistiques.php  
+│   ├── Fonction_Modif_Essais.php  
+│   ├── Infos_Patient.php  
+│   ├── Liste_Patients_Essai.php  
+│   ├── Modifier_Essais.php  
+│   ├── Modifier_Patient_Essai.php  
+│   └── Page_aff_stat.php  
+├── Page_Mes_Infos  
+│   ├── Creer_essai.php  
+│   ├── Fonction_Mes_infos.php  
+│   ├── Historique_Essais.php  
+│   ├── Menu_Mes_Infos.php  
+│   ├── Mes_infos.php  
+│   └── Page_Creer_Essai.php  
+├── Pictures  
+│   ├── defaultPicture.png  
+│   ├── eyes_close.png  
+│   ├── letterPicture.png  
+│   ├── logo.png  
+│   ├── minilogo.png  
+│   ├── open_eye.png  
+│   ├── pictureProfil.png  
+│   └── subscription.png  
+├── README.md  
+├── test_unitaire.php  
+├── website.css  
+└── website_db.sql  
 
 7 directories, 60 files
 
