@@ -118,7 +118,7 @@ Le projet inclut des tests unitaires.
 
 > Les tests unitaires sont exécutés via le fichier `test_unitaire.php`.
 
-*Si des erreurs sont constatés après avoir exécuter plusieurs fois ce fichier, veuillez réinitialiser la BdD.
+*Si des erreurs sont constatées après avoir exécuté plusieurs fois ce fichier, veuillez réinitialiser la BdD.
 
 ## Dépendances
 
