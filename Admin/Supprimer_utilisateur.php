@@ -2,6 +2,7 @@
 // Inclure la connexion à la base de données
 include_once '../Notifications/fonction_notif.php';
 include_once ("../Fonctions.php");
+session_start();
 $conn = Connexion_base();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

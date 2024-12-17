@@ -2,6 +2,7 @@
 //Connection à la base
 include("../Fonctions.php");
 include_once '../Notifications/fonction_notif.php';
+session_start();
 $conn=Connexion_base();
 
 //Vérification du role de l'utilisateur
