@@ -98,14 +98,14 @@ $conn= Connexion_base();
         <!-- Code de la barre de navigation -->
         <div class=\"navbar\">
             <div id=\"logo\">
-                <a href=../\"Homepage.php\">
+                <a href='../Homepage.php'>
                     <img src=../Pictures/logo.png alt=\"minilogo\" class=\"minilogo\">
                 </a>
             </div>
-            <a href=../Essais.php class=\"nav-btn\">Essais Cliniques</a>
+            <a href='../Essais.php' class=\"nav-btn\">Essais Cliniques</a>
 
             <!-- Accès à la page de Gestion -->
-            <a href= Home_Admin.php class=\"nav-btn\">Gestion</a>
+            <a href='Home_Admin.php' class=\"nav-btn\">Gestion</a>
 
             <!-- Connexion / Inscription -->
             <div class=\"dropdown\">
