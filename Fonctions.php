@@ -138,10 +138,11 @@ function Display_entreprise_data(array $data) {
         $counter = 0;
         foreach ($data['medecins'] as $medecin) {
             if ($counter >= 5) break; // Limite à 5 médecins
-            if (empty($medecin['Profile_picture'])) {
-                echo '<li><img src="Pictures/defaultPicture.png" alt="profile picture" class="fixed_picture" style="cursor: pointer;"></li>';
+            if ($medecin['Profile_picture'] == null){
+                echo '<li> <img src="Pictures/defaultPicture.png" alt="pictureProfil" class="fixed_picture" style="cursor: pointer;"> </li>';
             } else {
-                echo '<li>' . htmlspecialchars($medecin['Nom_Medecin']) . '</li>';
+                $profilePictureData = base64_encode($medecin['Profile_picture']);
+                echo '<li><img src="data:image/png;base64,' . $profilePictureData . '" alt="Photo de profil" class="fixed_picture" style="cursor: pointer;"></li>';
             }
             $counter++;
         }
@@ -184,7 +185,7 @@ function Get_essais($role) {
         ";
     
         // Si le statut n'est pas "tous", on ajoute une clause WHERE 
-        if ($statuses[$role] !=='Tout') {
+        if ($statuses[$role] !==['Tout']) {
             $placeholders = implode(',', array_fill(0, count($statuses[$role]), '?'));
             $sql .= "WHERE EC.Statut IN ($placeholders) ";
         }
@@ -195,7 +196,7 @@ function Get_essais($role) {
         $stmt = $conn->prepare($sql);
     
         // Lier les variables seulement si le statut est défini
-        if ($statuses[$role] !== 'Tout') {
+        if ($statuses[$role] !== ['Tout']) {
             foreach ($statuses[$role] as $index => $status) {
                 $stmt->bindValue($index + 1, $status, PDO::PARAM_STR);
             }

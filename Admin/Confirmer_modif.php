@@ -8,7 +8,6 @@ include_once '../Notifications/fonction_notif.php';
 session_start();
 if (!isset($_SESSION['modifications'])) {
     header('Location: Home_Admin.php');
-    header('Location: Home_Admin.php');
     exit;
 }
 
@@ -150,11 +149,11 @@ $modifications = $_SESSION['modifications'];
             $redirectUrl = ''; // Valeur par défaut
             if (isset($modifications['role'])) {
                 if ($modifications['role'] === 'Patient') {
-                    $redirectUrl = 'Liste_Patients.php';
+                    $redirectUrl = 'Liste_patients.php';
                 } elseif ($modifications['role'] === 'Medecin') {
-                    $redirectUrl = 'Liste_Medecins.php';
+                    $redirectUrl = 'Liste_medecins.php';
                 } elseif ($modifications['role'] === 'Entreprise') {
-                    $redirectUrl = 'Liste_Entreprises.php';
+                    $redirectUrl = 'Liste_entreprises.php';
                 }
             }
         ?>
@@ -178,7 +177,7 @@ $modifications = $_SESSION['modifications'];
                 $_SESSION['SuccessCode'] = 5;
                 // Effectue la redirection
                 header("Location: " . htmlspecialchars($redirectUrl, ENT_QUOTES, 'UTF-8'));
-                exit;
+                exit(); // Important pour stopper le script
             }
         }
         ?>
