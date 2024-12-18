@@ -5,34 +5,28 @@ include_once '../Notifications/fonction_notif.php';
 include_once ("../Fonctions.php");
 
 
-$id_essai = $_SESSION['Id_essai']; // Sinon, récupère la valeur de la session
+$Id_essai = $_SESSION['Id_essai']; // Sinon, récupère la valeur de la session
 
 // Récupération des informations de l'utilisateur
-$EssaiInfo = getEssaiInfo($conn, $id_essai);
+$EssaiInfo = getEssaiInfo($conn, $Id_essai);
 
-// Initialisation du message
+//Variable pour stocker le message
 $message = null;
+$success = false;
 
-// Vérification si une redirection a eu lieu
-if (isset($_SESSION['message'])) {
-    $message = $_SESSION['message'];
-    unset($_SESSION['message']); // Réinitialisation du message après l'affichage
-}
-
-if ($Id_essai !== null) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Mise à jour des informations
     $success = updateEssaiInfo($conn, $Id_essai);
 
     // Définir le message en fonction du résultat
     if ($success) {
         $_SESSION['message'] = "Modifications faites avec succès.";
-        header("Location: Modifier_Essais.php?Id_essai=" . $Id_essai); // Redirige vers la même page avec l'ID de l'essai
-        exit(); // Assurez-vous d'arrêter l'exécution du script après la redirection
     } else {
         $_SESSION['message'] = "Erreur de modification."; // Stocke le message dans la session
-        header("Location: Modifier_Essais.php?Id_essai=" . $Id_essai); // Redirige vers la même page en cas d'erreur
-        exit();
     }
+    // Rediriger vers la même page pour afficher les mises à jour
+    header("Location: Modifier_Essais.php");
+    exit();
 }
 ?>
 
@@ -195,11 +189,12 @@ if ($Id_essai !== null) {
     <div class="content">
     <h1>Modification des informations de l'essai</h1>
     <!-- Affichage du message -->
-    <?php if ($message): ?>
-        <div class="message <?= $success ? 'success' : 'error' ?>">
-            <?= htmlspecialchars($message) ?>
-        </div>
-    <?php endif; ?>
+    <?php if (isset($_SESSION['message'])): ?>
+            <div class="message <?= strpos($_SESSION['message'], 'succès') !== false ? 'success' : 'error' ?>">
+                <?= htmlspecialchars($_SESSION['message']) ?>
+            </div>
+            <?php unset($_SESSION['message']); // Supprime le message après affichage ?>
+        <?php endif; ?>
     <form method="POST" enctype="multipart/form-data">
     <?php if ($EssaiInfo): ?>
         <?php foreach ($EssaiInfo as $key => $value): ?>
@@ -226,7 +221,7 @@ if ($Id_essai !== null) {
         <?php endforeach; ?>
     <?php endif; ?>
     <input type="submit" value="Enregistrer">
-    <button class="back-btn" onclick="window.location.href='../Essai_individuel.php'">Retour</button>
+    <button type="button" class="back-btn" onclick="window.location.href='../Essai_individuel.php'">Retour</button>
     </form>
 </div>
 </body>
